@@ -10,3 +10,5 @@ EXTRA_HEALTH_INSURANCE = (
     if os.getenv("EXTRA_HEALTH_INSURANCE") is None
     else float(os.getenv("EXTRA_HEALTH_INSURANCE"))
 )
+
+CHURCH_TAX = 0 if os.getenv("CHURCH_TAX") is None else os.getenv("CHURCH_TAX")
