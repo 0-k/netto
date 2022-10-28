@@ -1,4 +1,4 @@
-from config import EXTRA_HEALTH_INSURANCE
+from netto.config import EXTRA_HEALTH_INSURANCE
 
 
 tax_curve = {

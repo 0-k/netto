@@ -1,7 +1,7 @@
 import math
 from scipy.integrate import quad
-from const import tax_curve
-from config import YEAR
+from netto.const import tax_curve
+from netto.config import YEAR
 
 
 def get_marginal_tax_rate(taxable_income):

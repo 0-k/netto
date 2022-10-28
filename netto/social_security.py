@@ -1,6 +1,6 @@
 import math
-from const import social_security_curve
-from config import YEAR, HAS_CHILDREN
+from netto.const import social_security_curve
+from netto.config import YEAR, HAS_CHILDREN
 
 
 def __get_rate(salary, type, extra=0):
