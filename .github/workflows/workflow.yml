@@ -3,7 +3,7 @@ name: Python package
 on: [push]
 
 env:
-  CONFIG_PATH: ./examples/config.yml
+  CONFIG_PATH: ./examples/config_2022.yml
 
 jobs:
   build:
