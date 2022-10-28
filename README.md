@@ -1,6 +1,6 @@
-# python-template
+# netto
 
-Project template in Python
+German tax and social security calculator
 
 
 ## TODO

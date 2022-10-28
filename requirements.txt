@@ -1,1 +1,3 @@
-PyYAML==6.0
+numpy
+pandas
+matplotlib
