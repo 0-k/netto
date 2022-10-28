@@ -1,6 +1,6 @@
 import math
-from const import *
-from config import YEAR
+from netto.const import tax_curve
+from netto.config import YEAR
 
 
 def get_marginal_tax_rate(taxable_income):
@@ -8,21 +8,21 @@ def get_marginal_tax_rate(taxable_income):
         return 0
     elif taxable_income <= tax_curve[YEAR][1]["step"]:
         return __calc_gradient(
-            tax_curve[year][0]["step"],
-            tax_curve[year][1]["step"],
-            tax_curve[year][0]["rate"],
-            tax_curve[year][1]["rate"],
+            tax_curve[YEAR][0]["step"],
+            tax_curve[YEAR][1]["step"],
+            tax_curve[YEAR][0]["rate"],
+            tax_curve[YEAR][1]["rate"],
             taxable_income,
         )
     elif taxable_income <= tax_curve[YEAR][2]["step"]:
         return __calc_gradient(
-            tax_curve[year][1]["step"],
-            tax_curve[year][2]["step"],
-            tax_curve[year][1]["rate"],
-            tax_curve[year][2]["rate"],
+            tax_curve[YEAR][1]["step"],
+            tax_curve[YEAR][2]["step"],
+            tax_curve[YEAR][1]["rate"],
+            tax_curve[YEAR][2]["rate"],
             taxable_income,
         )
-    elif taxable_income <= tax_curve[YEAR][3]["step"]:
+    elif taxable_income < tax_curve[YEAR][3]["step"]:
         return tax_curve[YEAR][2]["rate"]
     else:
         return tax_curve[YEAR][3]["rate"]

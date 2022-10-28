@@ -1,17 +1,32 @@
-def get_rate_pension(salary):
-    return 0.093 if salary <= 84600 else 0
+import math
+from netto.const import social_security_curve
+from netto.config import YEAR, HAS_CHILDREN
+
+
+def __get_rate(salary, type, extra=0):
+    return (
+        social_security_curve[YEAR][type]["rate"] + extra
+        if salary <= social_security_curve[YEAR][type]["limit"]
+        else 0
+    )
+
+
+def get_marginal_rate_pension(salary):
+    return __get_rate(salary, "pension")
 
 
 def get_rate_unemployment(salary):
-    return 0.012 if salary <= 84600 else 0
+    return __get_rate(salary, "unemployment")
 
 
 def get_rate_health(salary):
-    return 0.073 + 0.013 / 2 if salary <= 58050 else 0
+    extra = social_security_curve[YEAR]["nursing"]["extra"]
+    return __get_rate(salary, "health", extra)
 
 
 def get_rate_nursing(salary):
-    return 0.01525 if salary <= 58050 else 0
+    extra = 0 if HAS_CHILDREN else social_security_curve[YEAR]["nursing"]["extra"]
+    return __get_rate(salary, "nursing", extra)
 
 
 def calc_insurance_pension(salary):

@@ -1,7 +1,4 @@
-inflection_1 = 10347
-inflection_2 = 14926
-inflection_3 = 58596
-inflection_4 = 277826
+from netto.config import EXTRA_HEALTH_INSURANCE
 
 
 tax_curve = {
@@ -14,4 +11,23 @@ tax_curve = {
 }
 
 
-year = 2022
+social_security_curve = {
+    2022: {
+        "pension": {"limit": 84600, "rate": 0.093},
+        "unemployment": {"limit": 84600, "rate": 0.012},
+        "health": {"limit": 58050, "rate": 0.073, "extra": EXTRA_HEALTH_INSURANCE},
+        "nursing": {"limit": 58050, "rate": 0.01525, "extra": 0.0035},
+    }
+}
+
+
+correction_factor_pensions = {
+    2018: 0.72,
+    2019: 0.76,
+    2020: 0.8,
+    2021: 0.84,
+    2022: 0.88,
+    2023: 0.92,
+    2024: 0.96,
+    2025: 1.00,
+}
