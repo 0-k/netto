@@ -3,7 +3,6 @@ import netto.income_tax as income_tax
 
 
 class TestMain(unittest.TestCase):
-
     def setUp(self):
         pass
 
@@ -22,3 +21,9 @@ class TestMain(unittest.TestCase):
         self.assertEqual(income_tax.get_marginal_tax_rate(277826), 0.45)
         self.assertEqual(income_tax.get_marginal_tax_rate(277827), 0.45)
 
+    def test_sameness_of_calc_income_tax_methods(self):
+        for taxable_income in range(0, 100001, 10000):
+            self.assertEqual(
+                income_tax.calc_income_tax(taxable_income),
+                income_tax.calc_income_tax_by_integration(taxable_income),
+            )

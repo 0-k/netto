@@ -5,7 +5,9 @@ German tax and social security calculator
 
 ## TODO
 
-* Add todo items here
+* Calculate Vorsorgepauschale
+* Validate Soli
+* Test the whole thing
 
 ## Credits
 

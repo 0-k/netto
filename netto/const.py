@@ -4,9 +4,9 @@ from netto.config import EXTRA_HEALTH_INSURANCE
 tax_curve = {
     2022: {
         0: {"step": 10347, "rate": 0.14},
-        1: {"step": 14926, "rate": 0.2397},
-        2: {"step": 58596, "rate": 0.42},
-        3: {"step": 277826, "rate": 0.45},
+        1: {"step": 14926, "rate": 0.2397, "const": [1088.67, 1400]},
+        2: {"step": 58596, "rate": 0.42, "const": [206.43, 2397, 869.32]},
+        3: {"step": 277826, "rate": 0.45, "const": [9336.45, 17671.20]},
     }
 }
 
@@ -18,6 +18,11 @@ social_security_curve = {
         "health": {"limit": 58050, "rate": 0.073, "extra": EXTRA_HEALTH_INSURANCE},
         "nursing": {"limit": 58050, "rate": 0.01525, "extra": 0.0035},
     }
+}
+
+
+soli_curve = {
+    2022: {"start_taxable_income": 16956, "start_fraction": 0.119, "end_rate": 0.055}
 }
 
 

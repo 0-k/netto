@@ -3,7 +3,6 @@ import netto.main as main
 
 
 class TestMain(unittest.TestCase):
-
     def setUp(self):
         pass
 

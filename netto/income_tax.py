@@ -39,10 +39,36 @@ def calc_taxable_income(salary, deductable_social_security, deductable_other=0):
     )
 
 
+def calc_income_tax(taxable_income):
+    taxable_income = round(taxable_income)
+    if taxable_income <= tax_curve[YEAR][0]["step"]:
+        return 0
+    elif taxable_income <= tax_curve[YEAR][1]["step"]:
+        y = (taxable_income - tax_curve[YEAR][0]["step"]) / 10000
+        return math.floor(
+            (tax_curve[YEAR][1]["const"][0] * y + tax_curve[YEAR][1]["const"][1]) * y
+        )
+    elif taxable_income <= tax_curve[YEAR][2]["step"]:
+        z = (taxable_income - tax_curve[YEAR][1]["step"]) / 10000
+        return math.floor(
+            (tax_curve[YEAR][2]["const"][0] * z + tax_curve[YEAR][2]["const"][1]) * z
+            + tax_curve[YEAR][2]["const"][2]
+        )
+    elif taxable_income <= tax_curve[YEAR][3]["step"]:
+        return math.floor(
+            tax_curve[YEAR][2]["rate"] * taxable_income - tax_curve[YEAR][3]["const"][0]
+        )
+    else:
+        return math.floor(
+            tax_curve[YEAR][3]["rate"] * taxable_income - tax_curve[YEAR][3]["const"][1]
+        )
+
+
 def calc_income_tax_by_integration(taxable_income):
     integral, _ = quad(get_marginal_tax_rate, 0, taxable_income)
-    return integral
+    return math.floor(integral)
 
 
 if __name__ == "__main__":
-    print(get_marginal_tax_rate(50000))
+    print(calc_income_tax(60000))
+    print(calc_income_tax_by_integration(60000))
