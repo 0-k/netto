@@ -2,6 +2,7 @@ import math
 from scipy.integrate import quad
 from netto.const import tax_curve
 from netto.config import YEAR
+from social_security import calc_deductable_social_security, calc_social_security
 
 
 def get_marginal_tax_rate(taxable_income):
@@ -68,7 +69,3 @@ def calc_income_tax_by_integration(taxable_income):
     integral, _ = quad(get_marginal_tax_rate, 0, taxable_income)
     return math.floor(integral)
 
-
-if __name__ == "__main__":
-    print(calc_income_tax(60000))
-    print(calc_income_tax_by_integration(60000))

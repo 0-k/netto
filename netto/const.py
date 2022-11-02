@@ -7,6 +7,18 @@ tax_curve = {
         1: {"step": 14926, "rate": 0.2397, "const": [1088.67, 1400]},
         2: {"step": 58596, "rate": 0.42, "const": [206.43, 2397, 869.32]},
         3: {"step": 277826, "rate": 0.45, "const": [9336.45, 17671.20]},
+    },
+    2023: {
+        0: {"step": 10633, "rate": 0.14},
+        1: {"step": 15786, "rate": 0.2397, "const": [1088.67, 1400]},
+        2: {"step": 61971, "rate": 0.42, "const": [206.43, 2397, 869.32]},
+        3: {"step": 277826, "rate": 0.45, "const": [9336.45, 17671.20]},
+    },
+    2024: {
+        0: {"step": 10933, "rate": 0.14},
+        1: {"step": 16179, "rate": 0.2397, "const": [1088.67, 1400]},
+        2: {"step": 63514, "rate": 0.42, "const": [206.43, 2397, 869.32]},
+        3: {"step": 277826, "rate": 0.45, "const": [9336.45, 17671.20]},
     }
 }
 
@@ -17,7 +29,13 @@ social_security_curve = {
         "unemployment": {"limit": 84600, "rate": 0.012},
         "health": {"limit": 58050, "rate": 0.073, "extra": EXTRA_HEALTH_INSURANCE},
         "nursing": {"limit": 58050, "rate": 0.01525, "extra": 0.0035},
-    }
+    },
+    2023: {
+        "pension": {"limit": 87600, "rate": 0.093},
+        "unemployment": {"limit": 87600, "rate": 0.012},
+        "health": {"limit": 59850, "rate": 0.073, "extra": EXTRA_HEALTH_INSURANCE},
+        "nursing": {"limit": 59850, "rate": 0.01525, "extra": 0.0035},
+    },
 }
 
 

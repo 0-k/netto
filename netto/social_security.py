@@ -1,6 +1,6 @@
-import math
-from netto.const import social_security_curve
+from netto.const import social_security_curve, correction_factor_pensions
 from netto.config import YEAR, HAS_CHILDREN
+from scipy.integrate import quad
 
 
 def __get_rate(salary, type, extra=0):
@@ -10,8 +10,13 @@ def __get_rate(salary, type, extra=0):
         else 0
     )
 
+def __get_value(salary, type, extra=0):
+    return min(salary * (social_security_curve[YEAR][type]["rate"] + extra),
+               social_security_curve[YEAR][type]["limit"] *
+               (social_security_curve[YEAR][type]["rate"] + extra))
 
-def get_marginal_rate_pension(salary):
+
+def get_rate_pension(salary):
     return __get_rate(salary, "pension")
 
 
@@ -20,7 +25,7 @@ def get_rate_unemployment(salary):
 
 
 def get_rate_health(salary):
-    extra = social_security_curve[YEAR]["nursing"]["extra"]
+    extra = social_security_curve[YEAR]["health"]["extra"]
     return __get_rate(salary, "health", extra)
 
 
@@ -30,24 +35,26 @@ def get_rate_nursing(salary):
 
 
 def calc_insurance_pension(salary):
-    return min(salary * 0.093, 84600 * 0.093)
-
-
-def calc_insurance_health(salary, extra=0.012 / 2):
-    return min(salary * (0.073 + extra), 58050 * (0.073 + extra))
+    return __get_value(salary, "pension")
 
 
 def calc_insurance_unemployment(salary):
-    return min(salary * 0.012, 84600 * 0.012)
+    return __get_value(salary, "unemployment")
 
 
-def calc_insurance_nursing(salary, no_child_extra=0.0):
-    return min(salary * (0.01525 + no_child_extra), 58050 * (0.01525 + no_child_extra))
+def calc_insurance_health(salary):
+    extra = social_security_curve[YEAR]["health"]["extra"]
+    return __get_value(salary, "health", extra)
+
+
+def calc_insurance_nursing(salary):
+    extra = 0 if HAS_CHILDREN else social_security_curve[YEAR]["nursing"]["extra"]
+    return __get_value(salary, "nursing", extra)
 
 
 def calc_deductable_social_security(salary):
     return (
-        calc_insurance_pension(salary) * 0.88
+        calc_insurance_pension(salary) * correction_factor_pensions[YEAR]
         + calc_insurance_health(salary)
         + calc_insurance_nursing(salary)
     )
@@ -60,3 +67,11 @@ def calc_social_security(salary):
         + calc_insurance_nursing(salary)
         + calc_insurance_unemployment(salary)
     )
+
+def calc_social_security_by_integration(salary):
+    pension, _ = quad(get_rate_pension, 0, salary)
+    health, _ = quad(get_rate_health, 0, salary)
+    nursing, _ = quad(get_rate_nursing, 0, salary)
+    unemployment, _ = quad(get_rate_unemployment, 0, salary)
+    return pension + health + nursing + unemployment
+

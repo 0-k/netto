@@ -1,5 +1,5 @@
 import unittest
-import netto.income_tax as income_tax
+import netto.taxes_income as income_tax
 
 
 class TestMain(unittest.TestCase):
