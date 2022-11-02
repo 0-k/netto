@@ -2,7 +2,6 @@ import math
 from scipy.integrate import quad
 from netto.const import tax_curve
 from netto.config import YEAR
-from social_security import calc_deductable_social_security, calc_social_security
 
 
 def get_marginal_tax_rate(taxable_income):
