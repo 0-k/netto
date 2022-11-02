@@ -10,10 +10,13 @@ def __get_rate(salary, type, extra=0):
         else 0
     )
 
+
 def __get_value(salary, type, extra=0):
-    return min(salary * (social_security_curve[YEAR][type]["rate"] + extra),
-               social_security_curve[YEAR][type]["limit"] *
-               (social_security_curve[YEAR][type]["rate"] + extra))
+    return min(
+        salary * (social_security_curve[YEAR][type]["rate"] + extra),
+        social_security_curve[YEAR][type]["limit"]
+        * (social_security_curve[YEAR][type]["rate"] + extra),
+    )
 
 
 def get_rate_pension(salary):
@@ -68,10 +71,10 @@ def calc_social_security(salary):
         + calc_insurance_unemployment(salary)
     )
 
+
 def calc_social_security_by_integration(salary):
     pension, _ = quad(get_rate_pension, 0, salary)
     health, _ = quad(get_rate_health, 0, salary)
     nursing, _ = quad(get_rate_nursing, 0, salary)
     unemployment, _ = quad(get_rate_unemployment, 0, salary)
     return pension + health + nursing + unemployment
-

@@ -68,4 +68,3 @@ def calc_income_tax(taxable_income):
 def calc_income_tax_by_integration(taxable_income):
     integral, _ = quad(get_marginal_tax_rate, 0, taxable_income)
     return math.floor(integral)
-
