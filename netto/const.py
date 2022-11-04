@@ -52,7 +52,8 @@ social_security_curve = {
 
 
 soli_curve = {
-    2022: {"start_taxable_income": 16956, "start_fraction": 0.119, "end_rate": 0.055}
+    2022: {"start_taxable_income": 16956, "start_fraction": 0.119, "end_rate": 0.055},
+    2023: {"start_taxable_income": 16956, "start_fraction": 0.119, "end_rate": 0.055},
 }
 
 
