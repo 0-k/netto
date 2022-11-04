@@ -2,6 +2,18 @@ from netto.config import EXTRA_HEALTH_INSURANCE
 
 
 tax_curve = {
+    2020: {
+        0: {"step": 10347, "rate": 0.14},
+        1: {"step": 14926, "rate": 0.2397, "const": [1088.67, 1400]},
+        2: {"step": 58596, "rate": 0.42, "const": [206.43, 2397, 869.32]},
+        3: {"step": 277826, "rate": 0.45, "const": [9336.45, 17671.20]},
+    },
+    2021: {
+        0: {"step": 9744, "rate": 0.14},
+        1: {"step": 14926, "rate": 0.2397, "const": [1088.67, 1400]},
+        2: {"step": 58596, "rate": 0.42, "const": [206.43, 2397, 869.32]},
+        3: {"step": 277826, "rate": 0.45, "const": [9336.45, 17671.20]},
+    },
     2022: {
         0: {"step": 10347, "rate": 0.14},
         1: {"step": 14926, "rate": 0.2397, "const": [1088.67, 1400]},
@@ -10,15 +22,15 @@ tax_curve = {
     },
     2023: {
         0: {"step": 10633, "rate": 0.14},
-        1: {"step": 15786, "rate": 0.2397, "const": [1088.67, 1400]},
-        2: {"step": 61971, "rate": 0.42, "const": [206.43, 2397, 869.32]},
-        3: {"step": 277826, "rate": 0.45, "const": [9336.45, 17671.20]},
+        1: {"step": 15786, "rate": 0.2397, "const": NotImplementedError},
+        2: {"step": 61971, "rate": 0.42, "const": NotImplementedError},
+        3: {"step": 277826, "rate": 0.45, "const": NotImplementedError},
     },
     2024: {
         0: {"step": 10933, "rate": 0.14},
-        1: {"step": 16179, "rate": 0.2397, "const": [1088.67, 1400]},
-        2: {"step": 63514, "rate": 0.42, "const": [206.43, 2397, 869.32]},
-        3: {"step": 277826, "rate": 0.45, "const": [9336.45, 17671.20]},
+        1: {"step": 16179, "rate": 0.2397, "const": NotImplementedError},
+        2: {"step": 63514, "rate": 0.42, "const": NotImplementedError},
+        3: {"step": 277826, "rate": 0.45, "const": NotImplementedError},
     },
 }
 
