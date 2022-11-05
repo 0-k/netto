@@ -1,7 +1,7 @@
 import os
 
-
 YEAR = 2022 if os.getenv("YEAR") is None else int(os.getenv("YEAR"))
+
 HAS_CHILDREN = (
     False if os.getenv("HAS_CHILDREN") is None else bool(os.getenv("HAS_CHILDREN"))
 )

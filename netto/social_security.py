@@ -1,21 +1,21 @@
-from netto.const import social_security_curve, correction_factor_pensions
-from netto.config import YEAR, HAS_CHILDREN
 from scipy.integrate import quad
+from netto.const import social_security_curve, correction_factor_pensions
+import netto.config as config
 
 
 def __get_rate(salary, type, extra=0):
     return (
-        social_security_curve[YEAR][type]["rate"] + extra
-        if salary <= social_security_curve[YEAR][type]["limit"]
+        social_security_curve[config.YEAR][type]["rate"] + extra
+        if salary <= social_security_curve[config.YEAR][type]["limit"]
         else 0
     )
 
 
 def __get_value(salary, type, extra=0):
     return min(
-        salary * (social_security_curve[YEAR][type]["rate"] + extra),
-        social_security_curve[YEAR][type]["limit"]
-        * (social_security_curve[YEAR][type]["rate"] + extra),
+        salary * (social_security_curve[config.YEAR][type]["rate"] + extra),
+        social_security_curve[config.YEAR][type]["limit"]
+        * (social_security_curve[config.YEAR][type]["rate"] + extra),
     )
 
 
@@ -28,12 +28,16 @@ def get_rate_unemployment(salary):
 
 
 def get_rate_health(salary):
-    extra = social_security_curve[YEAR]["health"]["extra"]
+    extra = social_security_curve[config.YEAR]["health"]["extra"]
     return __get_rate(salary, "health", extra)
 
 
 def get_rate_nursing(salary):
-    extra = 0 if HAS_CHILDREN else social_security_curve[YEAR]["nursing"]["extra"]
+    extra = (
+        0
+        if config.HAS_CHILDREN
+        else social_security_curve[config.YEAR]["nursing"]["extra"]
+    )
     return __get_rate(salary, "nursing", extra)
 
 
@@ -46,18 +50,22 @@ def calc_insurance_unemployment(salary):
 
 
 def calc_insurance_health(salary):
-    extra = social_security_curve[YEAR]["health"]["extra"]
+    extra = social_security_curve[config.YEAR]["health"]["extra"]
     return __get_value(salary, "health", extra)
 
 
 def calc_insurance_nursing(salary):
-    extra = 0 if HAS_CHILDREN else social_security_curve[YEAR]["nursing"]["extra"]
+    extra = (
+        0
+        if config.HAS_CHILDREN
+        else social_security_curve[config.YEAR]["nursing"]["extra"]
+    )
     return __get_value(salary, "nursing", extra)
 
 
 def calc_deductable_social_security(salary):
     return (
-        calc_insurance_pension(salary) * correction_factor_pensions[YEAR]
+        calc_insurance_pension(salary) * correction_factor_pensions[config.YEAR]
         + calc_insurance_health(salary)
         + calc_insurance_nursing(salary)
     )

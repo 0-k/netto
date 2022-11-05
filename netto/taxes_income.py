@@ -1,32 +1,32 @@
 import math
 from scipy.integrate import quad
 from netto.const import tax_curve
-from netto.config import YEAR
+import netto.config as config
 
 
 def get_marginal_tax_rate(taxable_income):
-    if taxable_income < tax_curve[YEAR][0]["step"]:
+    if taxable_income < tax_curve[config.YEAR][0]["step"]:
         return 0
-    elif taxable_income <= tax_curve[YEAR][1]["step"]:
+    elif taxable_income <= tax_curve[config.YEAR][1]["step"]:
         return __calc_gradient(
-            tax_curve[YEAR][0]["step"],
-            tax_curve[YEAR][1]["step"],
-            tax_curve[YEAR][0]["rate"],
-            tax_curve[YEAR][1]["rate"],
+            tax_curve[config.YEAR][0]["step"],
+            tax_curve[config.YEAR][1]["step"],
+            tax_curve[config.YEAR][0]["rate"],
+            tax_curve[config.YEAR][1]["rate"],
             taxable_income,
         )
-    elif taxable_income <= tax_curve[YEAR][2]["step"]:
+    elif taxable_income <= tax_curve[config.YEAR][2]["step"]:
         return __calc_gradient(
-            tax_curve[YEAR][1]["step"],
-            tax_curve[YEAR][2]["step"],
-            tax_curve[YEAR][1]["rate"],
-            tax_curve[YEAR][2]["rate"],
+            tax_curve[config.YEAR][1]["step"],
+            tax_curve[config.YEAR][2]["step"],
+            tax_curve[config.YEAR][1]["rate"],
+            tax_curve[config.YEAR][2]["rate"],
             taxable_income,
         )
-    elif taxable_income < tax_curve[YEAR][3]["step"]:
-        return tax_curve[YEAR][2]["rate"]
+    elif taxable_income < tax_curve[config.YEAR][3]["step"]:
+        return tax_curve[config.YEAR][2]["rate"]
     else:
-        return tax_curve[YEAR][3]["rate"]
+        return tax_curve[config.YEAR][3]["rate"]
 
 
 def __calc_gradient(x_i, x_j, y_i, y_j, x):
@@ -41,26 +41,36 @@ def calc_taxable_income(salary, deductable_social_security, deductable_other=0):
 
 def calc_income_tax(taxable_income):
     taxable_income = round(taxable_income)
-    if taxable_income <= tax_curve[YEAR][0]["step"]:
+    if taxable_income <= tax_curve[config.YEAR][0]["step"]:
         return 0
-    elif taxable_income <= tax_curve[YEAR][1]["step"]:
-        y = (taxable_income - tax_curve[YEAR][0]["step"]) / 10000
+    elif taxable_income <= tax_curve[config.YEAR][1]["step"]:
+        y = (taxable_income - tax_curve[config.YEAR][0]["step"]) / 10000
         return math.floor(
-            (tax_curve[YEAR][1]["const"][0] * y + tax_curve[YEAR][1]["const"][1]) * y
+            (
+                tax_curve[config.YEAR][1]["const"][0] * y
+                + tax_curve[config.YEAR][1]["const"][1]
+            )
+            * y
         )
-    elif taxable_income <= tax_curve[YEAR][2]["step"]:
-        z = (taxable_income - tax_curve[YEAR][1]["step"]) / 10000
+    elif taxable_income <= tax_curve[config.YEAR][2]["step"]:
+        z = (taxable_income - tax_curve[config.YEAR][1]["step"]) / 10000
         return math.floor(
-            (tax_curve[YEAR][2]["const"][0] * z + tax_curve[YEAR][2]["const"][1]) * z
-            + tax_curve[YEAR][2]["const"][2]
+            (
+                tax_curve[config.YEAR][2]["const"][0] * z
+                + tax_curve[config.YEAR][2]["const"][1]
+            )
+            * z
+            + tax_curve[config.YEAR][2]["const"][2]
         )
-    elif taxable_income <= tax_curve[YEAR][3]["step"]:
+    elif taxable_income <= tax_curve[config.YEAR][3]["step"]:
         return math.floor(
-            tax_curve[YEAR][2]["rate"] * taxable_income - tax_curve[YEAR][3]["const"][0]
+            tax_curve[config.YEAR][2]["rate"] * taxable_income
+            - tax_curve[config.YEAR][3]["const"][0]
         )
     else:
         return math.floor(
-            tax_curve[YEAR][3]["rate"] * taxable_income - tax_curve[YEAR][3]["const"][1]
+            tax_curve[config.YEAR][3]["rate"] * taxable_income
+            - tax_curve[config.YEAR][3]["const"][1]
         )
 
 

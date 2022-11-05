@@ -1,4 +1,4 @@
-from netto.config import CHURCH_TAX
+import netto.config as config
 
 
 def calc_soli(tax_assessment):
@@ -6,4 +6,4 @@ def calc_soli(tax_assessment):
 
 
 def calc_church_tax(tax_assessment):
-    return tax_assessment * CHURCH_TAX
+    return tax_assessment * config.CHURCH_TAX

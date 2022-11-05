@@ -1,9 +1,9 @@
+import numpy as np
+import matplotlib.pyplot as plt
 from netto.taxes_income import calc_taxable_income, calc_income_tax_by_integration
 from netto.taxes_other import calc_soli, calc_church_tax
 from netto.social_security import calc_deductable_social_security, calc_social_security
-import numpy as np
-import matplotlib.pyplot as plt
-import netto.config
+import netto.config as config
 
 
 def calc_netto(salary):
@@ -22,6 +22,10 @@ def calc_netto(salary):
 
 
 if __name__ == "__main__":
-    net = [calc_netto(salary) for salary in range(0, 150001, 1000)]
-    plt.plot(np.diff(net))
+    config.YEAR = 2022
+    net_2022 = [calc_netto(salary) for salary in range(0, 200001, 1000)]
+    plt.plot(np.diff(net_2022))
+    config.YEAR = 2023
+    net_2023 = [calc_netto(salary) for salary in range(0, 200001, 1000)]
+    plt.plot(np.diff(net_2023))
     plt.show()

@@ -1,4 +1,4 @@
-from netto.config import EXTRA_HEALTH_INSURANCE
+import netto.config as config
 
 
 tax_curve = {
@@ -39,13 +39,21 @@ social_security_curve = {
     2022: {
         "pension": {"limit": 84600, "rate": 0.093},
         "unemployment": {"limit": 84600, "rate": 0.012},
-        "health": {"limit": 58050, "rate": 0.073, "extra": EXTRA_HEALTH_INSURANCE},
+        "health": {
+            "limit": 58050,
+            "rate": 0.073,
+            "extra": config.EXTRA_HEALTH_INSURANCE,
+        },
         "nursing": {"limit": 58050, "rate": 0.01525, "extra": 0.0035},
     },
     2023: {
         "pension": {"limit": 87600, "rate": 0.093},
         "unemployment": {"limit": 87600, "rate": 0.012},
-        "health": {"limit": 59850, "rate": 0.073, "extra": EXTRA_HEALTH_INSURANCE},
+        "health": {
+            "limit": 59850,
+            "rate": 0.073,
+            "extra": config.EXTRA_HEALTH_INSURANCE,
+        },
         "nursing": {"limit": 59850, "rate": 0.01525, "extra": 0.0035},
     },
 }
