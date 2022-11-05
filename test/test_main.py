@@ -10,4 +10,4 @@ class TestMain(unittest.TestCase):
         pass
 
     def test_for_valid_main(self):
-        self.assertEqual(main.calc_netto(0), None)
+        self.assertEqual(main.calc_netto(0), 0)
