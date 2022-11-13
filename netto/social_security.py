@@ -6,7 +6,7 @@ import netto.config as config
 def __get_rate(salary, type, extra=0):
     return (
         social_security_curve[config.YEAR][type]["rate"] + extra
-        if salary <= social_security_curve[config.YEAR][type]["limit"]
+        if 0 < salary <= social_security_curve[config.YEAR][type]["limit"]
         else 0
     )
 

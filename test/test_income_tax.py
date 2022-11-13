@@ -2,7 +2,7 @@ import unittest
 import netto.taxes_income as income_tax
 
 
-class TestMain(unittest.TestCase):
+class TestIncomeTax(unittest.TestCase):
     def setUp(self):
         pass
 
