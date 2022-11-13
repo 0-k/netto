@@ -63,20 +63,23 @@ def calc_insurance_nursing(salary):
     return __get_value(salary, "nursing", extra)
 
 
-def calc_deductable_social_security(salary):
-    return (
+def calc_deductable_social_security(salary):  #
+    return round(
         calc_insurance_pension(salary) * correction_factor_pensions[config.YEAR]
         + calc_insurance_health(salary)
-        + calc_insurance_nursing(salary)
+        * ((0.14/2 + config.EXTRA_HEALTH_INSURANCE) / (0.146/2 + config.EXTRA_HEALTH_INSURANCE))
+        + calc_insurance_nursing(salary),
+        2,
     )
 
 
 def calc_social_security(salary):
-    return (
+    return round(
         calc_insurance_pension(salary)
         + calc_insurance_health(salary)
         + calc_insurance_nursing(salary)
-        + calc_insurance_unemployment(salary)
+        + calc_insurance_unemployment(salary),
+        2,
     )
 
 
@@ -85,4 +88,4 @@ def calc_social_security_by_integration(salary):
     health, _ = quad(get_rate_health, 0, salary)
     nursing, _ = quad(get_rate_nursing, 0, salary)
     unemployment, _ = quad(get_rate_unemployment, 0, salary)
-    return pension + health + nursing + unemployment
+    return round(pension + health + nursing + unemployment, 2)
