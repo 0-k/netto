@@ -1,9 +1,20 @@
 import netto.config as config
+from netto.const import soli_curve
 
 
 def calc_soli(tax_assessment):
-    return min(max(0, tax_assessment - 16956) * 0.119, tax_assessment * 0.055)
+    return round(
+        max(
+            min(
+                max(0, tax_assessment - soli_curve[config.YEAR]["start_taxable_income"])
+                * soli_curve[config.YEAR]["start_fraction"],
+                tax_assessment * soli_curve[config.YEAR]["end_rate"],
+            ),
+            0,
+        ),
+        2,
+    )
 
 
 def calc_church_tax(tax_assessment):
-    return tax_assessment * config.CHURCH_TAX
+    return round(max(tax_assessment * config.CHURCH_TAX, 0), 0)
