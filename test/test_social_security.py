@@ -39,7 +39,10 @@ class TestSocialSecurity(unittest.TestCase):
 
     def test_calc_deductable_social_security(self):
         self.assertEqual(social_security.calc_deductable_social_security(0), 0)
-        self.assertEqual(social_security.calc_deductable_social_security(30000), 2455.20+2310+562.50)
+        self.assertEqual(
+            social_security.calc_deductable_social_security(30000),
+            2455.20 + 2310 + 562.50,
+        )
 
     def test_sameness_of_calc_social_securitx(self):
         for salary in range(0, 100001, 10000):

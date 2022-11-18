@@ -24,8 +24,7 @@ def calc_netto(salary):
 if __name__ == "__main__":
     config.YEAR = 2022
     net_2022 = [calc_netto(salary) for salary in range(0, 200001, 1000)]
-    plt.plot(np.diff(net_2022))
     config.YEAR = 2023
     net_2023 = [calc_netto(salary) for salary in range(0, 200001, 1000)]
-    plt.plot(np.diff(net_2023))
+    plt.plot(np.array(net_2023) - np.array(net_2022))
     plt.show()

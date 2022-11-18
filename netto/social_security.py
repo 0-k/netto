@@ -50,7 +50,7 @@ def calc_insurance_unemployment(salary):
 
 
 def calc_insurance_health(salary):
-    extra = social_security_curve[config.YEAR]["health"]["extra"]
+    extra = config.EXTRA_HEALTH_INSURANCE / 2
     return __get_value(salary, "health", extra)
 
 
@@ -67,7 +67,10 @@ def calc_deductable_social_security(salary):  #
     return round(
         calc_insurance_pension(salary) * correction_factor_pensions[config.YEAR]
         + calc_insurance_health(salary)
-        * ((0.14/2 + config.EXTRA_HEALTH_INSURANCE) / (0.146/2 + config.EXTRA_HEALTH_INSURANCE))
+        * (
+            (0.14 / 2 + config.EXTRA_HEALTH_INSURANCE)
+            / (0.146 / 2 + config.EXTRA_HEALTH_INSURANCE)
+        )
         + calc_insurance_nursing(salary),
         2,
     )

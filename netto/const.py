@@ -42,7 +42,6 @@ social_security_curve = {
         "health": {
             "limit": 58050,
             "rate": 0.073,
-            "extra": config.EXTRA_HEALTH_INSURANCE,
         },
         "nursing": {"limit": 58050, "rate": 0.01525, "extra": 0.0035},
     },
@@ -52,7 +51,6 @@ social_security_curve = {
         "health": {
             "limit": 59850,
             "rate": 0.073,
-            "extra": config.EXTRA_HEALTH_INSURANCE,
         },
         "nursing": {"limit": 59850, "rate": 0.01525, "extra": 0.0035},
     },

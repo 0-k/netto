@@ -7,9 +7,9 @@ HAS_CHILDREN = (
 )
 
 EXTRA_HEALTH_INSURANCE = (
-    0.014 / 2
+    0.014
     if os.getenv("EXTRA_HEALTH_INSURANCE") is None
-    else float(os.getenv("EXTRA_HEALTH_INSURANCE")) / 2
+    else float(os.getenv("EXTRA_HEALTH_INSURANCE"))
 )
 
 CHURCH_TAX = 0 if os.getenv("CHURCH_TAX") is None else float(os.getenv("CHURCH_TAX"))
