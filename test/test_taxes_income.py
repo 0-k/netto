@@ -1,8 +1,8 @@
 import unittest
-import netto.taxes_income as income_tax
+import netto.taxes_income as taxes_income
 
 
-class TestIncomeTax(unittest.TestCase):
+class TestTaxesIncome(unittest.TestCase):
     def setUp(self):
         pass
 
@@ -10,20 +10,20 @@ class TestIncomeTax(unittest.TestCase):
         pass
 
     def test_valid_get_marginal_tax_rate(self):
-        self.assertEqual(income_tax.get_marginal_tax_rate(-1000), 0)
-        self.assertEqual(income_tax.get_marginal_tax_rate(0), 0)
-        self.assertEqual(income_tax.get_marginal_tax_rate(10346), 0)
-        self.assertEqual(income_tax.get_marginal_tax_rate(10347), 0.14)
-        self.assertEqual(income_tax.get_marginal_tax_rate(14926), 0.2397)
-        self.assertEqual(income_tax.get_marginal_tax_rate(58596), 0.42)
-        self.assertEqual(income_tax.get_marginal_tax_rate(58597), 0.42)
-        self.assertEqual(income_tax.get_marginal_tax_rate(100000), 0.42)
-        self.assertEqual(income_tax.get_marginal_tax_rate(277826), 0.45)
-        self.assertEqual(income_tax.get_marginal_tax_rate(277827), 0.45)
+        self.assertEqual(taxes_income.get_marginal_tax_rate(-1000), 0)
+        self.assertEqual(taxes_income.get_marginal_tax_rate(0), 0)
+        self.assertEqual(taxes_income.get_marginal_tax_rate(10346), 0)
+        self.assertEqual(taxes_income.get_marginal_tax_rate(10347), 0.14)
+        self.assertEqual(taxes_income.get_marginal_tax_rate(14926), 0.2397)
+        self.assertEqual(taxes_income.get_marginal_tax_rate(58596), 0.42)
+        self.assertEqual(taxes_income.get_marginal_tax_rate(58597), 0.42)
+        self.assertEqual(taxes_income.get_marginal_tax_rate(100000), 0.42)
+        self.assertEqual(taxes_income.get_marginal_tax_rate(277826), 0.45)
+        self.assertEqual(taxes_income.get_marginal_tax_rate(277827), 0.45)
 
     def test_sameness_of_calc_income_tax_methods(self):
         for taxable_income in range(0, 100001, 10000):
             self.assertEqual(
-                income_tax.calc_income_tax(taxable_income),
-                income_tax.calc_income_tax_by_integration(taxable_income),
+                taxes_income.calc_income_tax(taxable_income),
+                taxes_income.calc_income_tax_by_integration(taxable_income),
             )
