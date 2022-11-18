@@ -6,10 +6,12 @@ from netto.social_security import calc_deductable_social_security, calc_social_s
 import netto.config as config
 
 
-def calc_netto(salary):
+def calc_netto(salary, deductable_other=0):
     deductable_social_security = calc_deductable_social_security(salary)
     taxable_income = calc_taxable_income(
-        salary=salary, deductable_social_security=deductable_social_security
+        salary=salary,
+        deductable_social_security=deductable_social_security,
+        deductable_other=deductable_other,
     )
     income_tax = calc_income_tax_by_integration(taxable_income)
     return (
