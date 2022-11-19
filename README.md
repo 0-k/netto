@@ -1,6 +1,7 @@
 # netto
 
-German wage tax (Lohnsteuer) and social security (Sozialabgaben) calculator.
+German income tax (Einkommensteuer) and social security (Sozialabgaben) calculator.
+
 Currently tested against the following assumptions:
 * Tax class I/IV
 * Public health and pension insurance
