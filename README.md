@@ -1,17 +1,29 @@
 # netto
 
-German tax and social security calculator
+German wage tax (Lohnsteuer) and social security (Sozialabgaben) calculator.
+Currently tested against the following assumptions:
+* Tax class I/IV
+* Public health and pension insurance
+* West-German pension deduction
+* Optional: Church tax
+* Supported tax years: 2021-2023
 
+### TODO list
 
-## TODO
-
-* Calculate Vorsorgepauschale
-* Validate Soli
-* Test the whole thing
+* Implement tax class II & III/V
+* Calculate support for children (Kindergeld/Kinderfreibetrag)
+* Implement fields for private health insurance
+* Implement fields for private pension insurance
+* Implement correct pension deductible for East Germany
+* Convenience function to calculate church tax (by state)
 
 ## Sources
 
 * [German tax curve](https://www.bmf-steuerrechner.de/Tarifhistorie_Steuerrechner.pdf?__blob=publicationFile&v=1)
+* [Wage tax (Lohnsteuer)](https://www.bmf-steuerrechner.de/bl/bl2022/eingabeformbl2022.xhtml)
+* [Social security deductable (Vorsorgepauschale)](https://www.lohn-info.de/vorsorgepauschale.html)
+* [Taxable income calculator](https://udo-brechtel.de/mathe/est_gsv/reverse_zve_brutto.htm)
+* [Solidarity tax (Solidaritätszuschlag)](https://www.lohn-info.de/solizuschlag.html)
 
 ## Credits
 

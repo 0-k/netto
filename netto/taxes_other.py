@@ -17,4 +17,4 @@ def calc_soli(tax_assessment):
 
 
 def calc_church_tax(tax_assessment):
-    return round(max(tax_assessment * config.CHURCH_TAX, 0), 0)
+    return round(max(tax_assessment * config.CHURCH_TAX, 0), 2)
