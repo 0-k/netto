@@ -6,7 +6,7 @@ Currently tested against the following assumptions:
 * Public health and pension insurance
 * West-German pension deduction
 * Optional: Church tax
-* Supported tax years: 2021-2023
+* Supported tax years: 2018-2023
 
 ### TODO list
 
