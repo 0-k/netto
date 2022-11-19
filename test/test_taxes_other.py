@@ -1,10 +1,13 @@
 import unittest
 import netto.taxes_other as taxes_other
+import netto.config as config
 
 
 class TestTaxesOther(unittest.TestCase):
     def setUp(self):
-        pass
+        config.EXTRA_HEALTH_INSURANCE = 0.014
+        config.CHURCH_TAX = 0.09
+        config.HAS_CHILDREN = False
 
     def tearDown(self):
         pass

@@ -45,30 +45,23 @@ def calc_income_tax(taxable_income):
         return 0
     elif taxable_income <= tax_curve[config.YEAR][1]["step"]:
         y = (taxable_income - tax_curve[config.YEAR][0]["step"]) / 10000
-        return math.floor(
-            (
-                tax_curve[config.YEAR][1]["const"][0] * y
-                + tax_curve[config.YEAR][1]["const"][1]
-            )
-            * y
-        )
+        return (
+            tax_curve[config.YEAR][1]["const"][0] * y
+            + tax_curve[config.YEAR][1]["const"][1]
+        ) * y
     elif taxable_income <= tax_curve[config.YEAR][2]["step"]:
         z = (taxable_income - tax_curve[config.YEAR][1]["step"]) / 10000
-        return math.floor(
-            (
-                tax_curve[config.YEAR][2]["const"][0] * z
-                + tax_curve[config.YEAR][2]["const"][1]
-            )
-            * z
-            + tax_curve[config.YEAR][2]["const"][2]
-        )
+        return (
+            tax_curve[config.YEAR][2]["const"][0] * z
+            + tax_curve[config.YEAR][2]["const"][1]
+        ) * z + tax_curve[config.YEAR][2]["const"][2]
     elif taxable_income <= tax_curve[config.YEAR][3]["step"]:
-        return math.floor(
+        return (
             tax_curve[config.YEAR][2]["rate"] * taxable_income
             - tax_curve[config.YEAR][3]["const"][0]
         )
     else:
-        return math.floor(
+        return (
             tax_curve[config.YEAR][3]["rate"] * taxable_income
             - tax_curve[config.YEAR][3]["const"][1]
         )
@@ -76,4 +69,4 @@ def calc_income_tax(taxable_income):
 
 def calc_income_tax_by_integration(taxable_income):
     integral, _ = quad(get_marginal_tax_rate, 0, taxable_income)
-    return math.floor(integral)
+    return integral

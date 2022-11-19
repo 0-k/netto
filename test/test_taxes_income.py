@@ -1,10 +1,13 @@
 import unittest
 import netto.taxes_income as taxes_income
+import netto.config as config
 
 
 class TestTaxesIncome(unittest.TestCase):
     def setUp(self):
-        pass
+        config.EXTRA_HEALTH_INSURANCE = 0.014
+        config.CHURCH_TAX = 0.09
+        config.HAS_CHILDREN = False
 
     def tearDown(self):
         pass
@@ -23,7 +26,8 @@ class TestTaxesIncome(unittest.TestCase):
 
     def test_sameness_of_calc_income_tax_methods(self):
         for taxable_income in range(0, 100001, 10000):
-            self.assertEqual(
+            self.assertAlmostEqual(
                 taxes_income.calc_income_tax(taxable_income),
                 taxes_income.calc_income_tax_by_integration(taxable_income),
+                delta=0.1,
             )
