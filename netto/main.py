@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import newton
 from netto.taxes_income import calc_taxable_income, calc_income_tax_by_integration
 from netto.taxes_other import calc_soli, calc_church_tax
 from netto.social_security import calc_deductable_social_security, calc_social_security
@@ -21,6 +22,15 @@ def calc_netto(salary, deductable_other=0):
         - calc_church_tax(income_tax)
         - calc_social_security(salary)
     )
+
+
+def calc_inverse_netto(desired_netto, deductable_other=10000):
+    """ find gross salary to reach desired netto """
+
+    def f(salary):
+        return calc_netto(salary, deductable_other=deductable_other) - desired_netto
+
+    return round(newton(f, x0=desired_netto), 0)
 
 
 if __name__ == "__main__":
