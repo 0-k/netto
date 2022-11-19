@@ -1,6 +1,7 @@
 from scipy.integrate import quad
 from netto.const import social_security_curve, correction_factor_pensions
 import netto.config as config
+import math
 
 
 def __get_rate(salary, type, extra=0):
@@ -69,11 +70,12 @@ def calc_insurance_nursing(salary):
 
 
 def calc_deductable_social_security(salary):
-    return round(
-        calc_insurance_pension(salary) * correction_factor_pensions[config.YEAR]
-        + calc_insurance_health_deductable(salary)
-        + calc_insurance_nursing(salary),
-        2,
+    return (
+        math.ceil(
+            calc_insurance_pension(salary) * correction_factor_pensions[config.YEAR]
+        )
+        + math.ceil(calc_insurance_health_deductable(salary))
+        + math.ceil(calc_insurance_nursing(salary))
     )
 
 

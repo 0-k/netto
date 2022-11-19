@@ -41,7 +41,7 @@ class TestSocialSecurity(unittest.TestCase):
         self.assertEqual(social_security.calc_deductable_social_security(0), 0)
         self.assertEqual(
             social_security.calc_deductable_social_security(30000),
-            2455.20 + 2310 + 562.50,
+            2456 + 2310 + 563,  # https://www.lohn-info.de/vorsorgepauschale.html
         )
 
     def test_sameness_of_calc_social_securitx(self):

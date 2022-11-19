@@ -1,6 +1,3 @@
-import netto.config as config
-
-
 tax_curve = {
     2020: {
         0: {"step": 10347, "rate": 0.14},
