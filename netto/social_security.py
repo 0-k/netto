@@ -1,5 +1,5 @@
 from scipy.integrate import quad
-from netto.const import social_security_curve, correction_factor_pensions
+from .const import social_security_curve, correction_factor_pensions
 import netto.config as config
 import math
 

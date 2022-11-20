@@ -1,7 +1,7 @@
 from scipy.optimize import newton
-from netto.taxes_income import calc_taxable_income, calc_income_tax_by_integration
-from netto.taxes_other import calc_soli, calc_church_tax
-from netto.social_security import calc_deductable_social_security, calc_social_security
+from .taxes_income import calc_taxable_income, calc_income_tax_by_integration
+from .taxes_other import calc_soli, calc_church_tax
+from .social_security import calc_deductable_social_security, calc_social_security
 
 
 def calc_netto(salary, deductable_other=0):
@@ -12,12 +12,15 @@ def calc_netto(salary, deductable_other=0):
         deductable_other=deductable_other,
     )
     income_tax = calc_income_tax_by_integration(taxable_income)
-    return (
-        salary
-        - income_tax
-        - calc_soli(income_tax)
-        - calc_church_tax(income_tax)
-        - calc_social_security(salary)
+    return round(
+        (
+            salary
+            - income_tax
+            - calc_soli(income_tax)
+            - calc_church_tax(income_tax)
+            - calc_social_security(salary)
+        ),
+        2,
     )
 
 

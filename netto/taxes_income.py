@@ -1,6 +1,6 @@
 import math
 from scipy.integrate import quad
-from netto.const import tax_curve
+from .const import tax_curve
 import netto.config as config
 
 
