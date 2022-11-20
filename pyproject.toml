@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "netto"
+version = "0.1"
+authors = [
+  { name="Martin Klein", email="hi@martinklein.co" },
+]
+description = "German income tax (Einkommensteuer) and social security (Sozialabgaben) calculator"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/0-k/netto"
+"Bug Tracker" = "https://github.com/0-k/netto/issues"
