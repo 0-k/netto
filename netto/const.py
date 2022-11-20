@@ -31,15 +31,39 @@ tax_curve = {
     },
     2023: {
         0: {"step": 10633, "rate": 0.14},
-        1: {"step": 15786, "rate": 0.2397, "const": NotImplementedError},
-        2: {"step": 61971, "rate": 0.42, "const": NotImplementedError},
-        3: {"step": 277826, "rate": 0.45, "const": NotImplementedError},
+        1: {
+            "step": 15786,
+            "rate": 0.2397,
+            "const": [NotImplementedError, NotImplementedError],
+        },
+        2: {
+            "step": 61971,
+            "rate": 0.42,
+            "const": [NotImplementedError, NotImplementedError, NotImplementedError],
+        },
+        3: {
+            "step": 277826,
+            "rate": 0.45,
+            "const": [NotImplementedError, NotImplementedError],
+        },
     },
     2024: {
         0: {"step": 10933, "rate": 0.14},
-        1: {"step": 16179, "rate": 0.2397, "const": NotImplementedError},
-        2: {"step": 63514, "rate": 0.42, "const": NotImplementedError},
-        3: {"step": 277826, "rate": 0.45, "const": NotImplementedError},
+        1: {
+            "step": 16179,
+            "rate": 0.2397,
+            "const": [NotImplementedError, NotImplementedError],
+        },
+        2: {
+            "step": 63514,
+            "rate": 0.42,
+            "const": [NotImplementedError, NotImplementedError, NotImplementedError],
+        },
+        3: {
+            "step": 277826,
+            "rate": 0.45,
+            "const": [NotImplementedError, NotImplementedError],
+        },
     },
     2025: NotImplementedError,
 }

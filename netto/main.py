@@ -22,7 +22,7 @@ def calc_netto(salary, deductable_other=0):
 
 
 def calc_inverse_netto(desired_netto, deductable_other=10000):
-    """ find gross salary to reach desired netto """
+    """find gross salary to reach desired netto"""
 
     def f(salary):
         return calc_netto(salary, deductable_other=deductable_other) - desired_netto
@@ -30,3 +30,5 @@ def calc_inverse_netto(desired_netto, deductable_other=10000):
     return round(newton(f, x0=desired_netto), 0)
 
 
+if __name__ == "__main__":
+    print("hello world")
