@@ -1,10 +1,27 @@
 from scipy.optimize import newton
+
 from .taxes_income import calc_taxable_income, calc_income_tax_by_integration
 from .taxes_other import calc_soli, calc_church_tax
 from .social_security import calc_deductable_social_security, calc_social_security
 
+"""
+main.py
+====================================
+The core module to invoke the `calc_netto()` function
+"""
+
 
 def calc_netto(salary, deductable_other=0):
+    """
+        Return net income of a given year.
+        Parameters
+        ----------
+        salary
+            The yearly salary (float or int).
+        deductable_other
+            Deductables that reduce the taxable income.
+        """
+
     deductable_social_security = calc_deductable_social_security(salary)
     taxable_income = calc_taxable_income(
         salary=salary,
@@ -32,6 +49,3 @@ def calc_inverse_netto(desired_netto, deductable_other=10000):
 
     return round(newton(f, x0=desired_netto), 0)
 
-
-if __name__ == "__main__":
-    print("hello world")
