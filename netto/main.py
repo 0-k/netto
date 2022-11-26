@@ -42,7 +42,7 @@ def calc_netto(salary, deductable_other=0):
 
 
 def calc_inverse_netto(desired_netto, deductable_other=0):
-    """find gross salary to reach desired netto"""
+    """calculate gross salary to reach desired netto"""
 
     def f(salary):
         return calc_netto(salary, deductable_other=deductable_other) - desired_netto
