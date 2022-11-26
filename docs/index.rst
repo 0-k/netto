@@ -3,8 +3,9 @@
 Welcome to netto's documentation!
 =================================
 
-.. automodule:: netto.main
-    :members:
+
+.. include:: ../README.md
+   :parser: myst_parser.sphinx_
 
 .. toctree::
    :maxdepth: 2
