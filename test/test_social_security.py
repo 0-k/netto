@@ -1,6 +1,7 @@
 import unittest
-import netto.social_security as social_security
+
 import netto.config as config
+import netto.social_security as social_security
 
 
 class TestSocialSecurity(unittest.TestCase):

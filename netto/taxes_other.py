@@ -1,5 +1,5 @@
 import netto.config as config
-from .const import soli_curve
+from netto.const import soli_curve
 
 
 def calc_soli(tax_assessment):

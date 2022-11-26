@@ -1,6 +1,7 @@
 import unittest
-import netto.taxes_other as taxes_other
+
 import netto.config as config
+import netto.taxes_other as taxes_other
 
 
 class TestTaxesOther(unittest.TestCase):

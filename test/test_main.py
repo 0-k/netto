@@ -1,6 +1,7 @@
 import unittest
-import netto.main as main
+
 import netto.config as config
+import netto.main as main
 
 
 class TestMain(unittest.TestCase):

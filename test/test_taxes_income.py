@@ -1,6 +1,7 @@
 import unittest
-import netto.taxes_income as taxes_income
+
 import netto.config as config
+import netto.taxes_income as taxes_income
 
 
 class TestTaxesIncome(unittest.TestCase):

@@ -1,7 +1,9 @@
-from scipy.integrate import quad
-from .const import social_security_curve, correction_factor_pensions
-import netto.config as config
 import math
+
+from scipy.integrate import quad
+
+import netto.config as config
+from netto.const import correction_factor_pensions, social_security_curve
 
 
 def __get_rate(salary, type, extra=0):
