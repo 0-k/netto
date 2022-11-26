@@ -13,14 +13,14 @@ The core module to invoke the `calc_netto()` function
 
 def calc_netto(salary, deductable_other=0):
     """
-        Return net income of a given year.
-        Parameters
-        ----------
-        salary
-            The yearly salary (float or int).
-        deductable_other
-            Deductables that reduce the taxable income.
-        """
+    Return net income of a given year.
+    Parameters
+    ----------
+    salary
+        The yearly salary (float or int).
+    deductable_other
+        Deductables that reduce the taxable income.
+    """
 
     deductable_social_security = calc_deductable_social_security(salary)
     taxable_income = calc_taxable_income(
@@ -41,11 +41,10 @@ def calc_netto(salary, deductable_other=0):
     )
 
 
-def calc_inverse_netto(desired_netto, deductable_other=10000):
+def calc_inverse_netto(desired_netto, deductable_other=0):
     """find gross salary to reach desired netto"""
 
     def f(salary):
         return calc_netto(salary, deductable_other=deductable_other) - desired_netto
 
     return round(newton(f, x0=desired_netto), 0)
-
