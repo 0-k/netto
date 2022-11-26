@@ -2,3 +2,5 @@ black
 isort
 sphinx
 myst-parser
+build
+twine
