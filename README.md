@@ -1,5 +1,9 @@
 # netto
 
+[![PyPI version](https://img.shields.io/pypi/v/netto.svg)](https://pypi.python.org/pypi/netto)
+[![CI](https://github.com/0-k/netto/actions/workflows/workflow.yml/badge.svg)](https://github.com/0-k/netto/actions/workflows/workflow.yml)
+[![codecov](https://codecov.io/gh/0-k/netto/branch/master/graph/badge.svg)](https://codecov.io/gh/0-k/netto)
+
 German income tax (Einkommensteuer) and social security (Sozialabgaben) calculator.
 
 Currently tested against the following assumptions:
