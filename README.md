@@ -4,7 +4,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/netto.svg)](https://pypi.python.org/pypi/netto)
 [![CI](https://github.com/0-k/netto/actions/workflows/workflow.yml/badge.svg)](https://github.com/0-k/netto/actions/workflows/workflow.yml)
 [![codecov](https://codecov.io/gh/0-k/netto/branch/master/graph/badge.svg)](https://codecov.io/gh/0-k/netto)
-[![License](https://img.shields.io/pypi/l/netto.svg)](LICENSE.txt)
+[![License](https://img.shields.io/pypi/l/netto.svg)](LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 German income tax (Einkommensteuer) and social security (Sozialabgaben) calculator.
