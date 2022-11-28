@@ -26,9 +26,19 @@ class TestTaxesIncome(unittest.TestCase):
         self.assertEqual(taxes_income.get_marginal_tax_rate(277827), 0.45)
 
     def test_sameness_of_calc_income_tax_methods(self):
+        self.assertAlmostEqual(
+            taxes_income.calc_income_tax(12000),
+            taxes_income.calc_income_tax_by_integration(12000),
+            delta=0.1,
+        )
         for taxable_income in range(0, 100001, 10000):
             self.assertAlmostEqual(
                 taxes_income.calc_income_tax(taxable_income),
                 taxes_income.calc_income_tax_by_integration(taxable_income),
                 delta=0.1,
             )
+        self.assertAlmostEqual(
+            taxes_income.calc_income_tax(300000),
+            taxes_income.calc_income_tax_by_integration(300000),
+            delta=0.1,
+        )
