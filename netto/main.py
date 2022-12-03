@@ -11,7 +11,7 @@ The core module to invoke the `calc_netto()` function
 """
 
 
-def calc_netto(salary, deductable_other=0):
+def calc_netto(salary, deductable_other=0, verbose=False):
     """
     Return net income of a given year.
     Parameters
@@ -29,6 +29,11 @@ def calc_netto(salary, deductable_other=0):
         deductable_other=deductable_other,
     )
     income_tax = calc_income_tax_by_integration(taxable_income)
+    if verbose:
+        print('Income Tax:      ' + str(round(income_tax/12, 2)))
+        print('Soli:            ' + str(calc_soli(income_tax)/12))
+        print('Church Tax:      ' + str(calc_church_tax(income_tax)/12))
+        print('Social Security: ' + str(calc_social_security(salary)/12))
     return round(
         (
             salary
