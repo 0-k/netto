@@ -1,4 +1,4 @@
-tax_curve = {
+__tax_curve = {
     2018: {
         0: {"step": 9000, "rate": 0.14},
         1: {"step": 13996, "rate": 0.2397, "const": [997.8, 1400]},
@@ -69,7 +69,7 @@ tax_curve = {
 }
 
 
-social_security_curve = {
+__social_security_curve = {
     2018: {
         "pension": {"limit": 78000, "rate": 0.093},
         "unemployment": {"limit": 78000, "rate": 0.015},
@@ -116,7 +116,7 @@ social_security_curve = {
 }
 
 
-soli_curve = {
+__soli_curve = {
     2018: {"start_taxable_income": 972, "start_fraction": 0.2, "end_rate": 0.055},
     2019: {"start_taxable_income": 972, "start_fraction": 0.2, "end_rate": 0.055},
     2020: {"start_taxable_income": 972, "start_fraction": 0.2, "end_rate": 0.055},
@@ -128,7 +128,7 @@ soli_curve = {
 }
 
 
-correction_factor_pensions = {
+__correction_factor_pensions = {
     2018: 0.72,
     2019: 0.76,
     2020: 0.8,
