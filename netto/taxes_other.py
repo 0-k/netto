@@ -6,9 +6,9 @@ def calc_soli(tax_assessment):
     return round(
         max(
             min(
-                max(0, tax_assessment - soli_curve[config.YEAR]["start_taxable_income"])
-                * soli_curve[config.YEAR]["start_fraction"],
-                tax_assessment * soli_curve[config.YEAR]["end_rate"],
+                max(0, tax_assessment - soli_curve[config.year]["start_taxable_income"])
+                * soli_curve[config.year]["start_fraction"],
+                tax_assessment * soli_curve[config.year]["end_rate"],
             ),
             0,
         ),
@@ -17,4 +17,4 @@ def calc_soli(tax_assessment):
 
 
 def calc_church_tax(tax_assessment):
-    return round(max(tax_assessment * config.CHURCH_TAX, 0), 2)
+    return round(max(tax_assessment * config.church_tax, 0), 2)

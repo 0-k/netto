@@ -6,9 +6,9 @@ import netto.taxes_income as taxes_income
 
 class TestTaxesIncome(unittest.TestCase):
     def setUp(self):
-        config.EXTRA_HEALTH_INSURANCE = 0.014
-        config.CHURCH_TAX = 0.09
-        config.HAS_CHILDREN = False
+        config.extra_health_insurance = 0.014
+        config.church_tax = 0.09
+        config.has_children = False
 
     def tearDown(self):
         pass

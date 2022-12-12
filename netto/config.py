@@ -1,15 +1,22 @@
 import os
 
-YEAR = 2022 if os.getenv("YEAR") is None else int(os.getenv("YEAR"))
+# Use default values if environment variables are not set or are set to invalid values
+try:
+    year = int(os.getenv("YEAR", 2022))
+except ValueError:
+    year = 2022
 
-HAS_CHILDREN = (
-    False if os.getenv("HAS_CHILDREN") is None else bool(os.getenv("HAS_CHILDREN"))
-)
+try:
+    has_children = bool(os.getenv("HAS_CHILDREN", False))
+except ValueError:
+    has_children = False
 
-EXTRA_HEALTH_INSURANCE = (
-    0.014
-    if os.getenv("EXTRA_HEALTH_INSURANCE") is None
-    else float(os.getenv("EXTRA_HEALTH_INSURANCE"))
-)
+try:
+    extra_health_insurance = float(os.getenv("EXTRA_HEALTH_INSURANCE", 0.014))
+except ValueError:
+    extra_health_insurance = 0.014
 
-CHURCH_TAX = 0.09 if os.getenv("CHURCH_TAX") is None else float(os.getenv("CHURCH_TAX"))
+try:
+    church_tax = float(os.getenv("CHURCH_TAX", 0.09))
+except ValueError:
+    church_tax = 0.09
