@@ -1,6 +1,4 @@
-from netto import calc_netto
-from netto import calc_inverse_netto
-
+from netto import calc_inverse_netto, calc_netto
 
 # Calculate net income for a salary of 50,000 with no additional deductibles
 calc_netto(50000)

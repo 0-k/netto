@@ -39,7 +39,7 @@ def calc_netto(salary, deductibles=0, verbose=False):
     taxable_income = calc_taxable_income(
         salary=salary,
         deductible_social_security=deductible_social_security,
-        deductables_other=deductibles,
+        deductibles_other=deductibles,
     )
     income_tax = calc_income_tax_by_integration(taxable_income)
     if verbose:
