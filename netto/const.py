@@ -30,14 +30,14 @@ __tax_curve = {
         3: {"step": 277826, "rate": 0.45, "const": [9336.45, 17671.20]},
     },
     2023: {
-        0: {"step": 10633, "rate": 0.14},
+        0: {"step": 10909, "rate": 0.14},
         1: {
-            "step": 15786,
+            "step": 15999,
             "rate": 0.2397,
             "const": [NotImplementedError, NotImplementedError],
         },
         2: {
-            "step": 61971,
+            "step": 62809,
             "rate": 0.42,
             "const": [NotImplementedError, NotImplementedError, NotImplementedError],
         },
@@ -48,14 +48,14 @@ __tax_curve = {
         },
     },
     2024: {
-        0: {"step": 10933, "rate": 0.14},
+        0: {"step": 11605, "rate": 0.14},
         1: {
-            "step": 16179,
+            "step": 17005,
             "rate": 0.2397,
             "const": [NotImplementedError, NotImplementedError],
         },
         2: {
-            "step": 63514,
+            "step": 66760,
             "rate": 0.42,
             "const": [NotImplementedError, NotImplementedError, NotImplementedError],
         },
