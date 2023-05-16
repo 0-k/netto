@@ -6,7 +6,10 @@ def calc_soli(tax_assessment):
     return round(
         max(
             min(
-                max(0, tax_assessment - __soli_curve[config.year]["start_taxable_income"])
+                max(
+                    0,
+                    tax_assessment - __soli_curve[config.year]["start_taxable_income"],
+                )
                 * __soli_curve[config.year]["start_fraction"],
                 tax_assessment * __soli_curve[config.year]["end_rate"],
             ),

@@ -34,17 +34,17 @@ __tax_curve = {
         1: {
             "step": 15999,
             "rate": 0.2397,
-            "const": [NotImplementedError, NotImplementedError],
+            "const": [None, None],
         },
         2: {
             "step": 62809,
             "rate": 0.42,
-            "const": [NotImplementedError, NotImplementedError, NotImplementedError],
+            "const": [None, None, None],
         },
         3: {
             "step": 277826,
             "rate": 0.45,
-            "const": [NotImplementedError, NotImplementedError],
+            "const": [None, None],
         },
     },
     2024: {
@@ -52,20 +52,19 @@ __tax_curve = {
         1: {
             "step": 17005,
             "rate": 0.2397,
-            "const": [NotImplementedError, NotImplementedError],
+            "const": [None, None],
         },
         2: {
             "step": 66760,
             "rate": 0.42,
-            "const": [NotImplementedError, NotImplementedError, NotImplementedError],
+            "const": [None, None, None],
         },
         3: {
             "step": 277826,
             "rate": 0.45,
-            "const": [NotImplementedError, NotImplementedError],
+            "const": [None, None],
         },
     },
-    2025: NotImplementedError,
 }
 
 
@@ -124,7 +123,7 @@ __soli_curve = {
     2022: {"start_taxable_income": 16956, "start_fraction": 0.119, "end_rate": 0.055},
     2023: {"start_taxable_income": 17543, "start_fraction": 0.119, "end_rate": 0.055},
     2024: {"start_taxable_income": 18130, "start_fraction": 0.119, "end_rate": 0.055},
-    2025: NotImplementedError,
+    2025: None,
 }
 
 

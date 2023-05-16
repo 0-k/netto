@@ -25,6 +25,13 @@ class TestTaxesIncome(unittest.TestCase):
         self.assertEqual(taxes_income.get_marginal_tax_rate(277826), 0.45)
         self.assertEqual(taxes_income.get_marginal_tax_rate(277827), 0.45)
 
+    def test_valid_get_marginal_tax_rate_married(self):
+        self.assertEqual(taxes_income.get_marginal_tax_rate(10346, is_married=True), 0)
+        self.assertEqual(taxes_income.get_marginal_tax_rate(10347, is_married=True), 0)
+        self.assertEqual(
+            taxes_income.get_marginal_tax_rate(10347 * 2, is_married=True), 0.14
+        )
+
     def test_sameness_of_calc_income_tax_methods(self):
         self.assertAlmostEqual(
             taxes_income.calc_income_tax(12000),
