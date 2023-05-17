@@ -1,9 +1,7 @@
 from scipy.optimize import newton
 
-from netto.social_security import (calc_deductible_social_security,
-                                   calc_social_security)
-from netto.taxes_income import (calc_income_tax_by_integration,
-                                calc_taxable_income)
+from netto.social_security import calc_deductible_social_security, calc_social_security
+from netto.taxes_income import calc_income_tax_by_integration, calc_taxable_income
 from netto.taxes_other import calc_church_tax, calc_soli
 
 

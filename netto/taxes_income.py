@@ -6,7 +6,7 @@ import netto.config as config
 from netto.const import __tax_curve
 
 
-def get_marginal_tax_rate(taxable_income, is_married=False):
+def get_marginal_tax_rate(taxable_income):
     """
     Calculate the marginal tax rate for a given taxable income.
 
@@ -28,7 +28,7 @@ def get_marginal_tax_rate(taxable_income, is_married=False):
     get_marginal_tax_rate(10000)
     """
     # If the person is married, double the tax brackets
-    if is_married:
+    if config.is_married:
         tax_curve = {
             year: {
                 bracket: {

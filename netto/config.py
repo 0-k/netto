@@ -12,6 +12,11 @@ except ValueError:
     has_children = False
 
 try:
+    is_married = bool(os.getenv("IS_MARRIED", False))
+except ValueError:
+    is_married = False
+
+try:
     extra_health_insurance = float(os.getenv("EXTRA_HEALTH_INSURANCE", 0.014))
 except ValueError:
     extra_health_insurance = 0.014
