@@ -10,20 +10,16 @@
 German income tax (Einkommensteuer) and social security (Sozialabgaben) calculator.
 
 Currently tested against the following assumptions:
-* Tax class I/IV
 * Public health and pension insurance
 * West-German pension deduction
 * Optional: Church tax
-* Supported tax years: 2018-2023
+* Optional: Married 
+* Supported tax years: 2018-2024
 
 ### TODO list
 
-* Implement tax class II & III/V
 * Calculate support for children (Kindergeld/Kinderfreibetrag)
-* Implement fields for private health insurance
-* Implement fields for private pension insurance
 * Implement correct pension deductible for East Germany
-* Convenience function to calculate church tax (by state)
 
 ## Sources
 
@@ -36,4 +32,4 @@ Currently tested against the following assumptions:
 
 ## Credits
 
-Martin Klein, 2022
+Martin Klein, 2023

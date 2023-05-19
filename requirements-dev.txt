@@ -5,3 +5,4 @@ myst-parser
 build
 twine
 sphinx-autoapi
+sphinx_rtd_theme
