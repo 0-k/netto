@@ -44,11 +44,11 @@ def calc_netto(salary, deductibles=0, verbose=False):
     income_tax = calc_income_tax_by_integration(taxable_income)
     if verbose:
         repr = (
-            "Monthly Evaluation:\n"
-            + f"Income Tax:      {round(income_tax / 12, 2):>12}\n"
-            + f"Soli:            {round(calc_soli(income_tax) / 12, 2):>12}\n"
-            + f"Church Tax:      {round(calc_church_tax(income_tax) / 12, 2):>12}\n"
-            + f"Social Security: {round(calc_social_security(salary) / 12, 2):>12}\n"
+            "Yearly Evaluation:\n"
+            + f"Income Tax:      {round(income_tax, 2):>12}\n"
+            + f"Soli:            {round(calc_soli(income_tax), 2):>12}\n"
+            + f"Church Tax:      {round(calc_church_tax(income_tax), 2):>12}\n"
+            + f"Social Security: {round(calc_social_security(salary), 2):>12}"
         )
         print(repr)
     return round(

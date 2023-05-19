@@ -1,4 +1,6 @@
 import unittest
+from io import StringIO
+from unittest.mock import patch
 
 import netto.config as config
 import netto.main as main
@@ -38,3 +40,16 @@ class TestMain(unittest.TestCase):
         self.assertAlmostEqual(main.calc_inverse_netto(36909.71), 60000, delta=1)
         self.assertAlmostEqual(main.calc_inverse_netto(52091.39), 90000, delta=1)
         self.assertAlmostEqual(main.calc_inverse_netto(68238.23), 120000, delta=1)
+
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_verbose_print(self, mock_stdout):
+        main.calc_netto(0, verbose=True)
+        actual_output = mock_stdout.getvalue().strip()
+        expected_output = (
+            "Yearly Evaluation:\n"
+            + f"Income Tax:      {0.0:>12}\n"
+            + f"Soli:            {0.0:>12}\n"
+            + f"Church Tax:      {0.0:>12}\n"
+            + f"Social Security: {0.0:>12}"
+        )
+        self.assertEqual(actual_output, expected_output)
