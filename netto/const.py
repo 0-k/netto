@@ -65,6 +65,24 @@ __tax_curve = {
             "const": [None, None],
         },
     },
+    2025: {
+        0: {"step": 12086, "rate": 0.14},
+        1: {
+            "step": 17430,
+            "rate": 0.2397,
+            "const": [None, None],
+        },
+        2: {
+            "step": 68430,
+            "rate": 0.42,
+            "const": [None, None, None],
+        },
+        3: {
+            "step": 277826,
+            "rate": 0.45,
+            "const": [None, None],
+        },
+    },
 }
 
 
