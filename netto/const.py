@@ -106,12 +106,18 @@ __social_security_curve = {
         "nursing": {"limit": 59850, "rate": 0.01525, "extra": 0.0035},
     },
     2024: {
-        "pension": {"limit": 87600, "rate": 0.093},
-        "unemployment": {"limit": 87600, "rate": 0.012},
-        "health": {"limit": 59850, "rate": 0.073},
-        "nursing": {"limit": 59850, "rate": 0.01525, "extra": 0.0035},
+        "pension": {"limit": 90600, "rate": 0.093},
+        "unemployment": {"limit": 90600, "rate": 0.012},
+        "health": {"limit": 62100, "rate": 0.073},
+        "nursing": {"limit": 62100, "rate": 0.01525, "extra": 0.0035},
     },
-    2025: NotImplementedError,
+    2025: {
+        "pension": {"limit": 96000, "rate": 0.093},
+        "unemployment": {"limit": 96000, "rate": 0.012},
+        "health": {"limit": 66150, "rate": 0.073},
+        "nursing": {"limit": 66150, "rate": 0.01525, "extra": 0.0035},
+    },
+    2026: NotImplementedError,
 }
 
 
