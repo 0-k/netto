@@ -147,7 +147,7 @@ __soli_curve = {
     2022: {"start_taxable_income": 16956, "start_fraction": 0.119, "end_rate": 0.055},
     2023: {"start_taxable_income": 17543, "start_fraction": 0.119, "end_rate": 0.055},
     2024: {"start_taxable_income": 18130, "start_fraction": 0.119, "end_rate": 0.055},
-    2025: None,
+    2025: {"start_taxable_income": 19450, "start_fraction": 0.119, "end_rate": 0.055},
 }
 
 
