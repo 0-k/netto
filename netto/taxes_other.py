@@ -1,6 +1,6 @@
 from typing import Optional
 
-from netto.config import TaxConfig, get_default_config
+from netto.config import TaxConfig
 from netto.const import __soli_curve
 
 
@@ -21,7 +21,7 @@ def calc_soli(tax_assessment: float, config: Optional[TaxConfig] = None) -> floa
         The solidarity tax amount
     """
     if config is None:
-        config = get_default_config()
+        config = TaxConfig()
 
     return round(
         max(
@@ -56,6 +56,6 @@ def calc_church_tax(tax_assessment: float, config: Optional[TaxConfig] = None) -
         The church tax amount
     """
     if config is None:
-        config = get_default_config()
+        config = TaxConfig()
 
     return round(max(tax_assessment * config.church_tax, 0), 2)

@@ -1,15 +1,9 @@
-import os
 import unittest
-from unittest.mock import patch
 
-from netto.config import TaxConfig, load_config_from_env, reset_default_config
+from netto.config import TaxConfig
 
 
 class TestConfig(unittest.TestCase):
-    def tearDown(self):
-        # Reset default config after each test
-        reset_default_config()
-
     def test_taxconfig_defaults(self):
         """Test that TaxConfig uses correct default values"""
         config = TaxConfig()
@@ -48,50 +42,11 @@ class TestConfig(unittest.TestCase):
         with self.assertRaises(ValueError):
             TaxConfig(church_tax=-0.01)
 
-    @patch.dict(
-        os.environ,
-        {
-            "YEAR": "2023",
-            "HAS_CHILDREN": "True",
-            "IS_MARRIED": "True",
-            "EXTRA_HEALTH_INSURANCE": "0.015",
-            "CHURCH_TAX": "0.1",
-        },
-    )
-    def test_load_config_from_env_valid(self):
-        """Test loading configuration from environment variables"""
-        config = load_config_from_env()
-        self.assertEqual(config.year, 2023)
-        self.assertTrue(config.has_children)
-        self.assertTrue(config.is_married)
-        self.assertEqual(config.extra_health_insurance, 0.015)
-        self.assertEqual(config.church_tax, 0.1)
-
-    @patch.dict(
-        os.environ,
-        {
-            "YEAR": "invalid",
-            "HAS_CHILDREN": "invalid",
-            "IS_MARRIED": "invalid",
-            "EXTRA_HEALTH_INSURANCE": "invalid",
-            "CHURCH_TAX": "invalid",
-        },
-    )
-    def test_load_config_from_env_invalid(self):
-        """Test that invalid environment variables fall back to defaults"""
-        config = load_config_from_env()
-        self.assertEqual(config.year, 2022)
-        self.assertFalse(config.has_children)
-        self.assertFalse(config.is_married)
-        self.assertEqual(config.extra_health_insurance, 0.014)
-        self.assertEqual(config.church_tax, 0.09)
-
-    @patch.dict(os.environ, {}, clear=True)
-    def test_load_config_from_env_empty(self):
-        """Test that missing environment variables use defaults"""
-        config = load_config_from_env()
-        self.assertEqual(config.year, 2022)
-        self.assertFalse(config.has_children)
-        self.assertFalse(config.is_married)
-        self.assertEqual(config.extra_health_insurance, 0.014)
-        self.assertEqual(config.church_tax, 0.09)
+    def test_taxconfig_validation_type_errors(self):
+        """Test that type validation works"""
+        with self.assertRaises(TypeError):
+            TaxConfig(year="2022")  # String instead of int
+        with self.assertRaises(TypeError):
+            TaxConfig(has_children="True")  # String instead of bool
+        with self.assertRaises(TypeError):
+            TaxConfig(is_married=1)  # Int instead of bool

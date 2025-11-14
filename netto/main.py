@@ -2,7 +2,7 @@ from typing import Optional
 
 from scipy.optimize import newton
 
-from netto.config import TaxConfig, get_default_config
+from netto.config import TaxConfig
 from netto.social_security import calc_deductible_social_security, calc_social_security
 from netto.taxes_income import calc_income_tax_by_integration, calc_taxable_income
 from netto.taxes_other import calc_church_tax, calc_soli
@@ -26,7 +26,7 @@ def calc_netto(
     verbose: bool, optional
         Determines whether additional information about the calculation should be printed. Default is False.
     config : TaxConfig, optional
-        Tax configuration. If not provided, uses default configuration from environment variables.
+        Tax configuration. If not provided, uses default TaxConfig().
 
     Returns
     -------
@@ -50,7 +50,7 @@ def calc_netto(
     calc_netto(50000, config=config)
     """
     if config is None:
-        config = get_default_config()
+        config = TaxConfig()
 
     deductible_social_security = calc_deductible_social_security(salary, config)
     taxable_income = calc_taxable_income(
@@ -97,7 +97,7 @@ def calc_inverse_netto(
     deductibles: float or int, optional
         Deductibles that reduce the taxable income. Default is 0.
     config : TaxConfig, optional
-        Tax configuration. If not provided, uses default configuration from environment variables.
+        Tax configuration. If not provided, uses default TaxConfig().
 
     Returns
     -------
@@ -118,7 +118,7 @@ def calc_inverse_netto(
     calc_inverse_netto(50000, config=config)
     """
     if config is None:
-        config = get_default_config()
+        config = TaxConfig()
 
     def f(salary):
         return calc_netto(salary, deductibles=deductibles, config=config) - desired_netto

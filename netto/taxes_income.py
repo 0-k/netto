@@ -3,7 +3,7 @@ from typing import Optional
 
 from scipy.integrate import quad
 
-from netto.config import TaxConfig, get_default_config
+from netto.config import TaxConfig
 from netto.const import __tax_curve
 
 
@@ -29,7 +29,7 @@ def get_marginal_tax_rate(taxable_income: float, config: Optional[TaxConfig] = N
     get_marginal_tax_rate(10000)
     """
     if config is None:
-        config = get_default_config()
+        config = TaxConfig()
 
     # If the person is married, double the tax brackets
     if config.is_married:
@@ -133,7 +133,7 @@ def calc_income_tax(taxable_income: float, config: Optional[TaxConfig] = None) -
     calc_income_tax(10000)
     """
     if config is None:
-        config = get_default_config()
+        config = TaxConfig()
 
     taxable_income = round(taxable_income)
     if taxable_income <= __tax_curve[config.year][0]["step"]:
@@ -185,7 +185,7 @@ def calc_income_tax_by_integration(taxable_income: float, config: Optional[TaxCo
     calc_income_tax_by_integration(10000)
     """
     if config is None:
-        config = get_default_config()
+        config = TaxConfig()
 
     income_tax, _ = quad(lambda ti: get_marginal_tax_rate(ti, config), 0, taxable_income)
     return income_tax

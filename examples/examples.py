@@ -1,7 +1,7 @@
 from netto import TaxConfig, calc_inverse_netto, calc_netto
 
 # ============================================================================
-# Basic Usage (using default configuration from environment variables)
+# Basic Usage (using default configuration)
 # ============================================================================
 
 # Calculate net income for a salary of 50,000 with no additional deductibles

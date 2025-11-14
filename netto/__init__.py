@@ -1,4 +1,4 @@
-from netto.config import TaxConfig, load_config_from_env
+from netto.config import TaxConfig
 from netto.main import calc_inverse_netto, calc_netto
 from netto.social_security import (
     calc_deductible_social_security,
@@ -27,7 +27,6 @@ __all__ = [
     "calc_inverse_netto",
     # Configuration
     "TaxConfig",
-    "load_config_from_env",
     # Social Security
     "calc_social_security",
     "calc_deductible_social_security",
