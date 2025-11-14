@@ -1,8 +1,28 @@
-import netto.config as config
+from typing import Optional
+
+from netto.config import TaxConfig, get_default_config
 from netto.const import __soli_curve
 
 
-def calc_soli(tax_assessment):
+def calc_soli(tax_assessment: float, config: Optional[TaxConfig] = None) -> float:
+    """
+    Calculate solidarity tax (Solidaritätszuschlag).
+
+    Parameters
+    ----------
+    tax_assessment : float
+        The income tax assessment base
+    config : TaxConfig, optional
+        Tax configuration (uses default if not provided)
+
+    Returns
+    -------
+    float
+        The solidarity tax amount
+    """
+    if config is None:
+        config = get_default_config()
+
     return round(
         max(
             min(
@@ -19,5 +39,23 @@ def calc_soli(tax_assessment):
     )
 
 
-def calc_church_tax(tax_assessment):
+def calc_church_tax(tax_assessment: float, config: Optional[TaxConfig] = None) -> float:
+    """
+    Calculate church tax (Kirchensteuer).
+
+    Parameters
+    ----------
+    tax_assessment : float
+        The income tax assessment base
+    config : TaxConfig, optional
+        Tax configuration (uses default if not provided)
+
+    Returns
+    -------
+    float
+        The church tax amount
+    """
+    if config is None:
+        config = get_default_config()
+
     return round(max(tax_assessment * config.church_tax, 0), 2)
