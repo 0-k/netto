@@ -2,11 +2,11 @@ import math
 
 from scipy.integrate import quad
 
-import netto.config as config
+from netto.config import TaxConfig
 from netto.const import __tax_curve
 
 
-def get_marginal_tax_rate(taxable_income):
+def get_marginal_tax_rate(taxable_income: float, config: TaxConfig | None = None) -> float:
     """
     Calculate the marginal tax rate for a given taxable income.
 
@@ -14,8 +14,8 @@ def get_marginal_tax_rate(taxable_income):
     ----------
     taxable_income: float or int
         The taxable income for which the marginal tax rate should be calculated.
-    is_married: bool
-        Whether the person is married or not. If true, the tax brackets are doubled.
+    config : TaxConfig, optional
+        Tax configuration (uses default if not provided)
 
     Returns
     -------
@@ -27,6 +27,9 @@ def get_marginal_tax_rate(taxable_income):
     # Calculate marginal tax rate for a taxable income of 10000
     get_marginal_tax_rate(10000)
     """
+    if config is None:
+        config = TaxConfig()
+
     # If the person is married, double the tax brackets
     if config.is_married:
         tax_curve = {
@@ -66,12 +69,16 @@ def get_marginal_tax_rate(taxable_income):
         return tax_curve[config.year][3]["rate"]
 
 
-def __calc_gradient(x_i, x_j, y_i, y_j, x):
+def __calc_gradient(x_i: float, x_j: float, y_i: float, y_j: float, x: float) -> float:
     # Calculate the gradient between the two points (x_i, y_i) and (x_j, y_j)
     return (1 - (x_j - x) / (x_j - x_i)) * (y_j - y_i) + y_i
 
 
-def calc_taxable_income(salary, deductible_social_security, deductibles_other=0):
+def calc_taxable_income(
+    salary: float,
+    deductible_social_security: float,
+    deductibles_other: float = 0
+) -> float:
     """
     Calculate the taxable income for a given salary and deductibles.
 
@@ -103,7 +110,7 @@ def calc_taxable_income(salary, deductible_social_security, deductibles_other=0)
     )
 
 
-def calc_income_tax(taxable_income):
+def calc_income_tax(taxable_income: float, config: TaxConfig | None = None) -> float:
     """
     Calculate the income tax for a given taxable income.
 
@@ -111,6 +118,8 @@ def calc_income_tax(taxable_income):
     ----------
     taxable_income: float or int
         The taxable income for which the income tax should be calculated.
+    config : TaxConfig, optional
+        Tax configuration (uses default if not provided)
 
     Returns
     -------
@@ -122,6 +131,8 @@ def calc_income_tax(taxable_income):
     # Calculate income tax for a taxable income of 10000
     calc_income_tax(10000)
     """
+    if config is None:
+        config = TaxConfig()
 
     taxable_income = round(taxable_income)
     if taxable_income <= __tax_curve[config.year][0]["step"]:
@@ -150,7 +161,7 @@ def calc_income_tax(taxable_income):
         )
 
 
-def calc_income_tax_by_integration(taxable_income):
+def calc_income_tax_by_integration(taxable_income: float, config: TaxConfig | None = None) -> float:
     """
     Calculate the income tax for a given taxable income by means of integration.
     Always available, even when exact integration curve in const.py is not defined.
@@ -159,6 +170,8 @@ def calc_income_tax_by_integration(taxable_income):
     ----------
     taxable_income: float or int
         The taxable income for which the income tax should be calculated.
+    config : TaxConfig, optional
+        Tax configuration (uses default if not provided)
 
     Returns
     -------
@@ -170,6 +183,8 @@ def calc_income_tax_by_integration(taxable_income):
     # Calculate income tax for a taxable income of 10000
     calc_income_tax_by_integration(10000)
     """
+    if config is None:
+        config = TaxConfig()
 
-    income_tax, _ = quad(get_marginal_tax_rate, 0, taxable_income)
+    income_tax, _ = quad(lambda ti: get_marginal_tax_rate(ti, config), 0, taxable_income)
     return income_tax
