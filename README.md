@@ -13,13 +13,8 @@ Currently tested against the following assumptions:
 * Public health and pension insurance
 * West-German pension deduction
 * Optional: Church tax
-* Optional: Married 
-* Supported tax years: 2018-2024
-
-### TODO list
-
-* Calculate support for children (Kindergeld/Kinderfreibetrag)
-* Implement correct pension deductible for East Germany
+* Optional: Married
+* Supported tax years: 2018-2025
 
 ## Sources
 
@@ -32,4 +27,4 @@ Currently tested against the following assumptions:
 
 ## Credits
 
-Martin Klein, 2023
+Martin Klein, 2025
