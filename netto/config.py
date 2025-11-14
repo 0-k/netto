@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(slots=True)
 class TaxConfig:
     """
     Configuration for tax and social security calculations.

@@ -1,5 +1,4 @@
 import math
-from typing import Optional
 
 from scipy.integrate import quad
 
@@ -7,7 +6,7 @@ from netto.config import TaxConfig
 from netto.const import __tax_curve
 
 
-def get_marginal_tax_rate(taxable_income: float, config: Optional[TaxConfig] = None) -> float:
+def get_marginal_tax_rate(taxable_income: float, config: TaxConfig | None = None) -> float:
     """
     Calculate the marginal tax rate for a given taxable income.
 
@@ -111,7 +110,7 @@ def calc_taxable_income(
     )
 
 
-def calc_income_tax(taxable_income: float, config: Optional[TaxConfig] = None) -> float:
+def calc_income_tax(taxable_income: float, config: TaxConfig | None = None) -> float:
     """
     Calculate the income tax for a given taxable income.
 
@@ -162,7 +161,7 @@ def calc_income_tax(taxable_income: float, config: Optional[TaxConfig] = None) -
         )
 
 
-def calc_income_tax_by_integration(taxable_income: float, config: Optional[TaxConfig] = None) -> float:
+def calc_income_tax_by_integration(taxable_income: float, config: TaxConfig | None = None) -> float:
     """
     Calculate the income tax for a given taxable income by means of integration.
     Always available, even when exact integration curve in const.py is not defined.

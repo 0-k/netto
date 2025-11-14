@@ -1,5 +1,3 @@
-from typing import Optional
-
 from scipy.optimize import newton
 
 from netto.config import TaxConfig
@@ -12,7 +10,7 @@ def calc_netto(
     salary: float,
     deductibles: float = 0,
     verbose: bool = False,
-    config: Optional[TaxConfig] = None
+    config: TaxConfig | None = None
 ) -> float:
     """
     This function calculates the net income for a given year by subtracting the income tax, soli, church tax, and social security amounts from the salary.
@@ -83,7 +81,7 @@ def calc_netto(
 def calc_inverse_netto(
     desired_netto: float,
     deductibles: float = 0,
-    config: Optional[TaxConfig] = None
+    config: TaxConfig | None = None
 ) -> float:
     """
     Calculate gross salary to reach desired net income.

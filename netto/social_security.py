@@ -1,5 +1,4 @@
 import math
-from typing import Optional
 
 from scipy.integrate import quad
 
@@ -7,11 +6,11 @@ from netto.config import TaxConfig
 from netto.const import __correction_factor_pensions, __social_security_curve
 
 
-def get_rate_pension(salary: float, config: Optional[TaxConfig] = None) -> float:
+def get_rate_pension(salary: float, config: TaxConfig | None = None) -> float:
     return __get_rate(salary, "pension", config=config)
 
 
-def __get_rate(salary: float, type: str, extra: float = 0, config: Optional[TaxConfig] = None) -> float:
+def __get_rate(salary: float, type: str, extra: float = 0, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
     return (
@@ -21,18 +20,18 @@ def __get_rate(salary: float, type: str, extra: float = 0, config: Optional[TaxC
     )
 
 
-def get_rate_unemployment(salary: float, config: Optional[TaxConfig] = None) -> float:
+def get_rate_unemployment(salary: float, config: TaxConfig | None = None) -> float:
     return __get_rate(salary, "unemployment", config=config)
 
 
-def get_rate_health(salary: float, config: Optional[TaxConfig] = None) -> float:
+def get_rate_health(salary: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
     extra = config.extra_health_insurance / 2
     return __get_rate(salary, "health", extra, config=config)
 
 
-def get_rate_nursing(salary: float, config: Optional[TaxConfig] = None) -> float:
+def get_rate_nursing(salary: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
     extra = (
@@ -43,11 +42,11 @@ def get_rate_nursing(salary: float, config: Optional[TaxConfig] = None) -> float
     return __get_rate(salary, "nursing", extra, config=config)
 
 
-def calc_insurance_pension(salary: float, config: Optional[TaxConfig] = None) -> float:
+def calc_insurance_pension(salary: float, config: TaxConfig | None = None) -> float:
     return __get_value(salary, "pension", config=config)
 
 
-def __get_value(salary: float, type: str, extra: float = 0, config: Optional[TaxConfig] = None) -> float:
+def __get_value(salary: float, type: str, extra: float = 0, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
     return min(
@@ -57,25 +56,25 @@ def __get_value(salary: float, type: str, extra: float = 0, config: Optional[Tax
     )
 
 
-def calc_insurance_unemployment(salary: float, config: Optional[TaxConfig] = None) -> float:
+def calc_insurance_unemployment(salary: float, config: TaxConfig | None = None) -> float:
     return __get_value(salary, "unemployment", config=config)
 
 
-def calc_insurance_health(salary: float, config: Optional[TaxConfig] = None) -> float:
+def calc_insurance_health(salary: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
     extra = config.extra_health_insurance / 2
     return __get_value(salary, "health", extra, config=config)
 
 
-def calc_insurance_health_deductable(salary: float, config: Optional[TaxConfig] = None) -> float:
+def calc_insurance_health_deductable(salary: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
     extra = config.extra_health_insurance / 2
     return __get_value(salary, "health", extra - 0.003, config=config)
 
 
-def calc_insurance_nursing(salary: float, config: Optional[TaxConfig] = None) -> float:
+def calc_insurance_nursing(salary: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
     extra = (
@@ -86,7 +85,7 @@ def calc_insurance_nursing(salary: float, config: Optional[TaxConfig] = None) ->
     return __get_value(salary, "nursing", extra, config=config)
 
 
-def calc_deductible_social_security(salary: float, config: Optional[TaxConfig] = None) -> float:
+def calc_deductible_social_security(salary: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
     return (
@@ -98,7 +97,7 @@ def calc_deductible_social_security(salary: float, config: Optional[TaxConfig] =
     )
 
 
-def calc_social_security(salary: float, config: Optional[TaxConfig] = None) -> float:
+def calc_social_security(salary: float, config: TaxConfig | None = None) -> float:
     return round(
         calc_insurance_pension(salary, config)
         + calc_insurance_health(salary, config)
@@ -108,7 +107,7 @@ def calc_social_security(salary: float, config: Optional[TaxConfig] = None) -> f
     )
 
 
-def calc_social_security_by_integration(salary: float, config: Optional[TaxConfig] = None) -> float:
+def calc_social_security_by_integration(salary: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
     pension, _ = quad(lambda s: get_rate_pension(s, config), 0, salary)

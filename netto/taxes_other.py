@@ -1,10 +1,8 @@
-from typing import Optional
-
 from netto.config import TaxConfig
 from netto.const import __soli_curve
 
 
-def calc_soli(tax_assessment: float, config: Optional[TaxConfig] = None) -> float:
+def calc_soli(tax_assessment: float, config: TaxConfig | None = None) -> float:
     """
     Calculate solidarity tax (Solidaritätszuschlag).
 
@@ -39,7 +37,7 @@ def calc_soli(tax_assessment: float, config: Optional[TaxConfig] = None) -> floa
     )
 
 
-def calc_church_tax(tax_assessment: float, config: Optional[TaxConfig] = None) -> float:
+def calc_church_tax(tax_assessment: float, config: TaxConfig | None = None) -> float:
     """
     Calculate church tax (Kirchensteuer).
 
