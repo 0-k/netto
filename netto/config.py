@@ -1,43 +1,53 @@
-import os
+from dataclasses import dataclass
 
 
-def str_to_bool(s):
-    if s == "True":
-        return True
-    elif s == "False":
-        return False
-    else:
-        raise ValueError
+@dataclass(slots=True)
+class TaxConfig:
+    """
+    Configuration for tax and social security calculations.
 
+    Parameters
+    ----------
+    year : int
+        Tax year for calculations (default: 2022)
+    has_children : bool
+        Whether the taxpayer has children (affects nursing insurance, default: False)
+    is_married : bool
+        Whether the taxpayer is married (doubles tax brackets, default: False)
+    extra_health_insurance : float
+        Extra health insurance rate (default: 0.014)
+    church_tax : float
+        Church tax rate (default: 0.09)
 
-# Use default values if environment variables are not set or are set to invalid values
-def load_config():
-    global year, has_children, is_married, extra_health_insurance, church_tax
+    Examples
+    --------
+    # Default configuration
+    config = TaxConfig()
 
-    try:
-        year = int(os.getenv("YEAR", "2022"))
-    except ValueError:
-        year = 2022
+    # Custom configuration for 2025
+    config = TaxConfig(year=2025, is_married=True, has_children=True)
 
-    try:
-        has_children = str_to_bool(os.getenv("HAS_CHILDREN", "False"))
-    except ValueError:
-        has_children = False
+    # No church tax
+    config = TaxConfig(church_tax=0.0)
+    """
 
-    try:
-        is_married = str_to_bool(os.getenv("IS_MARRIED", "False"))
-    except ValueError:
-        is_married = False
+    year: int = 2022
+    has_children: bool = False
+    is_married: bool = False
+    extra_health_insurance: float = 0.014
+    church_tax: float = 0.09
 
-    try:
-        extra_health_insurance = float(os.getenv("EXTRA_HEALTH_INSURANCE", "0.014"))
-    except ValueError:
-        extra_health_insurance = 0.014
-
-    try:
-        church_tax = float(os.getenv("CHURCH_TAX", "0.09"))
-    except ValueError:
-        church_tax = 0.09
-
-
-load_config()
+    def __post_init__(self):
+        """Validate configuration values."""
+        if not isinstance(self.year, int):
+            raise TypeError(f"year must be int, got {type(self.year)}")
+        if self.year < 2018 or self.year > 2025:
+            raise ValueError(f"year must be between 2018 and 2025, got {self.year}")
+        if not isinstance(self.has_children, bool):
+            raise TypeError(f"has_children must be bool, got {type(self.has_children)}")
+        if not isinstance(self.is_married, bool):
+            raise TypeError(f"is_married must be bool, got {type(self.is_married)}")
+        if self.extra_health_insurance < 0:
+            raise ValueError(f"extra_health_insurance must be non-negative, got {self.extra_health_insurance}")
+        if self.church_tax < 0:
+            raise ValueError(f"church_tax must be non-negative, got {self.church_tax}")
