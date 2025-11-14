@@ -1,0 +1,20 @@
+{
+  "year": 2020,
+  "pension": {
+    "limit": 82800,
+    "rate": 0.093
+  },
+  "unemployment": {
+    "limit": 82800,
+    "rate": 0.012
+  },
+  "health": {
+    "limit": 56250,
+    "rate": 0.073
+  },
+  "nursing": {
+    "limit": 56250,
+    "rate": 0.01525,
+    "extra": 0.0025
+  }
+}

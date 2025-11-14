@@ -1,0 +1,20 @@
+{
+  "year": 2022,
+  "pension": {
+    "limit": 84600,
+    "rate": 0.093
+  },
+  "unemployment": {
+    "limit": 84600,
+    "rate": 0.012
+  },
+  "health": {
+    "limit": 58050,
+    "rate": 0.073
+  },
+  "nursing": {
+    "limit": 58050,
+    "rate": 0.01525,
+    "extra": 0.0035
+  }
+}
