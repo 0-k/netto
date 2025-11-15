@@ -1,5 +1,7 @@
 black
 isort
+pytest
+pytest-cov
 sphinx
 myst-parser
 build

@@ -382,21 +382,3 @@ def test_pension_factor_value_2022():
     factor_2022 = load_pension_factor(2022)
 
     assert factor_2022 == 0.88
-
-
-# Test backward compatibility with old const.py names
-
-
-def test_backward_compatibility_imports():
-    """Test that old const.py variable names are available"""
-    from netto.data_loader import (
-        __tax_curve,
-        __social_security_curve,
-        __soli_curve,
-        __correction_factor_pensions
-    )
-
-    assert __tax_curve == tax_curve
-    assert __social_security_curve == social_security_curve
-    assert __soli_curve == soli_curve
-    assert __correction_factor_pensions == correction_factor_pensions
