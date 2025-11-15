@@ -12,9 +12,9 @@ sys.path.insert(0, os.path.abspath(".."))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "netto"
-copyright = "2022, Martin Klein"
+copyright = "2025, Martin Klein"
 author = "Martin Klein"
-release = "0.1"
+release = "0.2.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

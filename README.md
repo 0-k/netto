@@ -13,17 +13,12 @@ Currently tested against the following assumptions:
 * Public health and pension insurance
 * West-German pension deduction
 * Optional: Church tax
-* Optional: Married 
-* Supported tax years: 2018-2024
-
-### TODO list
-
-* Calculate support for children (Kindergeld/Kinderfreibetrag)
-* Implement correct pension deductible for East Germany
+* Optional: Married
+* Supported tax years: 2018-2025
 
 ## Sources
 
-* [German tax curve](https://www.bmf-steuerrechner.de/Tarifhistorie_Steuerrechner.pdf?__blob=publicationFile&v=1)
+* [German tax curve](https://www.bmf-steuerrechner.de/javax.faces.resource/2025_1_14_Tarifhistorie_Steuerrechner.pdf.xhtml)
 * [Wage tax (Lohnsteuer)](https://www.bmf-steuerrechner.de/bl/bl2022/eingabeformbl2022.xhtml)
 * [Social security deductable (Vorsorgepauschale)](https://www.lohn-info.de/vorsorgepauschale.html)
 * [Social security rates](https://www.lohn-info.de/sozialversicherungsbeitraege2022.html)
@@ -32,4 +27,4 @@ Currently tested against the following assumptions:
 
 ## Credits
 
-Martin Klein, 2023
+Martin Klein, 2025

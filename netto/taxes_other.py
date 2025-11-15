@@ -1,5 +1,5 @@
 from netto.config import TaxConfig
-from netto.const import __soli_curve
+from netto.data_loader import soli_curve
 
 
 def calc_soli(tax_assessment: float, config: TaxConfig | None = None) -> float:
@@ -26,10 +26,10 @@ def calc_soli(tax_assessment: float, config: TaxConfig | None = None) -> float:
             min(
                 max(
                     0,
-                    tax_assessment - __soli_curve[config.year]["start_taxable_income"],
+                    tax_assessment - soli_curve[config.year]["start_taxable_income"],
                 )
-                * __soli_curve[config.year]["start_fraction"],
-                tax_assessment * __soli_curve[config.year]["end_rate"],
+                * soli_curve[config.year]["start_fraction"],
+                tax_assessment * soli_curve[config.year]["end_rate"],
             ),
             0,
         ),
