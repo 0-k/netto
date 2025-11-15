@@ -238,18 +238,23 @@ From README TODO list:
 ### Running Tests
 
 ```bash
-# Run all tests with unittest
-python -m unittest discover test/
+# First, install package in editable mode (required for imports to work)
+pip install -e .
 
 # Run with pytest (preferred)
-python -m pytest test/ -v
+pytest test/ -v
 
 # Run with coverage
-python -m pytest --cov=netto test/
+pytest --cov=netto test/
 
 # Run specific test file
-python -m pytest test/test_main.py -v
+pytest test/test_main.py -v
+
+# Alternative: Use pytest's import mode (like CI does)
+python -m pytest --import-mode=append test/
 ```
+
+**Important**: Install the package with `pip install -e .` before running tests. This makes the `netto` module importable by pytest and avoids `ModuleNotFoundError`.
 
 ### Building Documentation
 

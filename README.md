@@ -141,12 +141,17 @@ Pre-commit hooks automatically run ruff linting and formatting before each commi
 ### Running Tests
 
 ```bash
+# First-time setup: install package in editable mode
+pip install -e .
+
 # Run all tests with coverage
 pytest --cov=netto test/
 
 # Run specific test file
 pytest test/test_main.py -v
 ```
+
+**Note**: The `pip install -e .` step is required for pytest to find the `netto` module.
 
 ### Code Quality
 
