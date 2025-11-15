@@ -10,13 +10,17 @@ from netto.config import TaxConfig
 @pytest.fixture
 def default_config():
     """Fixture providing default config for tests"""
-    return TaxConfig(extra_health_insurance=0.014, church_tax=0.09, has_children=False)
+    return TaxConfig(
+        year=2022, extra_health_insurance=0.014, church_tax=0.09, has_children=False
+    )
 
 
 @pytest.fixture
 def alternate_config():
     """Fixture providing alternate config for tests"""
-    return TaxConfig(extra_health_insurance=0.015, church_tax=0.0, has_children=True)
+    return TaxConfig(
+        year=2022, extra_health_insurance=0.015, church_tax=0.0, has_children=True
+    )
 
 
 @pytest.mark.parametrize(
@@ -99,7 +103,8 @@ def test_calc_netto_with_default_none_config():
 def test_calc_inverse_netto_with_default_none_config():
     """Test that calc_inverse_netto works when config=None (uses default TaxConfig)"""
     # Use a value that we know works well with Newton's method
-    result = main.calc_inverse_netto(30000)
+    # Use explicit year=2022 for stable test behavior
+    result = main.calc_inverse_netto(30000, config=TaxConfig(year=2022))
     # Should use default TaxConfig
     assert isinstance(result, int | float)
     assert result > 0

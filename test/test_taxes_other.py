@@ -7,7 +7,9 @@ from netto.config import TaxConfig
 @pytest.fixture
 def default_config():
     """Fixture providing default config for tests"""
-    return TaxConfig(extra_health_insurance=0.014, church_tax=0.09, has_children=False)
+    return TaxConfig(
+        year=2022, extra_health_insurance=0.014, church_tax=0.09, has_children=False
+    )
 
 
 @pytest.mark.parametrize(

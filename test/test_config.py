@@ -6,10 +6,10 @@ from netto.config import TaxConfig
 def test_taxconfig_defaults():
     """Test that TaxConfig uses correct default values"""
     config = TaxConfig()
-    assert config.year == 2022
+    assert config.year == 2025
     assert config.has_children is False
     assert config.is_married is False
-    assert config.extra_health_insurance == 0.014
+    assert config.extra_health_insurance == 0.025
     assert config.church_tax == 0.09
 
 

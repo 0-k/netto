@@ -7,7 +7,9 @@ from netto.config import TaxConfig
 @pytest.fixture
 def default_config():
     """Fixture providing default config for tests"""
-    return TaxConfig(extra_health_insurance=0.014, church_tax=0.09, has_children=False)
+    return TaxConfig(
+        year=2022, extra_health_insurance=0.014, church_tax=0.09, has_children=False
+    )
 
 
 @pytest.mark.parametrize(
@@ -121,7 +123,7 @@ def test_sameness_of_calc_social_security_different_config(salary):
 )
 def test_get_rate_health_different_config(salary, expected):
     """Test health rate with different extra health insurance"""
-    config = TaxConfig(extra_health_insurance=0.015)
+    config = TaxConfig(year=2022, extra_health_insurance=0.015)
     result = social_security.get_rate_health(salary, config)
     assert abs(result - expected) < 0.0001
 
@@ -138,7 +140,7 @@ def test_get_rate_health_different_config(salary, expected):
 )
 def test_get_rate_nursing_no_children(salary, expected):
     """Test nursing rate without children (includes extra rate)"""
-    config = TaxConfig(has_children=False)
+    config = TaxConfig(year=2022, has_children=False)
     result = social_security.get_rate_nursing(salary, config)
     assert result == expected
 
@@ -155,7 +157,7 @@ def test_get_rate_nursing_no_children(salary, expected):
 )
 def test_get_rate_nursing_with_children(salary, expected):
     """Test nursing rate with children (no extra rate)"""
-    config = TaxConfig(has_children=True)
+    config = TaxConfig(year=2022, has_children=True)
     result = social_security.get_rate_nursing(salary, config)
     assert result == expected
 
