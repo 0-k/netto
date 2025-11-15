@@ -16,8 +16,16 @@ data/
 │   ├── 2019.json
 │   ├── ...
 │   └── 2025.json
-├── soli.json           # Solidarity tax parameters (all years)
-├── pension_correction_factors.json  # Pension deduction factors (all years)
+├── soli/                # Solidarity tax parameters by year
+│   ├── 2018.json
+│   ├── 2019.json
+│   ├── ...
+│   └── 2025.json
+├── pension_factors/     # Pension deduction factors by year
+│   ├── 2018.json
+│   ├── 2019.json
+│   ├── ...
+│   └── 2025.json
 └── README.md           # This file
 ```
 
@@ -102,41 +110,43 @@ Each file contains social security contribution limits and rates:
   - `rate`: Employee contribution rate (employer pays the same)
   - `extra`: Extra rate for childless individuals (nursing only)
 
-### Solidarity Tax (`soli.json`)
+### Solidarity Tax (`soli/YEAR.json`)
 
-Contains solidarity tax (Solidaritätszuschlag) parameters for all years:
+Each file contains solidarity tax (Solidaritätszuschlag) parameters for a specific year:
 
 ```json
 {
-  "2022": {
-    "start_taxable_income": 16956,
-    "start_fraction": 0.119,
-    "end_rate": 0.055
-  }
+  "year": 2022,
+  "start_taxable_income": 16956,
+  "start_fraction": 0.119,
+  "end_rate": 0.055
 }
 ```
 
 **Fields:**
+- `year`: Tax year
 - `start_taxable_income`: Income threshold in EUR where soli starts
 - `start_fraction`: Fraction used for progressive phase-in
 - `end_rate`: Maximum soli rate (5.5%)
 
 **Important Change in 2021:** Solidarity tax was significantly reduced. Before 2021, it applied to most taxpayers. From 2021 onward, it only affects high earners through a progressive phase-in mechanism.
 
-### Pension Correction Factors (`pension_correction_factors.json`)
+### Pension Correction Factors (`pension_factors/YEAR.json`)
 
-Contains pension deduction factors for West Germany:
+Each file contains pension deduction factor for West Germany for a specific year:
 
 ```json
 {
-  "2022": 0.88,
-  "2023": 0.92,
-  "2024": 0.96,
-  "2025": 1.0
+  "year": 2022,
+  "factor": 0.88
 }
 ```
 
-**Note:** These factors gradually increase each year, reaching 100% deductibility in 2025.
+**Fields:**
+- `year`: Tax year
+- `factor`: Pension deduction factor (0.0 to 1.0)
+
+**Note:** These factors gradually increase each year, reaching 100% deductibility (1.0) in 2025.
 
 ## Data Sources
 
@@ -168,11 +178,11 @@ To add tax data for a new year:
    - Source limits (Beitragsbemessungsgrenzen) from official sources
    - Source rates from official announcements
 
-3. **Add to soli.json:**
-   - Add new year entry with updated thresholds
+3. **Create soli file:** `soli/YEAR.json`
+   - Add year entry with updated thresholds
 
-4. **Add to pension_correction_factors.json:**
-   - Add new year entry (continues at 1.0 after 2025)
+4. **Create pension factor file:** `pension_factors/YEAR.json`
+   - Add year entry with factor (continues at 1.0 after 2025)
 
 5. **Update validation in** `netto/config.py`:
    - Update year range validation
