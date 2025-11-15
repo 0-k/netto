@@ -113,7 +113,7 @@ The `TaxConfig` dataclass provides type-safe configuration:
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `year` | int | 2025 | Tax year (2018-2025 supported) |
+| `year` | int | 2025 | Tax year (2018-2026 supported) |
 | `is_married` | bool | False | Married status (Ehegattensplitting) |
 | `has_children` | bool | False | Has children (affects nursing insurance) |
 | `church_tax` | float | 0.09 | Church tax rate (0.0-0.09, set to 0.0 for none) |
@@ -124,8 +124,8 @@ The `TaxConfig` dataclass provides type-safe configuration:
 | Year | Status | Notes |
 |------|--------|-------|
 | 2018-2022 | Fully supported | Complete tax data |
-| 2023-2025 | Fully supported | Complete tax data |
-| 2026-2027 | Planned | To be added |
+| 2023-2026 | Fully supported | Complete tax data (2026 uses 2025 estimates) |
+| 2027+ | Planned | To be added |
 
 ## Documentation
 

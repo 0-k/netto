@@ -34,7 +34,7 @@ def test_taxconfig_validation_year_range():
     with pytest.raises(ValueError):
         TaxConfig(year=2017)  # Too early
     with pytest.raises(ValueError):
-        TaxConfig(year=2026)  # Too late
+        TaxConfig(year=2027)  # Too late
 
 
 def test_taxconfig_validation_negative_rates():

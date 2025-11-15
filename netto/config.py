@@ -9,7 +9,7 @@ class TaxConfig:
     Parameters
     ----------
     year : int
-        Tax year (2018-2025, default: 2025)
+        Tax year (2018-2026, default: 2025)
     has_children : bool
         Has children (affects nursing insurance)
     is_married : bool
@@ -36,8 +36,8 @@ class TaxConfig:
         """Validate configuration values."""
         if not isinstance(self.year, int):
             raise TypeError(f"year must be int, got {type(self.year)}")
-        if self.year < 2018 or self.year > 2025:
-            raise ValueError(f"year must be between 2018 and 2025, got {self.year}")
+        if self.year < 2018 or self.year > 2026:
+            raise ValueError(f"year must be between 2018 and 2026, got {self.year}")
         if not isinstance(self.has_children, bool):
             raise TypeError(f"has_children must be bool, got {type(self.has_children)}")
         if not isinstance(self.is_married, bool):

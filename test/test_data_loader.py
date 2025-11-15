@@ -171,7 +171,7 @@ def test_pension_factor_invalid_factor():
 # Tests for individual load functions
 
 
-@pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025])
+@pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026])
 def test_load_tax_curve(year):
     """Test loading tax curve for available years"""
     curve = load_tax_curve(year)
@@ -187,7 +187,7 @@ def test_load_tax_curve_missing_year():
         load_tax_curve(2030)
 
 
-@pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025])
+@pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026])
 def test_load_social_security(year):
     """Test loading social security for available years"""
     ss = load_social_security(year)
@@ -199,9 +199,9 @@ def test_load_social_security(year):
 
 
 def test_load_social_security_not_implemented():
-    """Test that loading social security for 2026+ raises NotImplementedError"""
+    """Test that loading social security for 2027+ raises NotImplementedError"""
     with pytest.raises(NotImplementedError):
-        load_social_security(2026)
+        load_social_security(2027)
 
 
 def test_load_social_security_missing_year():
@@ -210,7 +210,7 @@ def test_load_social_security_missing_year():
         load_social_security(2015)
 
 
-@pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025])
+@pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026])
 def test_load_soli(year):
     """Test loading solidarity tax data for available years"""
     soli = load_soli(year)
@@ -226,7 +226,7 @@ def test_load_soli_missing_year():
         load_soli(2030)
 
 
-@pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025])
+@pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026])
 def test_load_pension_factor(year):
     """Test loading pension factor for available years"""
     factor = load_pension_factor(year)
@@ -258,10 +258,10 @@ def test_load_all_social_security():
     """Test loading all social security data"""
     ss_data = load_all_social_security()
     assert isinstance(ss_data, dict)
-    assert len(ss_data) >= 8  # At least 2018-2025
-    # Check for 2026 NotImplementedError marker
-    assert 2026 in ss_data
-    assert ss_data[2026] is NotImplementedError
+    assert len(ss_data) >= 9  # At least 2018-2026
+    # Check for 2027 NotImplementedError marker
+    assert 2027 in ss_data
+    assert ss_data[2027] is NotImplementedError
 
 
 def test_load_all_soli():

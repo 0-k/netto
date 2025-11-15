@@ -226,7 +226,7 @@ def load_all_tax_curves() -> dict[int, dict[int, dict]]:
         Tax curves for all years
     """
     tax_curves = {}
-    for year in range(2018, 2026):  # 2018-2025
+    for year in range(2018, 2027):  # 2018-2026
         try:
             tax_curves[year] = load_tax_curve(year)
         except FileNotFoundError:
@@ -244,14 +244,14 @@ def load_all_social_security() -> dict[int, dict]:
         Social security data for all years
     """
     social_security = {}
-    for year in range(2018, 2026):  # 2018-2025
+    for year in range(2018, 2027):  # 2018-2026
         try:
             social_security[year] = load_social_security(year)
         except (FileNotFoundError, NotImplementedError):
             pass
 
-    # Add NotImplementedError for 2026+ to maintain backward compatibility
-    social_security[2026] = NotImplementedError
+    # Add NotImplementedError for 2027+ to maintain backward compatibility
+    social_security[2027] = NotImplementedError
 
     return social_security
 
@@ -266,7 +266,7 @@ def load_all_soli() -> dict[int, dict]:
         Soli data for all years
     """
     soli_data = {}
-    for year in range(2018, 2026):  # 2018-2025
+    for year in range(2018, 2027):  # 2018-2026
         try:
             soli_data[year] = load_soli(year)
         except FileNotFoundError:
@@ -284,7 +284,7 @@ def load_all_pension_factors() -> dict[int, float]:
         Pension correction factors for all years
     """
     pension_factors = {}
-    for year in range(2018, 2026):  # 2018-2025
+    for year in range(2018, 2027):  # 2018-2026
         try:
             pension_factors[year] = load_pension_factor(year)
         except FileNotFoundError:
