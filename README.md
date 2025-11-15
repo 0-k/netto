@@ -18,7 +18,7 @@ Currently tested against the following assumptions:
 
 ## Sources
 
-* [German tax curve](https://www.bmf-steuerrechner.de/Tarifhistorie_Steuerrechner.pdf?__blob=publicationFile&v=1)
+* [German tax curve](https://www.bmf-steuerrechner.de/javax.faces.resource/2025_1_14_Tarifhistorie_Steuerrechner.pdf.xhtml)
 * [Wage tax (Lohnsteuer)](https://www.bmf-steuerrechner.de/bl/bl2022/eingabeformbl2022.xhtml)
 * [Social security deductable (Vorsorgepauschale)](https://www.lohn-info.de/vorsorgepauschale.html)
 * [Social security rates](https://www.lohn-info.de/sozialversicherungsbeitraege2022.html)
