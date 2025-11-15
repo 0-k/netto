@@ -15,13 +15,7 @@ def test_taxconfig_defaults():
 
 def test_taxconfig_custom_values():
     """Test creating TaxConfig with custom values"""
-    config = TaxConfig(
-        year=2025,
-        has_children=True,
-        is_married=True,
-        extra_health_insurance=0.02,
-        church_tax=0.08
-    )
+    config = TaxConfig(year=2025, has_children=True, is_married=True, extra_health_insurance=0.02, church_tax=0.08)
     assert config.year == 2025
     assert config.has_children is True
     assert config.is_married is True

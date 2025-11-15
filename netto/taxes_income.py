@@ -74,11 +74,7 @@ def __calc_gradient(x_i: float, x_j: float, y_i: float, y_j: float, x: float) ->
     return (1 - (x_j - x) / (x_j - x_i)) * (y_j - y_i) + y_i
 
 
-def calc_taxable_income(
-    salary: float,
-    deductible_social_security: float,
-    deductibles_other: float = 0
-) -> float:
+def calc_taxable_income(salary: float, deductible_social_security: float, deductibles_other: float = 0) -> float:
     """
     Calculate the taxable income for a given salary and deductibles.
 
@@ -105,9 +101,7 @@ def calc_taxable_income(
     calc_taxable_income(60000, 2000, 500)
     """
 
-    return math.floor(
-        max(0, salary - deductible_social_security - 1200 - 36 - deductibles_other)
-    )
+    return math.floor(max(0, salary - deductible_social_security - 1200 - 36 - deductibles_other))
 
 
 def calc_income_tax(taxable_income: float, config: TaxConfig | None = None) -> float:
@@ -139,26 +133,16 @@ def calc_income_tax(taxable_income: float, config: TaxConfig | None = None) -> f
         return 0
     elif taxable_income <= TAX_CURVE_DATA[config.year][1]["step"]:
         y = (taxable_income - TAX_CURVE_DATA[config.year][0]["step"]) / 10000
-        return (
-            TAX_CURVE_DATA[config.year][1]["const"][0] * y
-            + TAX_CURVE_DATA[config.year][1]["const"][1]
-        ) * y
+        return (TAX_CURVE_DATA[config.year][1]["const"][0] * y + TAX_CURVE_DATA[config.year][1]["const"][1]) * y
     elif taxable_income <= TAX_CURVE_DATA[config.year][2]["step"]:
         z = (taxable_income - TAX_CURVE_DATA[config.year][1]["step"]) / 10000
         return (
-            TAX_CURVE_DATA[config.year][2]["const"][0] * z
-            + TAX_CURVE_DATA[config.year][2]["const"][1]
+            TAX_CURVE_DATA[config.year][2]["const"][0] * z + TAX_CURVE_DATA[config.year][2]["const"][1]
         ) * z + TAX_CURVE_DATA[config.year][2]["const"][2]
     elif taxable_income <= TAX_CURVE_DATA[config.year][3]["step"]:
-        return (
-            TAX_CURVE_DATA[config.year][2]["rate"] * taxable_income
-            - TAX_CURVE_DATA[config.year][3]["const"][0]
-        )
+        return TAX_CURVE_DATA[config.year][2]["rate"] * taxable_income - TAX_CURVE_DATA[config.year][3]["const"][0]
     else:
-        return (
-            TAX_CURVE_DATA[config.year][3]["rate"] * taxable_income
-            - TAX_CURVE_DATA[config.year][3]["const"][1]
-        )
+        return TAX_CURVE_DATA[config.year][3]["rate"] * taxable_income - TAX_CURVE_DATA[config.year][3]["const"][1]
 
 
 def calc_income_tax_by_integration(taxable_income: float, config: TaxConfig | None = None) -> float:

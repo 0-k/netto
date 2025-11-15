@@ -14,10 +14,8 @@ The loaded data is exposed as module-level variables for easy import:
 
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator
-
 
 # Get the data directory path
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -28,7 +26,7 @@ class TaxBracket(BaseModel):
 
     step: float = Field(gt=0, description="Income threshold for this bracket")
     rate: float = Field(ge=0, le=1, description="Tax rate for this bracket")
-    const: Optional[List[float]] = Field(default=None, description="Polynomial coefficients")
+    const: list[float] | None = Field(default=None, description="Polynomial coefficients")
 
     @field_validator("const")
     @classmethod
@@ -43,7 +41,7 @@ class TaxCurve(BaseModel):
     """Tax curve configuration for a single year."""
 
     year: int = Field(ge=2018, le=2030, description="Tax year")
-    brackets: Dict[str, TaxBracket] = Field(description="Tax brackets (0-3)")
+    brackets: dict[str, TaxBracket] = Field(description="Tax brackets (0-3)")
 
     @field_validator("brackets")
     @classmethod
@@ -59,7 +57,7 @@ class SocialSecurityEntry(BaseModel):
 
     limit: float = Field(gt=0, description="Income limit for this contribution")
     rate: float = Field(ge=0, le=1, description="Contribution rate")
-    extra: Optional[float] = Field(default=None, ge=0, le=1, description="Extra rate (nursing only)")
+    extra: float | None = Field(default=None, ge=0, le=1, description="Extra rate (nursing only)")
 
 
 class SocialSecurity(BaseModel):
@@ -88,7 +86,7 @@ class PensionFactor(BaseModel):
     factor: float = Field(ge=0, le=1, description="Pension deduction factor")
 
 
-def load_tax_curve(year: int) -> Dict[int, dict]:
+def load_tax_curve(year: int) -> dict[int, dict]:
     """
     Load tax curve for a specific year.
 
@@ -227,7 +225,7 @@ def load_pension_factor(year: int) -> float:
     return pension_factor.factor
 
 
-def load_all_tax_curves() -> Dict[int, Dict[int, dict]]:
+def load_all_tax_curves() -> dict[int, dict[int, dict]]:
     """
     Load tax curves for all available years.
 
@@ -245,7 +243,7 @@ def load_all_tax_curves() -> Dict[int, Dict[int, dict]]:
     return tax_curves
 
 
-def load_all_social_security() -> Dict[int, dict]:
+def load_all_social_security() -> dict[int, dict]:
     """
     Load social security data for all available years.
 
@@ -267,7 +265,7 @@ def load_all_social_security() -> Dict[int, dict]:
     return social_security
 
 
-def load_all_soli() -> Dict[int, dict]:
+def load_all_soli() -> dict[int, dict]:
     """
     Load solidarity tax data for all available years.
 
@@ -285,7 +283,7 @@ def load_all_soli() -> Dict[int, dict]:
     return soli_data
 
 
-def load_all_pension_factors() -> Dict[int, float]:
+def load_all_pension_factors() -> dict[int, float]:
     """
     Load pension correction factors for all available years.
 

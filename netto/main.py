@@ -6,12 +6,7 @@ from netto.taxes_income import calc_income_tax_by_integration, calc_taxable_inco
 from netto.taxes_other import calc_church_tax, calc_soli
 
 
-def calc_netto(
-    salary: float,
-    deductibles: float = 0,
-    verbose: bool = False,
-    config: TaxConfig | None = None
-) -> float:
+def calc_netto(salary: float, deductibles: float = 0, verbose: bool = False, config: TaxConfig | None = None) -> float:
     """
     This function calculates the net income for a given year by subtracting the income tax, soli, church tax, and social security amounts from the salary.
 
@@ -78,11 +73,7 @@ def calc_netto(
     )
 
 
-def calc_inverse_netto(
-    desired_netto: float,
-    deductibles: float = 0,
-    config: TaxConfig | None = None
-) -> float:
+def calc_inverse_netto(desired_netto: float, deductibles: float = 0, config: TaxConfig | None = None) -> float:
     """
     Calculate gross salary to reach desired net income.
 

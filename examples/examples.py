@@ -30,7 +30,7 @@ config_2025_married = TaxConfig(
     is_married=True,
     has_children=True,
     church_tax=0.0,  # No church tax
-    extra_health_insurance=0.015  # Slightly higher health insurance
+    extra_health_insurance=0.015,  # Slightly higher health insurance
 )
 
 # Calculate with custom configuration
@@ -43,12 +43,7 @@ print(f"Gross salary needed to reach 45,000 net: {gross_needed}")
 
 
 # Create a configuration for a single person without church tax in 2024
-config_2024_single = TaxConfig(
-    year=2024,
-    is_married=False,
-    has_children=False,
-    church_tax=0.0
-)
+config_2024_single = TaxConfig(year=2024, is_married=False, has_children=False, church_tax=0.0)
 
 # Calculate with different configuration
 net_income_single = calc_netto(50000, config=config_2024_single, verbose=True)

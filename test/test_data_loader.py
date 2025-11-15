@@ -1,28 +1,26 @@
 import pytest
-from pathlib import Path
 from pydantic import ValidationError
 
 from netto.data_loader import (
+    PensionFactor,
+    SocialSecurity,
+    SocialSecurityEntry,
+    SoliCurve,
     TaxBracket,
     TaxCurve,
-    SocialSecurityEntry,
-    SocialSecurity,
-    SoliCurve,
-    PensionFactor,
-    load_tax_curve,
-    load_social_security,
-    load_soli,
-    load_pension_factor,
-    load_all_tax_curves,
+    correction_factor_pensions,
+    load_all_pension_factors,
     load_all_social_security,
     load_all_soli,
-    load_all_pension_factors,
-    tax_curve,
+    load_all_tax_curves,
+    load_pension_factor,
+    load_social_security,
+    load_soli,
+    load_tax_curve,
     social_security_curve,
     soli_curve,
-    correction_factor_pensions,
+    tax_curve,
 )
-
 
 # Tests for Pydantic Models
 
@@ -74,7 +72,7 @@ def test_tax_curve_valid():
             "1": TaxBracket(step=14927, rate=0.14, const=[995.21, 1400]),
             "2": TaxBracket(step=58597, rate=0.2397, const=[208.85, 2397, 950.96]),
             "3": TaxBracket(step=277826, rate=0.42, const=[0.42, 9336.45]),
-        }
+        },
     )
     assert curve.year == 2022
     assert len(curve.brackets) == 4
@@ -88,7 +86,7 @@ def test_tax_curve_invalid_brackets():
             brackets={
                 "0": TaxBracket(step=10000, rate=0.0),
                 "1": TaxBracket(step=20000, rate=0.14),
-            }
+            },
         )
 
 
@@ -102,7 +100,7 @@ def test_tax_curve_invalid_year():
                 "1": TaxBracket(step=20000, rate=0.14),
                 "2": TaxBracket(step=30000, rate=0.24),
                 "3": TaxBracket(step=40000, rate=0.42),
-            }
+            },
         )
 
 
@@ -137,7 +135,7 @@ def test_social_security_valid():
         pension=SocialSecurityEntry(limit=84600, rate=0.093),
         unemployment=SocialSecurityEntry(limit=84600, rate=0.012),
         health=SocialSecurityEntry(limit=58050, rate=0.073, extra=0.007),
-        nursing=SocialSecurityEntry(limit=58050, rate=0.01525, extra=0.0035)
+        nursing=SocialSecurityEntry(limit=58050, rate=0.01525, extra=0.0035),
     )
     assert ss.year == 2022
     assert ss.pension.limit == 84600
@@ -146,12 +144,7 @@ def test_social_security_valid():
 
 def test_soli_curve_valid():
     """Test creating a valid SoliCurve"""
-    soli = SoliCurve(
-        year=2022,
-        start_taxable_income=16956,
-        start_fraction=0.119,
-        end_rate=0.055
-    )
+    soli = SoliCurve(year=2022, start_taxable_income=16956, start_fraction=0.119, end_rate=0.055)
     assert soli.year == 2022
     assert soli.start_taxable_income == 16956
     assert soli.start_fraction == 0.119
@@ -266,7 +259,7 @@ def test_load_all_social_security():
     assert len(ss_data) >= 8  # At least 2018-2025
     # Check for 2026 NotImplementedError marker
     assert 2026 in ss_data
-    assert ss_data[2026] == NotImplementedError
+    assert ss_data[2026] is NotImplementedError
 
 
 def test_load_all_soli():

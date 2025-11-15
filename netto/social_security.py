@@ -34,11 +34,7 @@ def get_rate_health(salary: float, config: TaxConfig | None = None) -> float:
 def get_rate_nursing(salary: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
-    extra = (
-        0
-        if config.has_children
-        else social_security_curve[config.year]["nursing"]["extra"]
-    )
+    extra = 0 if config.has_children else social_security_curve[config.year]["nursing"]["extra"]
     return __get_rate(salary, "nursing", extra, config=config)
 
 
@@ -51,8 +47,7 @@ def __get_value(salary: float, type: str, extra: float = 0, config: TaxConfig | 
         config = TaxConfig()
     return min(
         salary * (social_security_curve[config.year][type]["rate"] + extra),
-        social_security_curve[config.year][type]["limit"]
-        * (social_security_curve[config.year][type]["rate"] + extra),
+        social_security_curve[config.year][type]["limit"] * (social_security_curve[config.year][type]["rate"] + extra),
     )
 
 
@@ -77,11 +72,7 @@ def calc_insurance_health_deductable(salary: float, config: TaxConfig | None = N
 def calc_insurance_nursing(salary: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
-    extra = (
-        0
-        if config.has_children
-        else social_security_curve[config.year]["nursing"]["extra"]
-    )
+    extra = 0 if config.has_children else social_security_curve[config.year]["nursing"]["extra"]
     return __get_value(salary, "nursing", extra, config=config)
 
 
@@ -89,9 +80,7 @@ def calc_deductible_social_security(salary: float, config: TaxConfig | None = No
     if config is None:
         config = TaxConfig()
     return (
-        math.ceil(
-            calc_insurance_pension(salary, config) * correction_factor_pensions[config.year]
-        )
+        math.ceil(calc_insurance_pension(salary, config) * correction_factor_pensions[config.year])
         + math.ceil(calc_insurance_health_deductable(salary, config))
         + math.ceil(calc_insurance_nursing(salary, config))
     )
