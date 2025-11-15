@@ -78,23 +78,34 @@ def test_calc_deductible_social_security(default_config):
     """Test deductible social security calculation"""
     assert social_security.calc_deductible_social_security(0, default_config) == 0
     # https://www.lohn-info.de/vorsorgepauschale.html
-    assert social_security.calc_deductible_social_security(30000, default_config) == 2456 + 2310 + 563
+    assert (
+        social_security.calc_deductible_social_security(30000, default_config)
+        == 2456 + 2310 + 563
+    )
 
 
-@pytest.mark.parametrize("salary", [0, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000])
+@pytest.mark.parametrize(
+    "salary", [0, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
+)
 def test_sameness_of_calc_social_security(salary, default_config):
     """Test that both social security calculation methods give same results"""
     result_direct = social_security.calc_social_security(salary, default_config)
-    result_integration = social_security.calc_social_security_by_integration(salary, default_config)
+    result_integration = social_security.calc_social_security_by_integration(
+        salary, default_config
+    )
     assert result_direct == result_integration
 
 
-@pytest.mark.parametrize("salary", [0, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000])
+@pytest.mark.parametrize(
+    "salary", [0, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
+)
 def test_sameness_of_calc_social_security_different_config(salary):
     """Test social security calculation with different config"""
     config = TaxConfig(extra_health_insurance=0.015, has_children=True)
     result_direct = social_security.calc_social_security(salary, config)
-    result_integration = social_security.calc_social_security_by_integration(salary, config)
+    result_integration = social_security.calc_social_security_by_integration(
+        salary, config
+    )
     assert result_direct == result_integration
 
 

@@ -26,7 +26,9 @@ class TaxBracket(BaseModel):
 
     step: float = Field(gt=0, description="Income threshold for this bracket")
     rate: float = Field(ge=0, le=1, description="Tax rate for this bracket")
-    const: list[float] | None = Field(default=None, description="Polynomial coefficients")
+    const: list[float] | None = Field(
+        default=None, description="Polynomial coefficients"
+    )
 
     @field_validator("const")
     @classmethod
@@ -57,7 +59,9 @@ class SocialSecurityEntry(BaseModel):
 
     limit: float = Field(gt=0, description="Income limit for this contribution")
     rate: float = Field(ge=0, le=1, description="Contribution rate")
-    extra: float | None = Field(default=None, ge=0, le=1, description="Extra rate (nursing only)")
+    extra: float | None = Field(
+        default=None, ge=0, le=1, description="Extra rate (nursing only)"
+    )
 
 
 class SocialSecurity(BaseModel):
@@ -74,8 +78,12 @@ class SoliCurve(BaseModel):
     """Solidarity tax configuration for a single year."""
 
     year: int = Field(ge=2018, le=2030, description="Tax year")
-    start_taxable_income: float = Field(gt=0, description="Income threshold where soli starts")
-    start_fraction: float = Field(ge=0, le=1, description="Starting fraction for progressive phase-in")
+    start_taxable_income: float = Field(
+        gt=0, description="Income threshold where soli starts"
+    )
+    start_fraction: float = Field(
+        ge=0, le=1, description="Starting fraction for progressive phase-in"
+    )
     end_rate: float = Field(ge=0, le=1, description="Maximum soli rate")
 
 
@@ -145,7 +153,9 @@ def load_social_security(year: int) -> dict:
 
     if not file_path.exists():
         if year >= 2026:
-            raise NotImplementedError(f"Social security data not yet available for {year}")
+            raise NotImplementedError(
+                f"Social security data not yet available for {year}"
+            )
         raise FileNotFoundError(f"Social security data not found for year {year}")
 
     with open(file_path) as f:

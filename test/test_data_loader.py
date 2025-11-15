@@ -144,7 +144,9 @@ def test_social_security_valid():
 
 def test_soli_curve_valid():
     """Test creating a valid SoliCurve"""
-    soli = SoliCurve(year=2022, start_taxable_income=16956, start_fraction=0.119, end_rate=0.055)
+    soli = SoliCurve(
+        year=2022, start_taxable_income=16956, start_fraction=0.119, end_rate=0.055
+    )
     assert soli.year == 2022
     assert soli.start_taxable_income == 16956
     assert soli.start_fraction == 0.119

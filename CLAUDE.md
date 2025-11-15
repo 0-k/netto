@@ -110,8 +110,9 @@ Contains data loader with Pydantic validation for:
 ## Development Guidelines
 
 ### Code Style
-- **Formatter & Linter**: Ruff (line length: 127)
+- **Formatter & Linter**: Ruff (line length: 88)
   - Replaces Black, isort, and Flake8 with a single fast tool
+  - Uses Black-compatible 88 character line length (industry standard)
   - Configuration in `pyproject.toml`
 - **Type Hints**: Use type hints for all public functions
 - **Docstrings**: NumPy-style docstrings with Parameters, Returns, Examples

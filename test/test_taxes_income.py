@@ -68,7 +68,9 @@ def test_get_marginal_tax_rate_married(taxable_income, expected_rate):
 def test_sameness_of_calc_income_tax_methods(taxable_income, default_config):
     """Test that both income tax calculation methods give similar results"""
     result_direct = taxes_income.calc_income_tax(taxable_income, default_config)
-    result_integration = taxes_income.calc_income_tax_by_integration(taxable_income, default_config)
+    result_integration = taxes_income.calc_income_tax_by_integration(
+        taxable_income, default_config
+    )
     assert abs(result_direct - result_integration) < 0.1
 
 

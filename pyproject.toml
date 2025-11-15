@@ -33,7 +33,7 @@ packages = ["netto"]
 netto = ["../data/**/*.json", "../data/**/*.md"]
 
 [tool.ruff]
-line-length = 127
+line-length = 88  # Black-compatible default, widely adopted standard
 target-version = "py310"
 
 [tool.ruff.lint]

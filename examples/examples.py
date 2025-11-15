@@ -43,7 +43,9 @@ print(f"Gross salary needed to reach 45,000 net: {gross_needed}")
 
 
 # Create a configuration for a single person without church tax in 2024
-config_2024_single = TaxConfig(year=2024, is_married=False, has_children=False, church_tax=0.0)
+config_2024_single = TaxConfig(
+    year=2024, is_married=False, has_children=False, church_tax=0.0
+)
 
 # Calculate with different configuration
 net_income_single = calc_netto(50000, config=config_2024_single, verbose=True)
@@ -52,8 +54,14 @@ net_income_single = calc_netto(50000, config=config_2024_single, verbose=True)
 # Multiple scenarios comparison
 scenarios = [
     ("Single, 2024, no church tax", TaxConfig(year=2024, church_tax=0.0)),
-    ("Married, 2024, with church tax", TaxConfig(year=2024, is_married=True, church_tax=0.09)),
-    ("Single with children, 2025", TaxConfig(year=2025, has_children=True, church_tax=0.0)),
+    (
+        "Married, 2024, with church tax",
+        TaxConfig(year=2024, is_married=True, church_tax=0.09),
+    ),
+    (
+        "Single with children, 2025",
+        TaxConfig(year=2025, has_children=True, church_tax=0.0),
+    ),
 ]
 
 salary = 70000

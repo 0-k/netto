@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Code Quality Tools**: Migrated from Black, isort, and Flake8 to Ruff
   - Single, faster tool for formatting and linting
   - Configuration in `pyproject.toml`
+  - Line length set to 88 (Black-compatible, industry standard)
   - Updated CI workflow to use Ruff
   - Updated development dependencies in `requirements-dev.txt`
   - Applied ruff formatting and linting fixes across entire codebase

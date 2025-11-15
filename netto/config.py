@@ -48,6 +48,8 @@ class TaxConfig:
         if not isinstance(self.is_married, bool):
             raise TypeError(f"is_married must be bool, got {type(self.is_married)}")
         if self.extra_health_insurance < 0:
-            raise ValueError(f"extra_health_insurance must be non-negative, got {self.extra_health_insurance}")
+            raise ValueError(
+                f"extra_health_insurance must be non-negative, got {self.extra_health_insurance}"
+            )
         if self.church_tax < 0:
             raise ValueError(f"church_tax must be non-negative, got {self.church_tax}")
