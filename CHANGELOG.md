@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2025-11-15
 
 ### Added
+- **TaxConfig dataclass**: New `TaxConfig` dataclass for explicit, type-safe configuration
+  - Replaces environment variable-based configuration
+  - Provides validation in `__post_init__`
+  - Supports year (2018-2025), has_children, is_married, extra_health_insurance, church_tax
 - **Data validation with Pydantic**: All tax and social security data now validated using Pydantic models
 - **ReadTheDocs configuration**: Added `.readthedocs.yml` for proper documentation building
 - **MANIFEST.in**: Ensures data files are included in package distribution
@@ -25,10 +29,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Validation functions for all data types
   - Module-level variables for easy import
 - **Dependencies**: Added `pydantic>=2.0` for data validation
+- **Type hints**: Added throughout the codebase for better IDE support
+- **Explicit public API**: Defined `__all__` in `__init__.py`
 
 ### Changed
+- **BREAKING**: Configuration system completely refactored:
+  - Environment variable support removed (`NETTO_YEAR`, etc. no longer work)
+  - All functions now accept optional `config: TaxConfig` parameter
+  - Defaults to `TaxConfig()` with sensible defaults (year=2022, single, no church tax)
+  - No more global state or hidden configuration
 - **BREAKING**: Refactored data storage from hardcoded Python dictionaries to validated JSON files
 - **BREAKING**: Removed `netto.const` module - import from `netto.data_loader` instead
+- **BREAKING**: Python 3.10+ required (was 3.8+)
 - **Version**: Updated from 0.1.x to 0.2.0
 - **Copyright years**: Updated to 2025 in LICENSE, README.md, and documentation
 - **Documentation version**: Updated Sphinx docs to version 0.2.0
@@ -38,6 +50,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Documentation dependencies**: Updated `docs/requirements.txt` with missing packages
 
 ### Removed
+- **BREAKING**: Environment variable configuration support (no more `NETTO_YEAR`, `NETTO_MARRIED`, etc.)
+- **BREAKING**: `load_config_from_env()` function removed
+- **BREAKING**: `get_default_config()` function removed
+- **BREAKING**: Global configuration state removed
 - **BREAKING**: `netto/const.py` module (replaced by `netto/data_loader.py`)
 - **TODO list**: Removed from README.md (moved to CLAUDE.md for internal tracking)
 
@@ -57,7 +73,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Migration Guide for 0.2.0
 
-If you were importing from `netto.const`:
+**1. Configuration Changes:**
+
+```python
+# OLD (0.1.x) - Environment variables
+import os
+os.environ['NETTO_YEAR'] = '2024'
+os.environ['NETTO_MARRIED'] = '1'
+from netto import calc_netto
+calc_netto(50000)  # Used env vars
+
+# NEW (0.2.0) - Explicit TaxConfig
+from netto import calc_netto, TaxConfig
+
+# Use defaults
+calc_netto(50000)  # year=2022, single, no church tax
+
+# Or explicit config
+config = TaxConfig(year=2024, is_married=True)
+calc_netto(50000, config=config)
+```
+
+**2. Internal imports (if you were using them):**
 
 ```python
 # OLD (0.1.x) - No longer works
@@ -67,9 +104,10 @@ from netto.const import __tax_curve, __social_security_curve
 from netto.data_loader import tax_curve, social_security_curve
 ```
 
-Public API (`calc_netto`, `calc_inverse_netto`, `TaxConfig`) remains unchanged.
+**3. Python version requirement:**
+- Minimum Python version is now 3.10 (was 3.8)
 
-## [0.1.0] - 2023-XX-XX
+## [0.1.0] - 2023-05-19
 
 ### Added
 - Initial release
