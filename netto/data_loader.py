@@ -304,16 +304,7 @@ def load_all_pension_factors() -> Dict[int, float]:
 
 
 # Load all data at module import time and expose as module-level variables
-# These match the old const.py variable names for backward compatibility
 tax_curve = load_all_tax_curves()
 social_security_curve = load_all_social_security()
 soli_curve = load_all_soli()
 correction_factor_pensions = load_all_pension_factors()
-
-
-# Expose private names for backward compatibility with existing code
-# that imports from const.py with leading underscores
-__tax_curve = tax_curve
-__social_security_curve = social_security_curve
-__soli_curve = soli_curve
-__correction_factor_pensions = correction_factor_pensions
