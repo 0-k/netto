@@ -280,9 +280,17 @@ pip install -e .
 # Install with dev dependencies
 pip install -r requirements-dev.txt
 
+# Set up pre-commit hooks (recommended)
+pre-commit install
+
+# Run pre-commit on all files (optional, to test)
+pre-commit run --all-files
+
 # Run examples
 python examples/examples.py
 ```
+
+**Pre-commit hooks** automatically run ruff linting and formatting before each commit, preventing CI failures. This is highly recommended for all contributors.
 
 ### Updating Tax Data
 
@@ -361,6 +369,10 @@ See `RELEASE.md` for detailed instructions.
 ### Git Workflow
 - **Main branch**: `master` (protected)
 - **Feature branches**: `claude/feature-name-SESSION_ID`
+- **Pre-commit hooks**: HIGHLY RECOMMENDED - install with `pre-commit install`
+  - Automatically runs ruff linting and formatting before each commit
+  - Prevents CI failures by catching issues locally
+  - Ensures consistent code quality across all commits
 - **Commit messages**: Conventional commits format
   - `feat:` for new features
   - `fix:` for bug fixes
@@ -368,6 +380,7 @@ See `RELEASE.md` for detailed instructions.
   - `refactor:` for refactoring
   - `test:` for tests
   - `chore:` for maintenance
+  - `style:` for code formatting/style changes
 
 ### CI/CD
 - **Build Workflow** (`workflow.yml`): Runs on every push

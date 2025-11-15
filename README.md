@@ -131,7 +131,12 @@ cd netto
 # Install in development mode with dev dependencies
 pip install -e .
 pip install -r requirements-dev.txt
+
+# Set up pre-commit hooks (recommended)
+pre-commit install
 ```
+
+Pre-commit hooks automatically run ruff linting and formatting before each commit, preventing CI failures.
 
 ### Running Tests
 

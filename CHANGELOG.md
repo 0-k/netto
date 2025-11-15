@@ -9,12 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0a3] - 2025-11-15
 
+### Added
+- **Pre-commit hooks**: Added `.pre-commit-config.yaml` for automatic code quality checks
+  - Runs ruff linting with auto-fix before each commit
+  - Runs ruff formatting before each commit
+  - Prevents CI failures by catching issues locally
+  - Added `pre-commit` to development dependencies
+
 ### Changed
 - **Code Quality Tools**: Migrated from Black, isort, and Flake8 to Ruff
   - Single, faster tool for formatting and linting
   - Configuration in `pyproject.toml`
   - Updated CI workflow to use Ruff
   - Updated development dependencies in `requirements-dev.txt`
+  - Applied ruff formatting and linting fixes across entire codebase
 - **README.md**: Completely redesigned for better usability
   - Added comprehensive feature list with emojis
   - Added installation instructions

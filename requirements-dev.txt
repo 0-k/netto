@@ -1,6 +1,7 @@
 ruff
 pytest
 pytest-cov
+pre-commit
 sphinx
 myst-parser
 build
