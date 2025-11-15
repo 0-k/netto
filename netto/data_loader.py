@@ -2,13 +2,19 @@
 Data loader for tax and social security data.
 
 This module loads tax data from JSON files and provides validation
-using Pydantic models. It replaces the hardcoded data dictionaries
-from const.py with a more maintainable file-based approach.
+using Pydantic models. All data is organized in individual yearly files
+for better maintainability and auditability.
+
+The loaded data is exposed as module-level variables for easy import:
+- tax_curve: Tax brackets by year
+- social_security_curve: Social security rates by year
+- soli_curve: Solidarity tax parameters by year
+- correction_factor_pensions: Pension deduction factors by year
 """
 
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -69,9 +75,17 @@ class SocialSecurity(BaseModel):
 class SoliCurve(BaseModel):
     """Solidarity tax configuration for a single year."""
 
+    year: int = Field(ge=2018, le=2030, description="Tax year")
     start_taxable_income: float = Field(gt=0, description="Income threshold where soli starts")
     start_fraction: float = Field(ge=0, le=1, description="Starting fraction for progressive phase-in")
     end_rate: float = Field(ge=0, le=1, description="Maximum soli rate")
+
+
+class PensionFactor(BaseModel):
+    """Pension correction factor for a single year."""
+
+    year: int = Field(ge=2018, le=2030, description="Tax year")
+    factor: float = Field(ge=0, le=1, description="Pension deduction factor")
 
 
 def load_tax_curve(year: int) -> Dict[int, dict]:
@@ -145,73 +159,72 @@ def load_social_security(year: int) -> dict:
     return social_security.model_dump(exclude={"year"})
 
 
-def load_soli() -> Dict[int, dict]:
+def load_soli(year: int) -> dict:
     """
-    Load all solidarity tax data.
+    Load solidarity tax data for a specific year.
+
+    Parameters
+    ----------
+    year : int
+        Tax year to load
 
     Returns
     -------
     dict
-        Soli data for all years
+        Soli data
 
     Examples
     --------
-    >>> soli = load_soli()
-    >>> soli[2022]['end_rate']
+    >>> soli = load_soli(2022)
+    >>> soli['end_rate']
     0.055
     """
-    file_path = DATA_DIR / "soli.json"
+    file_path = DATA_DIR / "soli" / f"{year}.json"
 
     if not file_path.exists():
-        raise FileNotFoundError("Soli data not found")
+        raise FileNotFoundError(f"Soli data not found for year {year}")
 
     with open(file_path) as f:
         data = json.load(f)
 
-    # Validate each year's data
-    validated_data = {}
-    for year_str, year_data in data.items():
-        year = int(year_str)
-        soli_curve = SoliCurve(**year_data)
-        validated_data[year] = soli_curve.model_dump()
+    # Validate with pydantic
+    soli_curve = SoliCurve(**data)
 
-    return validated_data
+    return soli_curve.model_dump(exclude={"year"})
 
 
-def load_pension_correction_factors() -> Dict[int, float]:
+def load_pension_factor(year: int) -> float:
     """
-    Load pension correction factors.
+    Load pension correction factor for a specific year.
+
+    Parameters
+    ----------
+    year : int
+        Tax year to load
 
     Returns
     -------
-    dict
-        Pension correction factors for all years
+    float
+        Pension correction factor
 
     Examples
     --------
-    >>> factors = load_pension_correction_factors()
-    >>> factors[2022]
+    >>> factor = load_pension_factor(2022)
+    >>> factor
     0.88
     """
-    file_path = DATA_DIR / "pension_correction_factors.json"
+    file_path = DATA_DIR / "pension_factors" / f"{year}.json"
 
     if not file_path.exists():
-        raise FileNotFoundError("Pension correction factors not found")
+        raise FileNotFoundError(f"Pension factor not found for year {year}")
 
     with open(file_path) as f:
         data = json.load(f)
 
-    # Convert string keys to integers and validate values
-    validated_data = {}
-    for year_str, value in data.items():
-        year = int(year_str)
-        if not isinstance(value, (int, float)):
-            raise ValueError(f"Invalid pension correction factor for {year}: {value}")
-        if not (0 <= value <= 1):
-            raise ValueError(f"Pension correction factor must be between 0 and 1, got {value}")
-        validated_data[year] = float(value)
+    # Validate with pydantic
+    pension_factor = PensionFactor(**data)
 
-    return validated_data
+    return pension_factor.factor
 
 
 def load_all_tax_curves() -> Dict[int, Dict[int, dict]]:
@@ -252,3 +265,55 @@ def load_all_social_security() -> Dict[int, dict]:
     social_security[2026] = NotImplementedError
 
     return social_security
+
+
+def load_all_soli() -> Dict[int, dict]:
+    """
+    Load solidarity tax data for all available years.
+
+    Returns
+    -------
+    dict
+        Soli data for all years
+    """
+    soli_data = {}
+    for year in range(2018, 2026):  # 2018-2025
+        try:
+            soli_data[year] = load_soli(year)
+        except FileNotFoundError:
+            pass  # Skip missing years
+    return soli_data
+
+
+def load_all_pension_factors() -> Dict[int, float]:
+    """
+    Load pension correction factors for all available years.
+
+    Returns
+    -------
+    dict
+        Pension correction factors for all years
+    """
+    pension_factors = {}
+    for year in range(2018, 2026):  # 2018-2025
+        try:
+            pension_factors[year] = load_pension_factor(year)
+        except FileNotFoundError:
+            pass  # Skip missing years
+    return pension_factors
+
+
+# Load all data at module import time and expose as module-level variables
+# These match the old const.py variable names for backward compatibility
+tax_curve = load_all_tax_curves()
+social_security_curve = load_all_social_security()
+soli_curve = load_all_soli()
+correction_factor_pensions = load_all_pension_factors()
+
+
+# Expose private names for backward compatibility with existing code
+# that imports from const.py with leading underscores
+__tax_curve = tax_curve
+__social_security_curve = social_security_curve
+__soli_curve = soli_curve
+__correction_factor_pensions = correction_factor_pensions
