@@ -9,26 +9,21 @@ class TaxConfig:
     Parameters
     ----------
     year : int
-        Tax year for calculations (default: 2022)
+        Tax year (2018-2025, default: 2022)
     has_children : bool
-        Whether the taxpayer has children (affects nursing insurance, default: False)
+        Has children (affects nursing insurance)
     is_married : bool
-        Whether the taxpayer is married (doubles tax brackets, default: False)
+        Married status (doubles tax brackets)
     extra_health_insurance : float
-        Extra health insurance rate (default: 0.014)
+        Extra health insurance rate
     church_tax : float
-        Church tax rate (default: 0.09)
+        Church tax rate (set to 0.0 for none)
 
     Examples
     --------
-    # Default configuration
-    config = TaxConfig()
-
-    # Custom configuration for 2025
-    config = TaxConfig(year=2025, is_married=True, has_children=True)
-
-    # No church tax
-    config = TaxConfig(church_tax=0.0)
+    >>> TaxConfig()
+    >>> TaxConfig(year=2025, is_married=True, has_children=True)
+    >>> TaxConfig(church_tax=0.0)
     """
 
     year: int = 2022
@@ -48,6 +43,8 @@ class TaxConfig:
         if not isinstance(self.is_married, bool):
             raise TypeError(f"is_married must be bool, got {type(self.is_married)}")
         if self.extra_health_insurance < 0:
-            raise ValueError(f"extra_health_insurance must be non-negative, got {self.extra_health_insurance}")
+            raise ValueError(
+                f"extra_health_insurance must be non-negative, got {self.extra_health_insurance}"
+            )
         if self.church_tax < 0:
             raise ValueError(f"church_tax must be non-negative, got {self.church_tax}")

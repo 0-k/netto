@@ -14,57 +14,48 @@ The loaded data is exposed as module-level variables for easy import:
 
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-
-# Get the data directory path
 DATA_DIR = Path(__file__).parent.parent / "data"
 
 
 class TaxBracket(BaseModel):
-    """Tax bracket configuration for a single bracket."""
-
     step: float = Field(gt=0, description="Income threshold for this bracket")
     rate: float = Field(ge=0, le=1, description="Tax rate for this bracket")
-    const: Optional[List[float]] = Field(default=None, description="Polynomial coefficients")
+    const: list[float] | None = Field(
+        default=None, description="Polynomial coefficients"
+    )
 
     @field_validator("const")
     @classmethod
     def validate_const_length(cls, v, info):
-        """Validate that const array has correct length based on bracket."""
         if v is not None and len(v) == 0:
             raise ValueError("const array cannot be empty")
         return v
 
 
 class TaxCurve(BaseModel):
-    """Tax curve configuration for a single year."""
-
     year: int = Field(ge=2018, le=2030, description="Tax year")
-    brackets: Dict[str, TaxBracket] = Field(description="Tax brackets (0-3)")
+    brackets: dict[str, TaxBracket] = Field(description="Tax brackets (0-3)")
 
     @field_validator("brackets")
     @classmethod
     def validate_brackets(cls, v):
-        """Ensure we have exactly 4 brackets (0-3)."""
         if set(v.keys()) != {"0", "1", "2", "3"}:
             raise ValueError("Tax curve must have exactly 4 brackets (0-3)")
         return v
 
 
 class SocialSecurityEntry(BaseModel):
-    """Social security entry for pension, unemployment, health, or nursing."""
-
     limit: float = Field(gt=0, description="Income limit for this contribution")
     rate: float = Field(ge=0, le=1, description="Contribution rate")
-    extra: Optional[float] = Field(default=None, ge=0, le=1, description="Extra rate (nursing only)")
+    extra: float | None = Field(
+        default=None, ge=0, le=1, description="Extra rate (nursing only)"
+    )
 
 
 class SocialSecurity(BaseModel):
-    """Social security configuration for a single year."""
-
     year: int = Field(ge=2018, le=2030, description="Tax year")
     pension: SocialSecurityEntry
     unemployment: SocialSecurityEntry
@@ -73,22 +64,22 @@ class SocialSecurity(BaseModel):
 
 
 class SoliCurve(BaseModel):
-    """Solidarity tax configuration for a single year."""
-
     year: int = Field(ge=2018, le=2030, description="Tax year")
-    start_taxable_income: float = Field(gt=0, description="Income threshold where soli starts")
-    start_fraction: float = Field(ge=0, le=1, description="Starting fraction for progressive phase-in")
+    start_taxable_income: float = Field(
+        gt=0, description="Income threshold where soli starts"
+    )
+    start_fraction: float = Field(
+        ge=0, le=1, description="Starting fraction for progressive phase-in"
+    )
     end_rate: float = Field(ge=0, le=1, description="Maximum soli rate")
 
 
 class PensionFactor(BaseModel):
-    """Pension correction factor for a single year."""
-
     year: int = Field(ge=2018, le=2030, description="Tax year")
     factor: float = Field(ge=0, le=1, description="Pension deduction factor")
 
 
-def load_tax_curve(year: int) -> Dict[int, dict]:
+def load_tax_curve(year: int) -> dict[int, dict]:
     """
     Load tax curve for a specific year.
 
@@ -116,7 +107,6 @@ def load_tax_curve(year: int) -> Dict[int, dict]:
     with open(file_path) as f:
         data = json.load(f)
 
-    # Validate with pydantic
     tax_curve = TaxCurve(**data)
 
     # Convert string keys to integers for backward compatibility
@@ -147,13 +137,14 @@ def load_social_security(year: int) -> dict:
 
     if not file_path.exists():
         if year >= 2026:
-            raise NotImplementedError(f"Social security data not yet available for {year}")
+            raise NotImplementedError(
+                f"Social security data not yet available for {year}"
+            )
         raise FileNotFoundError(f"Social security data not found for year {year}")
 
     with open(file_path) as f:
         data = json.load(f)
 
-    # Validate with pydantic
     social_security = SocialSecurity(**data)
 
     return social_security.model_dump(exclude={"year"})
@@ -187,7 +178,6 @@ def load_soli(year: int) -> dict:
     with open(file_path) as f:
         data = json.load(f)
 
-    # Validate with pydantic
     soli_curve = SoliCurve(**data)
 
     return soli_curve.model_dump(exclude={"year"})
@@ -221,13 +211,12 @@ def load_pension_factor(year: int) -> float:
     with open(file_path) as f:
         data = json.load(f)
 
-    # Validate with pydantic
     pension_factor = PensionFactor(**data)
 
     return pension_factor.factor
 
 
-def load_all_tax_curves() -> Dict[int, Dict[int, dict]]:
+def load_all_tax_curves() -> dict[int, dict[int, dict]]:
     """
     Load tax curves for all available years.
 
@@ -241,11 +230,11 @@ def load_all_tax_curves() -> Dict[int, Dict[int, dict]]:
         try:
             tax_curves[year] = load_tax_curve(year)
         except FileNotFoundError:
-            pass  # Skip missing years
+            pass
     return tax_curves
 
 
-def load_all_social_security() -> Dict[int, dict]:
+def load_all_social_security() -> dict[int, dict]:
     """
     Load social security data for all available years.
 
@@ -259,7 +248,7 @@ def load_all_social_security() -> Dict[int, dict]:
         try:
             social_security[year] = load_social_security(year)
         except (FileNotFoundError, NotImplementedError):
-            pass  # Skip missing years
+            pass
 
     # Add NotImplementedError for 2026+ to maintain backward compatibility
     social_security[2026] = NotImplementedError
@@ -267,7 +256,7 @@ def load_all_social_security() -> Dict[int, dict]:
     return social_security
 
 
-def load_all_soli() -> Dict[int, dict]:
+def load_all_soli() -> dict[int, dict]:
     """
     Load solidarity tax data for all available years.
 
@@ -281,11 +270,11 @@ def load_all_soli() -> Dict[int, dict]:
         try:
             soli_data[year] = load_soli(year)
         except FileNotFoundError:
-            pass  # Skip missing years
+            pass
     return soli_data
 
 
-def load_all_pension_factors() -> Dict[int, float]:
+def load_all_pension_factors() -> dict[int, float]:
     """
     Load pension correction factors for all available years.
 
@@ -299,7 +288,7 @@ def load_all_pension_factors() -> Dict[int, float]:
         try:
             pension_factors[year] = load_pension_factor(year)
         except FileNotFoundError:
-            pass  # Skip missing years
+            pass
     return pension_factors
 
 

@@ -1,62 +1,64 @@
-import pytest
 from io import StringIO
 from unittest.mock import patch
 
-from netto.config import TaxConfig
+import pytest
+
 import netto.main as main
+from netto.config import TaxConfig
 
 
 @pytest.fixture
 def default_config():
     """Fixture providing default config for tests"""
-    return TaxConfig(
-        extra_health_insurance=0.014,
-        church_tax=0.09,
-        has_children=False
-    )
+    return TaxConfig(extra_health_insurance=0.014, church_tax=0.09, has_children=False)
 
 
 @pytest.fixture
 def alternate_config():
     """Fixture providing alternate config for tests"""
-    return TaxConfig(
-        extra_health_insurance=0.015,
-        church_tax=0.0,
-        has_children=True
-    )
+    return TaxConfig(extra_health_insurance=0.015, church_tax=0.0, has_children=True)
 
 
-@pytest.mark.parametrize("salary,expected", [
-    (0, 0),
-    (30000, 20554.38),
-    (60000, 35796.68),
-    (90000, 49956.92),
-    (120000, 64965.08),
-])
+@pytest.mark.parametrize(
+    "salary,expected",
+    [
+        (0, 0),
+        (30000, 20554.38),
+        (60000, 35796.68),
+        (90000, 49956.92),
+        (120000, 64965.08),
+    ],
+)
 def test_calc_netto_with_default_config(salary, expected, default_config):
     """Test calc_netto with various salaries using default config"""
     result = main.calc_netto(salary, config=default_config)
     assert abs(result - expected) < 1
 
 
-@pytest.mark.parametrize("salary,expected", [
-    (30000, 20894.58),
-    (60000, 36909.71),
-    (90000, 52091.39),
-    (120000, 68238.23),
-])
+@pytest.mark.parametrize(
+    "salary,expected",
+    [
+        (30000, 20894.58),
+        (60000, 36909.71),
+        (90000, 52091.39),
+        (120000, 68238.23),
+    ],
+)
 def test_calc_netto_with_alternate_config(salary, expected, alternate_config):
     """Test calc_netto with alternate config (no church tax, with children)"""
     result = main.calc_netto(salary, config=alternate_config)
     assert abs(result - expected) < 1
 
 
-@pytest.mark.parametrize("desired_netto,expected_gross", [
-    (20894.58, 30000),
-    (36909.71, 60000),
-    (52091.39, 90000),
-    (68238.23, 120000),
-])
+@pytest.mark.parametrize(
+    "desired_netto,expected_gross",
+    [
+        (20894.58, 30000),
+        (36909.71, 60000),
+        (52091.39, 90000),
+        (68238.23, 120000),
+    ],
+)
 def test_calc_inverse_netto(desired_netto, expected_gross, alternate_config):
     """Test inverse netto calculation"""
     result = main.calc_inverse_netto(desired_netto, config=alternate_config)
@@ -99,7 +101,7 @@ def test_calc_inverse_netto_with_default_none_config():
     # Use a value that we know works well with Newton's method
     result = main.calc_inverse_netto(30000)
     # Should use default TaxConfig
-    assert isinstance(result, (int, float))
+    assert isinstance(result, int | float)
     assert result > 0
     # Verify the result makes sense (gross should be higher than net)
     assert result > 30000

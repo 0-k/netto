@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0a3] - 2025-11-15
+
+### Added
+- **Pre-commit hooks**: Added `.pre-commit-config.yaml` for automatic code quality checks
+  - Runs ruff linting with auto-fix before each commit
+  - Runs ruff formatting before each commit
+  - Prevents CI failures by catching issues locally
+  - Added `pre-commit` to development dependencies
+
+### Changed
+- **Code Quality Tools**: Migrated from Black, isort, and Flake8 to Ruff
+  - Single, faster tool for formatting and linting
+  - Configuration in `pyproject.toml`
+  - Line length set to 88 (Black-compatible, industry standard)
+  - Updated CI workflow to use Ruff
+  - Updated development dependencies in `requirements-dev.txt`
+  - Applied ruff formatting and linting fixes across entire codebase
+- **README.md**: Completely redesigned for better usability
+  - Added comprehensive feature list with emojis
+  - Added installation instructions
+  - Added quick start examples (basic, custom config, with deductibles)
+  - Added configuration reference table
+  - Added development setup instructions
+  - Added code quality commands using Ruff
+  - Updated badge from "Code style: black" to Ruff badge
+- **CLAUDE.md**: Updated project documentation
+  - Updated project structure to reflect `data/` directory instead of `const.py`
+  - Updated Code Style section to mention Ruff instead of Black/Flake8
+  - Updated Testing section to reflect pytest migration (completed)
+  - Updated Linting and Formatting section with Ruff commands
+  - Updated Updating Tax Data section to reflect new JSON-based workflow
+  - Updated CI/CD section to mention Ruff
+  - Moved completed tasks to "Completed Tasks" section
+  - Updated Tax Year Support Matrix (2023-2025 now fully supported)
+  - Updated last modified date to 2025-11-15 and version to 1.1
+
+### Removed
+- **Development Dependencies**: Removed Black, isort, and Twine from `requirements-dev.txt`
+  - Replaced with Ruff for formatting and linting
+  - Twine removed as it's not needed for modern PyPI publishing workflow
+
 ## [0.2.0] - 2025-11-15
 
 ### Added

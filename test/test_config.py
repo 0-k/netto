@@ -20,7 +20,7 @@ def test_taxconfig_custom_values():
         has_children=True,
         is_married=True,
         extra_health_insurance=0.02,
-        church_tax=0.08
+        church_tax=0.08,
     )
     assert config.year == 2025
     assert config.has_children is True

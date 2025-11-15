@@ -6,7 +6,9 @@ from netto.config import TaxConfig
 from netto.data_loader import tax_curve as TAX_CURVE_DATA
 
 
-def get_marginal_tax_rate(taxable_income: float, config: TaxConfig | None = None) -> float:
+def get_marginal_tax_rate(
+    taxable_income: float, config: TaxConfig | None = None
+) -> float:
     """
     Calculate the marginal tax rate for a given taxable income.
 
@@ -70,14 +72,11 @@ def get_marginal_tax_rate(taxable_income: float, config: TaxConfig | None = None
 
 
 def __calc_gradient(x_i: float, x_j: float, y_i: float, y_j: float, x: float) -> float:
-    # Calculate the gradient between the two points (x_i, y_i) and (x_j, y_j)
     return (1 - (x_j - x) / (x_j - x_i)) * (y_j - y_i) + y_i
 
 
 def calc_taxable_income(
-    salary: float,
-    deductible_social_security: float,
-    deductibles_other: float = 0
+    salary: float, deductible_social_security: float, deductibles_other: float = 0
 ) -> float:
     """
     Calculate the taxable income for a given salary and deductibles.
@@ -161,30 +160,32 @@ def calc_income_tax(taxable_income: float, config: TaxConfig | None = None) -> f
         )
 
 
-def calc_income_tax_by_integration(taxable_income: float, config: TaxConfig | None = None) -> float:
+def calc_income_tax_by_integration(
+    taxable_income: float, config: TaxConfig | None = None
+) -> float:
     """
-    Calculate the income tax for a given taxable income by means of integration.
-    Always available, even when exact integration curve in const.py is not defined.
+    Calculate income tax by numerical integration of marginal tax rates.
 
     Parameters
     ----------
-    taxable_income: float or int
-        The taxable income for which the income tax should be calculated.
+    taxable_income: float
+        Taxable income
     config : TaxConfig, optional
-        Tax configuration (uses default if not provided)
+        Tax configuration (uses defaults if not provided)
 
     Returns
     -------
-    income_tax: float
-        The income tax for the given taxable income.
+    float
+        Income tax amount
 
     Examples
     --------
-    # Calculate income tax for a taxable income of 10000
-    calc_income_tax_by_integration(10000)
+    >>> calc_income_tax_by_integration(10000)
     """
     if config is None:
         config = TaxConfig()
 
-    income_tax, _ = quad(lambda ti: get_marginal_tax_rate(ti, config), 0, taxable_income)
+    income_tax, _ = quad(
+        lambda ti: get_marginal_tax_rate(ti, config), 0, taxable_income
+    )
     return income_tax

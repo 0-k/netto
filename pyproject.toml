@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "netto"
-version = "0.2.0a2"
+version = "0.2.0a3"
 authors = [
   { name="Martin Klein", email="hi@martinklein.co" },
 ]
@@ -31,3 +31,25 @@ packages = ["netto"]
 
 [tool.setuptools.package-data]
 netto = ["../data/**/*.json", "../data/**/*.md"]
+
+[tool.ruff]
+line-length = 88  # Black-compatible default, widely adopted standard
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

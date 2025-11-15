@@ -10,42 +10,34 @@ def calc_netto(
     salary: float,
     deductibles: float = 0,
     verbose: bool = False,
-    config: TaxConfig | None = None
+    config: TaxConfig | None = None,
 ) -> float:
     """
-    This function calculates the net income for a given year by subtracting the income tax, soli, church tax, and social security amounts from the salary.
+    Calculate net income from gross salary.
 
     Parameters
     ----------
-    salary: float or int
-        The yearly salary.
-    deductibles: float or int, optional
-        Deductibles that reduce the taxable income. Default is 0.
+    salary: float
+        Yearly gross salary
+    deductibles: float, optional
+        Additional deductibles that reduce taxable income
     verbose: bool, optional
-        Determines whether additional information about the calculation should be printed. Default is False.
+        Print detailed calculation breakdown
     config : TaxConfig, optional
-        Tax configuration. If not provided, uses default TaxConfig().
+        Tax configuration (uses defaults if not provided)
 
     Returns
     -------
-    net_income: float
-        The net income for a given year.
+    float
+        Net income
 
     Examples
     --------
-    # Calculate net income for a salary of 50,000 with no additional deductibles
-    calc_netto(50000)
-
-    # Calculate net income for a salary of 50,000 with additional deductibles of 10,000
-    calc_netto(50000, deductibles=10000)
-
-    # Calculate net income for a salary of 50,000 and print additional information
-    calc_netto(50000, verbose=True)
-
-    # Calculate net income with custom configuration
-    from netto.config import TaxConfig
-    config = TaxConfig(year=2025, is_married=True, has_children=True)
-    calc_netto(50000, config=config)
+    >>> calc_netto(50000)
+    >>> calc_netto(50000, deductibles=10000)
+    >>> calc_netto(50000, verbose=True)
+    >>> config = TaxConfig(year=2025, is_married=True)
+    >>> calc_netto(50000, config=config)
     """
     if config is None:
         config = TaxConfig()
@@ -79,46 +71,38 @@ def calc_netto(
 
 
 def calc_inverse_netto(
-    desired_netto: float,
-    deductibles: float = 0,
-    config: TaxConfig | None = None
+    desired_netto: float, deductibles: float = 0, config: TaxConfig | None = None
 ) -> float:
     """
-    Calculate gross salary to reach desired net income.
-
-    This function calculates the gross salary needed to reach a desired net income. It uses the `calc_netto()` function to calculate the net income for a given salary, and then uses the `newton()` function to find the salary that produces the desired net income.
+    Calculate required gross salary to reach desired net income.
 
     Parameters
     ----------
-    desired_netto: float or int
-        The desired net income.
-    deductibles: float or int, optional
-        Deductibles that reduce the taxable income. Default is 0.
+    desired_netto: float
+        Desired net income
+    deductibles: float, optional
+        Additional deductibles that reduce taxable income
     config : TaxConfig, optional
-        Tax configuration. If not provided, uses default TaxConfig().
+        Tax configuration (uses defaults if not provided)
 
     Returns
     -------
-    gross_salary: float
-        The gross salary needed to reach the desired net income.
+    float
+        Required gross salary
 
     Examples
     --------
-    # Calculate gross salary needed to reach a net income of 50,000 with no additional deductibles
-    calc_inverse_netto(50000)
-
-    # Calculate gross salary needed to reach a net income of 50,000 with additional deductibles of 5,000
-    calc_inverse_netto(50000, deductibles=5000)
-
-    # Calculate gross salary with custom configuration
-    from netto.config import TaxConfig
-    config = TaxConfig(year=2025, is_married=True)
-    calc_inverse_netto(50000, config=config)
+    >>> calc_inverse_netto(50000)
+    >>> calc_inverse_netto(50000, deductibles=5000)
+    >>> config = TaxConfig(year=2025, is_married=True)
+    >>> calc_inverse_netto(50000, config=config)
     """
     if config is None:
         config = TaxConfig()
 
     def f(salary):
-        return calc_netto(salary, deductibles=deductibles, config=config) - desired_netto
+        return (
+            calc_netto(salary, deductibles=deductibles, config=config) - desired_netto
+        )
 
     return round(newton(f, x0=desired_netto), 0)
