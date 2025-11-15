@@ -2,24 +2,24 @@
   "year": 2024,
   "brackets": {
     "0": {
-      "step": 11605,
+      "step": 11784,
       "rate": 0.14,
       "const": null
     },
     "1": {
       "step": 17005,
       "rate": 0.2397,
-      "const": null
+      "const": [954.80, 1400]
     },
     "2": {
       "step": 66760,
       "rate": 0.42,
-      "const": null
+      "const": [181.19, 2397, 991.21]
     },
     "3": {
-      "step": 277826,
+      "step": 277825,
       "rate": 0.45,
-      "const": null
+      "const": [10636.31, 18971.06]
     }
   }
 }
