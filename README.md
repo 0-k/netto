@@ -94,12 +94,12 @@ from netto import calc_taxable_income, calc_deductible_social_security, get_marg
 salary = 50000
 
 # Calculate deductible social security contributions
-deductible_ss = calc_deductible_social_security(salary)
+deductible_social_security = calc_deductible_social_security(salary)
 
 # Calculate taxable income
 taxable_income = calc_taxable_income(
     salary=salary,
-    deductible_social_security=deductible_ss
+    deductible_social_security=deductible_social_security
 )
 
 # Get marginal tax rate for this income level

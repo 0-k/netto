@@ -226,7 +226,27 @@ The following tasks have been completed in v0.2.0:
 
 ### Future Enhancements (Post 0.2.0)
 
-From README TODO list:
+**v0.3.0 - API Improvements:**
+- [ ] **Overloaded parameters for helper functions** - Allow functions to accept either `salary` OR calculated values (e.g., `taxable_income`)
+  - Eliminates redundant parameter passing (currently need to pass `salary` multiple times)
+  - Example: `get_marginal_tax_rate()` could accept either `salary` or `taxable_income`
+  - Implementation approach:
+    ```python
+    def get_marginal_tax_rate(
+        salary: float | None = None,
+        taxable_income: float | None = None,
+        config: TaxConfig | None = None
+    ) -> float:
+        if salary is not None:
+            # Auto-calculate taxable_income from salary
+            deductible_ss = calc_deductible_social_security(salary, config)
+            taxable_income = calc_taxable_income(salary, deductible_ss)
+        return _calculate_rate(taxable_income, config)
+    ```
+  - Benefits: Cleaner API, less verbose for common use cases, still allows granular control
+  - Apply to: `get_marginal_tax_rate()`, `calc_taxable_income()`, and similar functions
+
+**Other enhancements:**
 - [ ] Calculate support for children (Kindergeld/Kinderfreibetrag)
 - [ ] Implement correct pension deductible for East Germany
 - [ ] Add support for self-employed individuals
