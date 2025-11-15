@@ -11,16 +11,16 @@
 
 ## Features
 
-- 💶 **Calculate net income** from gross salary with `calc_netto()`
-- 💵 **Calculate required gross salary** for desired net income with `calc_inverse_netto()`
-- 📅 **Support for tax years 2018-2025**
-- 👨‍👩‍👧‍👦 **Married couples support** (Ehegattensplitting - doubles tax brackets)
-- 👶 **Children support** (affects nursing care insurance extra rate)
-- ⛪ **Optional church tax** (8-9%, configurable)
-- 🏥 **Public health and pension insurance** calculations
-- 📊 **West-German pension deduction** (East German support planned)
-- ✅ **Type-safe configuration** with Pydantic validation
-- 📚 **Comprehensive documentation** on [ReadTheDocs](https://netto.readthedocs.io/)
+- **Calculate net income** from gross salary with `calc_netto()`
+- **Calculate required gross salary** for desired net income with `calc_inverse_netto()`
+- **Support for tax years 2018-2025**
+- **Married couples support** (Ehegattensplitting - doubles tax brackets)
+- **Children support** (affects nursing care insurance extra rate)
+- **Optional church tax** (8-9%, configurable)
+- **Public health and pension insurance** calculations
+- **West-German pension deduction** (East German support planned)
+- **Type-safe configuration** with Pydantic validation
+- **Comprehensive documentation** on [ReadTheDocs](https://netto.readthedocs.io/)
 
 ## Installation
 
@@ -100,9 +100,9 @@ The `TaxConfig` dataclass provides type-safe configuration:
 
 | Year | Status | Notes |
 |------|--------|-------|
-| 2018-2022 | ✅ Fully supported | Complete tax data |
-| 2023-2025 | ✅ Fully supported | Complete tax data |
-| 2026-2027 | 📋 Planned | To be added |
+| 2018-2022 | Fully supported | Complete tax data |
+| 2023-2025 | Fully supported | Complete tax data |
+| 2026-2027 | Planned | To be added |
 
 ## Documentation
 
