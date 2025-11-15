@@ -27,11 +27,17 @@ netto/
 │   ├── __init__.py     # Package initialization
 │   ├── main.py         # Main API (calc_netto, calc_inverse_netto)
 │   ├── config.py       # TaxConfig dataclass
-│   ├── const.py        # Tax curves and social security data (⚠️ needs refactoring)
+│   ├── data_loader.py  # Data loader with Pydantic validation
 │   ├── taxes_income.py # Income tax calculations
 │   ├── taxes_other.py  # Solidarity and church tax
 │   └── social_security.py  # Social security calculations
-├── test/               # Test suite (unittest)
+├── data/               # Tax data (JSON files with validation)
+│   ├── tax_curves/     # Income tax brackets by year
+│   ├── social_security/ # Social security rates by year
+│   ├── soli/           # Solidarity tax parameters
+│   ├── pension_factors/ # Pension correction factors
+│   └── README.md       # Data structure documentation
+├── test/               # Test suite (pytest)
 ├── docs/               # Sphinx documentation
 ├── examples/           # Usage examples
 └── .github/workflows/  # CI/CD pipelines
@@ -48,21 +54,21 @@ netto/
   - `church_tax`: Church tax rate (default: 0.09, set to 0.0 for none)
 - Includes validation in `__post_init__`
 
-#### 2. Tax Data (`const.py`)
-**⚠️ HIGH PRIORITY REFACTORING NEEDED**
+#### 2. Tax Data (`data_loader.py`)
+**✅ REFACTORED TO STRUCTURED DATA**
 
-Contains four main data structures:
-- `__tax_curve`: Progressive income tax brackets by year
-- `__social_security_curve`: Social security limits and rates
-- `__soli_curve`: Solidarity tax parameters
-- `__correction_factor_pensions`: Pension deduction factors
+Contains data loader with Pydantic validation for:
+- `tax_curve`: Progressive income tax brackets by year
+- `social_security_curve`: Social security limits and rates
+- `soli_curve`: Solidarity tax parameters
+- `pension_factors`: Pension deduction factors
 
-**Current Issues**:
-- Hardcoded Python dictionaries
-- Difficult to maintain and audit
-- No schema validation
-- 2023-2025 data has incomplete `const` values (set to None)
-- Cannot easily extend to new years
+**Benefits of Current Structure**:
+- JSON files in `data/` directory for easy editing
+- Pydantic schema validation ensures data integrity
+- Easy to audit changes via git diffs
+- Simple to extend to new years (just add new JSON files)
+- Clear separation between code and data
 
 #### 3. Main API (`main.py`)
 
@@ -104,14 +110,14 @@ Contains four main data structures:
 ## Development Guidelines
 
 ### Code Style
-- **Formatter**: Black (line length: 127)
-- **Linter**: Flake8
+- **Formatter & Linter**: Ruff (line length: 127)
+  - Replaces Black, isort, and Flake8 with a single fast tool
+  - Configuration in `pyproject.toml`
 - **Type Hints**: Use type hints for all public functions
 - **Docstrings**: NumPy-style docstrings with Parameters, Returns, Examples
 
 ### Testing
-**Current**: unittest framework
-**Recommended**: Migrate to pytest
+**Framework**: pytest (migrated from unittest)
 
 **Test Coverage**:
 - Target: >80% code coverage
@@ -129,45 +135,13 @@ Contains four main data structures:
 
 ## Release 0.2.0 - Preparation Tasks
 
-### Immediate Tasks
+### Remaining Tasks
 
-#### 1. Fix ReadTheDocs Build Action (High Priority)
-**Status**: ⚠️ Needs Investigation
-
-**Issue**: ReadTheDocs build may be failing or not configured
-
-**Investigation Steps**:
-1. Check if `.readthedocs.yml` exists (currently missing)
-2. Verify docs build locally: `cd docs && make html`
-3. Check Sphinx configuration in `docs/conf.py`
-4. Verify all dependencies in `docs/requirements.txt`
-
-**Recommended Action**:
-Create `.readthedocs.yml` in project root:
-```yaml
-version: 2
-
-build:
-  os: ubuntu-22.04
-  tools:
-    python: "3.12"
-
-sphinx:
-  configuration: docs/conf.py
-
-python:
-  install:
-    - requirements: docs/requirements.txt
-    - method: pip
-      path: .
-```
-
-#### 2. Add/Check Tax Codes for 2024-2027 (High Priority)
+#### 1. Add/Check Tax Codes for 2024-2027 (High Priority)
 **Status**: ⚠️ Incomplete Data
 
 **Current State**:
-- ✅ 2018-2022: Complete with all constants
-- ⚠️ 2023-2025: Steps and rates present, but `const` values are None
+- ✅ 2018-2025: Complete with all constants
 - ❌ 2026-2027: Not implemented
 
 **Required Data Sources**:
@@ -176,11 +150,11 @@ python:
 - [Social Security Rates](https://www.lohn-info.de/sozialversicherungsbeitraege2024.html)
 
 **Tasks**:
-1. Calculate and fill in missing `const` values for 2023-2025 tax curves
-2. Verify social security rates for 2024-2025
-3. Research and add preliminary data for 2026-2027 (if available)
-4. Update `config.py` validation to support new years
-5. Add tests for new years
+1. Research and add preliminary data for 2026-2027 (if available from official sources)
+2. Create JSON files in `data/` directory for 2026-2027
+3. Update `config.py` validation to support new years
+4. Add tests for new years
+5. Verify calculations against official BMF calculators
 
 **Tax Curve Constants Explanation**:
 The `const` values are polynomial coefficients used in German tax calculation:
@@ -189,66 +163,7 @@ The `const` values are polynomial coefficients used in German tax calculation:
 - Bracket 2: [a, b, c] for first progression zone
 - Bracket 3: [a, b] for top tax rate
 
-#### 3. Refactor const.py to Structured Data (Medium Priority)
-**Status**: 📋 Planned
-
-**Problem**:
-- Hard to update/maintain
-- No schema validation
-- Difficult to audit changes
-- Can't easily extend to new years
-- Python dictionaries are not ideal for data storage
-
-**Recommendation**:
-Move to structured data files with validation
-
-**Proposed Structure**:
-```
-data/
-├── tax_curves/
-│   ├── 2018.json
-│   ├── 2019.json
-│   ├── ...
-│   └── 2025.json
-├── social_security/
-│   ├── 2018.json
-│   ├── ...
-│   └── 2025.json
-├── soli_curve.json
-└── pension_factors.json
-```
-
-**Implementation Plan**:
-1. Create JSON schema for validation (using jsonschema or pydantic)
-2. Create data migration script to convert `const.py` to JSON files
-3. Create data loader in `const.py` to read JSON files
-4. Add validation layer to ensure data integrity
-5. Create data update tooling (CLI or scripts)
-6. Update documentation for data maintenance
-7. Version control data separately with clear commit messages
-
-**Benefits**:
-- Easy to review changes in PRs (diff JSON files)
-- Can add schema validation
-- Non-developers can update tax data
-- Easier to automate data updates
-- Better separation of code and data
-
-**Example Schema**:
-```python
-from pydantic import BaseModel, Field
-
-class TaxBracket(BaseModel):
-    step: float = Field(gt=0)
-    rate: float = Field(ge=0, le=1)
-    const: list[float] | None = None
-
-class TaxCurve(BaseModel):
-    year: int = Field(ge=2018, le=2030)
-    brackets: dict[int, TaxBracket]
-```
-
-#### 4. Improve Error Handling (Medium Priority)
+#### 2. Improve Error Handling (Medium Priority)
 **Status**: 📋 Planned
 
 **Current Issues**:
@@ -299,48 +214,14 @@ def calc_netto(salary: float, ...) -> float:
 - Consider more specific exception types
 - Add helpful error messages with valid ranges
 
-#### 5. Migrate to Pytest (Low Priority)
-**Status**: 📋 Nice to Have
+### Completed Tasks
 
-**Current**: Using unittest
-**In dev-dependencies**: pytest is available
+The following tasks have been completed in v0.2.0:
 
-**Benefits of pytest**:
-- Simpler, more Pythonic test syntax
-- Better fixtures and parametrization
-- More informative failure messages
-- Active development and plugin ecosystem
-- Already used in CI workflow
-
-**Migration Example**:
-```python
-# Before (unittest)
-class TestMain(unittest.TestCase):
-    def test_for_valid_main(self):
-        self.assertAlmostEqual(
-            main.calc_netto(30000, config=self.default_config),
-            20554.38,
-            delta=1
-        )
-
-# After (pytest)
-@pytest.mark.parametrize("salary,expected", [
-    (30000, 20554.38),
-    (60000, 35796.68),
-    (90000, 49956.92),
-    (120000, 64965.08),
-])
-def test_calc_netto(salary, expected, default_config):
-    assert abs(main.calc_netto(salary, config=default_config) - expected) < 1
-```
-
-**Migration Steps**:
-1. Convert one test file as proof of concept
-2. Create pytest fixtures for common configs
-3. Use parametrize for data-driven tests
-4. Convert remaining test files
-5. Remove unittest imports
-6. Update documentation
+- ✅ **ReadTheDocs Configuration**: Added `.readthedocs.yml` for proper documentation building
+- ✅ **Refactor const.py to Structured Data**: Migrated from hardcoded Python dictionaries to validated JSON files
+- ✅ **Migrate to Pytest**: Converted test suite from unittest to pytest
+- ✅ **Switch to Ruff**: Replaced Black, isort, and Flake8 with Ruff for faster linting and formatting
 
 ### Future Enhancements (Post 0.2.0)
 
@@ -380,11 +261,14 @@ make html
 ### Linting and Formatting
 
 ```bash
-# Format with black
-black netto/ test/ examples/
+# Format with ruff
+ruff format .
 
-# Lint with flake8
-flake8 netto/ test/ --max-line-length=127
+# Lint with ruff
+ruff check .
+
+# Fix linting issues automatically
+ruff check --fix .
 ```
 
 ### Local Development
@@ -402,19 +286,21 @@ python examples/examples.py
 
 ### Updating Tax Data
 
-**Current Process** (needs improvement):
-1. Edit `netto/const.py` directly
-2. Find relevant data from official sources
-3. Update dictionaries with new year data
-4. Update validation in `config.py`
-5. Add tests for new year
-6. Verify calculations against official calculators
+**Current Process**:
+1. Create new JSON file in `data/tax_curves/YEAR.json` (copy and modify from previous year)
+2. Create new JSON file in `data/social_security/YEAR.json`
+3. Create new JSON file in `data/soli/YEAR.json`
+4. Create new JSON file in `data/pension_factors/YEAR.json`
+5. Find relevant data from official sources (BMF, lohn-info.de)
+6. Update JSON files with new year data
+7. Update validation in `config.py` to support the new year
+8. Add tests for new year
+9. Verify calculations against official BMF calculators
 
-**Future Process** (after refactoring):
-1. Create new JSON file in `data/tax_curves/YEAR.json`
-2. Run validation script
-3. Auto-update supported years list
-4. Run tests against official calculators
+**Data Validation**:
+- All data is validated using Pydantic models in `data_loader.py`
+- Invalid data will raise validation errors on import
+- See `data/README.md` for detailed data structure documentation
 
 ### Release Process
 
@@ -485,8 +371,9 @@ See `RELEASE.md` for detailed instructions.
 
 ### CI/CD
 - **Build Workflow** (`workflow.yml`): Runs on every push
-  - Lint with flake8
-  - Test on Python 3.10-3.14
+  - Lint with ruff (`ruff check .`)
+  - Format check with ruff (`ruff format --check .`)
+  - Test on Python 3.10-3.14 with pytest
   - Upload coverage to Codecov
 - **PyPI Publishing**:
   - TestPyPI: Manual trigger via GitHub Actions
@@ -553,13 +440,13 @@ net = calc_netto(50000, deductibles=2000, verbose=True, config=config)
 | 2020 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
 | 2021 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
 | 2022 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
-| 2023 | ⚠️ Partial (const=None) | ✅ Complete | ✅ Complete | ⚠️ Needs completion |
-| 2024 | ⚠️ Partial (const=None) | ✅ Complete | ✅ Complete | ⚠️ Needs completion |
-| 2025 | ⚠️ Partial (const=None) | ✅ Complete | ✅ Complete | ⚠️ Needs completion |
-| 2026 | ❌ Not started | ❌ NotImplementedError | ❌ Missing | ❌ Planned |
-| 2027 | ❌ Not started | ❌ Missing | ❌ Missing | ❌ Planned |
+| 2023 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
+| 2024 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
+| 2025 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
+| 2026 | ❌ Not started | ❌ Not started | ❌ Not started | ❌ Planned |
+| 2027 | ❌ Not started | ❌ Not started | ❌ Not started | ❌ Planned |
 
 ---
 
-**Last Updated**: 2024-11-14 (for release 0.2.0 preparation)
-**Document Version**: 1.0
+**Last Updated**: 2025-11-15 (for release 0.2.0a3)
+**Document Version**: 1.1

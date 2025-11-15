@@ -1,10 +1,8 @@
-black
-isort
+ruff
 pytest
 pytest-cov
 sphinx
 myst-parser
 build
-twine
 sphinx-autoapi
 sphinx_rtd_theme
