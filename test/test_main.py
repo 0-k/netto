@@ -101,7 +101,7 @@ def test_calc_inverse_netto_with_default_none_config():
     # Use a value that we know works well with Newton's method
     result = main.calc_inverse_netto(30000)
     # Should use default TaxConfig
-    assert isinstance(result, (int, float))
+    assert isinstance(result, int | float)
     assert result > 0
     # Verify the result makes sense (gross should be higher than net)
     assert result > 30000

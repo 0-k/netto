@@ -201,5 +201,5 @@ def test_calc_social_security_with_default_none_config():
 def test_calc_deductible_social_security_with_default_none_config():
     """Test that calc_deductible_social_security works when config=None"""
     result = social_security.calc_deductible_social_security(50000)
-    assert isinstance(result, (int, float))
+    assert isinstance(result, int | float)
     assert result >= 0
