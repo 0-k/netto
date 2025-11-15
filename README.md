@@ -145,13 +145,13 @@ Pre-commit hooks automatically run ruff linting and formatting before each commi
 pip install -e .
 
 # Run all tests with coverage
-pytest --cov=netto test/
+python -m pytest --cov=netto test/
 
 # Run specific test file
-pytest test/test_main.py -v
+python -m pytest test/test_main.py -v
 ```
 
-**Note**: The `pip install -e .` step is required for pytest to find the `netto` module.
+**Note**: Use `python -m pytest` (not just `pytest`) to ensure tests run in the correct Python environment where netto is installed.
 
 ### Code Quality
 
