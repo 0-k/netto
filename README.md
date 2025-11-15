@@ -84,6 +84,29 @@ net = calc_netto(
 )
 ```
 
+### Advanced: Using Helper Functions
+
+For more granular control, you can use the intermediate calculation functions:
+
+```python
+from netto import calc_taxable_income, calc_deductible_social_security, get_marginal_tax_rate
+
+salary = 50000
+
+# Calculate deductible social security contributions
+deductible_ss = calc_deductible_social_security(salary)
+
+# Calculate taxable income
+taxable_income = calc_taxable_income(
+    salary=salary,
+    deductible_social_security=deductible_ss
+)
+
+# Get marginal tax rate for this income level
+marginal_rate = get_marginal_tax_rate(taxable_income)
+print(f"Marginal tax rate: {marginal_rate:.1%}")
+```
+
 ## Configuration
 
 The `TaxConfig` dataclass provides type-safe configuration:
