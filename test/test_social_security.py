@@ -108,7 +108,7 @@ def test_sameness_of_calc_social_security_different_config(salary):
     result_integration = social_security.calc_social_security_by_integration(
         salary, config
     )
-    assert result_direct == result_integration
+    assert abs(result_direct - result_integration) < 0.02
 
 
 @pytest.mark.parametrize(

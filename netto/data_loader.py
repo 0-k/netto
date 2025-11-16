@@ -129,8 +129,8 @@ def load_social_security(year: int) -> dict:
 
     Examples
     --------
-    >>> ss = load_social_security(2022)
-    >>> ss['pension']['limit']
+    >>> social_sec = load_social_security(2022)
+    >>> social_sec['pension']['limit']
     84600
     """
     file_path = DATA_DIR / "social_security" / f"{year}.json"

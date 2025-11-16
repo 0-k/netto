@@ -130,16 +130,16 @@ def test_social_security_entry_invalid_limit():
 
 def test_social_security_valid():
     """Test creating a valid SocialSecurity"""
-    ss = SocialSecurity(
+    social_sec = SocialSecurity(
         year=2022,
         pension=SocialSecurityEntry(limit=84600, rate=0.093),
         unemployment=SocialSecurityEntry(limit=84600, rate=0.012),
         health=SocialSecurityEntry(limit=58050, rate=0.073, extra=0.007),
         nursing=SocialSecurityEntry(limit=58050, rate=0.01525, extra=0.0035),
     )
-    assert ss.year == 2022
-    assert ss.pension.limit == 84600
-    assert ss.health.extra == 0.007
+    assert social_sec.year == 2022
+    assert social_sec.pension.limit == 84600
+    assert social_sec.health.extra == 0.007
 
 
 def test_soli_curve_valid():
@@ -190,12 +190,12 @@ def test_load_tax_curve_missing_year():
 @pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026])
 def test_load_social_security(year):
     """Test loading social security for available years"""
-    ss = load_social_security(year)
-    assert isinstance(ss, dict)
-    assert "pension" in ss
-    assert "unemployment" in ss
-    assert "health" in ss
-    assert "nursing" in ss
+    social_sec = load_social_security(year)
+    assert isinstance(social_sec, dict)
+    assert "pension" in social_sec
+    assert "unemployment" in social_sec
+    assert "health" in social_sec
+    assert "nursing" in social_sec
 
 
 def test_load_social_security_not_implemented():
@@ -256,12 +256,12 @@ def test_load_all_tax_curves():
 
 def test_load_all_social_security():
     """Test loading all social security data"""
-    ss_data = load_all_social_security()
-    assert isinstance(ss_data, dict)
-    assert len(ss_data) >= 9  # At least 2018-2026
+    social_security_data = load_all_social_security()
+    assert isinstance(social_security_data, dict)
+    assert len(social_security_data) >= 9  # At least 2018-2026
     # Check for 2027 NotImplementedError marker
-    assert 2027 in ss_data
-    assert ss_data[2027] is NotImplementedError
+    assert 2027 in social_security_data
+    assert social_security_data[2027] is NotImplementedError
 
 
 def test_load_all_soli():
