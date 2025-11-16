@@ -6,7 +6,7 @@
   },
   "unemployment": {
     "limit": 87600,
-    "rate": 0.012
+    "rate": 0.013
   },
   "health": {
     "limit": 59850,

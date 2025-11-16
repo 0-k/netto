@@ -6,10 +6,10 @@ from netto.config import TaxConfig
 def test_taxconfig_defaults():
     """Test that TaxConfig uses correct default values"""
     config = TaxConfig()
-    assert config.year == 2022
+    assert config.year == 2025
     assert config.has_children is False
     assert config.is_married is False
-    assert config.extra_health_insurance == 0.014
+    assert config.extra_health_insurance == 0.025
     assert config.church_tax == 0.09
 
 
@@ -34,7 +34,7 @@ def test_taxconfig_validation_year_range():
     with pytest.raises(ValueError):
         TaxConfig(year=2017)  # Too early
     with pytest.raises(ValueError):
-        TaxConfig(year=2026)  # Too late
+        TaxConfig(year=2027)  # Too late
 
 
 def test_taxconfig_validation_negative_rates():

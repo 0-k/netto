@@ -7,7 +7,9 @@ from netto.config import TaxConfig
 @pytest.fixture
 def default_config():
     """Fixture providing default config for tests"""
-    return TaxConfig(extra_health_insurance=0.014, church_tax=0.09, has_children=False)
+    return TaxConfig(
+        year=2022, extra_health_insurance=0.014, church_tax=0.09, has_children=False
+    )
 
 
 @pytest.mark.parametrize(
@@ -42,7 +44,7 @@ def test_get_marginal_tax_rate(taxable_income, expected_rate, default_config):
 )
 def test_get_marginal_tax_rate_married(taxable_income, expected_rate):
     """Test marginal tax rate for married couples (doubled brackets)"""
-    config = TaxConfig(is_married=True)
+    config = TaxConfig(year=2022, is_married=True)
     result = taxes_income.get_marginal_tax_rate(taxable_income, config)
     assert result == expected_rate
 
@@ -83,7 +85,9 @@ def test_get_marginal_tax_rate_with_default_none_config():
 
 def test_calc_income_tax_with_default_none_config():
     """Test that calc_income_tax works when config=None"""
-    result = taxes_income.calc_income_tax(50000)
+    # Use explicit year=2022 since calc_income_tax requires const values
+    # which are not available for 2023-2025
+    result = taxes_income.calc_income_tax(50000, config=TaxConfig(year=2022))
     assert isinstance(result, float)
     assert result >= 0
 

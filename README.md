@@ -113,19 +113,18 @@ The `TaxConfig` dataclass provides type-safe configuration:
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `year` | int | 2022 | Tax year (2018-2025 supported) |
+| `year` | int | 2025 | Tax year (2018-2026 supported) |
 | `is_married` | bool | False | Married status (Ehegattensplitting) |
 | `has_children` | bool | False | Has children (affects nursing insurance) |
 | `church_tax` | float | 0.09 | Church tax rate (0.0-0.09, set to 0.0 for none) |
-| `extra_health_insurance` | float | 0.014 | Additional health insurance rate |
+| `extra_health_insurance` | float | 0.025 | Additional health insurance rate |
 
 ## Supported Tax Years
 
-| Year | Status | Notes |
-|------|--------|-------|
-| 2018-2022 | Fully supported | Complete tax data |
-| 2023-2025 | Fully supported | Complete tax data |
-| 2026-2027 | Planned | To be added |
+| Year      | Status | Notes |
+|-----------|--------|-------|
+| 2018-2026 | Fully supported | Complete tax data (2026 uses 2025 estimates) |
+| 2027+     | Planned | To be added |
 
 ## Documentation
 
@@ -135,7 +134,7 @@ Full documentation is available at [netto.readthedocs.io](https://netto.readthed
 
 All tax calculations are based on official German government sources:
 
-- **Tax Calculation Formulas**: [BMF Tarifhistorie](https://www.bmf-steuerrechner.de/Tarifhistorie_Steuerrechner.pdf)
+- **Tax Calculation Formulas**: [BMF Tarifhistorie](https://www.bmf-steuerrechner.de/javax.faces.resource/2025_1_14_Tarifhistorie_Steuerrechner.pdf.xhtml)
 - **Wage Tax Calculator**: [BMF Lohnsteuerrechner](https://www.bmf-steuerrechner.de/)
 - **Social Security Deductible**: [Vorsorgepauschale](https://www.lohn-info.de/vorsorgepauschale.html)
 - **Social Security Rates**: [Sozialversicherungsbeiträge](https://www.lohn-info.de/sozialversicherungsbeitraege2024.html)
