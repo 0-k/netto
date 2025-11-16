@@ -1,20 +1,20 @@
 {
   "year": 2026,
   "pension": {
-    "limit": 96000,
+    "limit": 101400,
     "rate": 0.093
   },
   "unemployment": {
-    "limit": 96000,
-    "rate": 0.012
+    "limit": 101400,
+    "rate": 0.013
   },
   "health": {
-    "limit": 66150,
+    "limit": 69750,
     "rate": 0.073
   },
   "nursing": {
-    "limit": 66150,
-    "rate": 0.01525,
-    "extra": 0.0035
+    "limit": 69750,
+    "rate": 0.018,
+    "extra": 0.006
   }
 }

@@ -121,11 +121,10 @@ The `TaxConfig` dataclass provides type-safe configuration:
 
 ## Supported Tax Years
 
-| Year | Status | Notes |
-|------|--------|-------|
-| 2018-2022 | Fully supported | Complete tax data |
-| 2023-2026 | Fully supported | Complete tax data (2026 uses 2025 estimates) |
-| 2027+ | Planned | To be added |
+| Year      | Status | Notes |
+|-----------|--------|-------|
+| 2018-2026 | Fully supported | Complete tax data (2026 uses 2025 estimates) |
+| 2027+     | Planned | To be added |
 
 ## Documentation
 

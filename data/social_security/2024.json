@@ -6,7 +6,7 @@
   },
   "unemployment": {
     "limit": 90600,
-    "rate": 0.012
+    "rate": 0.013
   },
   "health": {
     "limit": 62100,
@@ -14,7 +14,7 @@
   },
   "nursing": {
     "limit": 62100,
-    "rate": 0.01525,
-    "extra": 0.0035
+    "rate": 0.017,
+    "extra": 0.006
   }
 }
