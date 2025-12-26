@@ -4,9 +4,9 @@
 
 **Netto** is a German income tax (Einkommensteuer) and social security (Sozialabgaben) calculator written in Python. It calculates net income from gross salary considering various tax brackets, social security contributions, solidarity tax (Solidaritätszuschlag), and optional church tax.
 
-**Current Version**: 0.2.0 (in preparation)
+**Current Version**: 0.2.0
 
-**Supported Tax Years**: 2018-2025 (with plans to extend to 2026-2027)
+**Supported Tax Years**: 2018-2026 (with plans to extend to 2027)
 
 **Key Features**:
 - Calculate net income from gross salary (`calc_netto`)
@@ -47,7 +47,7 @@ netto/
 
 #### 1. Configuration (`config.py`)
 - **TaxConfig dataclass**: Central configuration for all calculations
-  - `year`: Tax year (2018-2025)
+  - `year`: Tax year (2018-2026)
   - `has_children`: Affects nursing insurance extra rate
   - `is_married`: Doubles tax brackets (Ehegattensplitting)
   - `extra_health_insurance`: Additional health insurance rate (default: 0.014)
@@ -138,12 +138,12 @@ Contains data loader with Pydantic validation for:
 
 ### Remaining Tasks
 
-#### 1. Add/Check Tax Codes for 2024-2027 (High Priority)
-**Status**: ⚠️ Incomplete Data
+#### 1. Add/Check Tax Codes for 2027 (Medium Priority)
+**Status**: ⚠️ Awaiting Official Data
 
 **Current State**:
-- ✅ 2018-2025: Complete with all constants
-- ❌ 2026-2027: Not implemented
+- ✅ 2018-2026: Complete with all constants
+- ❌ 2027: Not yet available from official sources
 
 **Required Data Sources**:
 - [BMF Tarifhistorie](https://www.bmf-steuerrechner.de/Tarifhistorie_Steuerrechner.pdf)
@@ -151,10 +151,10 @@ Contains data loader with Pydantic validation for:
 - [Social Security Rates](https://www.lohn-info.de/sozialversicherungsbeitraege2024.html)
 
 **Tasks**:
-1. Research and add preliminary data for 2026-2027 (if available from official sources)
-2. Create JSON files in `data/` directory for 2026-2027
-3. Update `config.py` validation to support new years
-4. Add tests for new years
+1. Monitor official sources for 2027 tax data release
+2. Create JSON files in `data/` directory for 2027
+3. Update `config.py` validation to support year 2027
+4. Add tests for new year
 5. Verify calculations against official BMF calculators
 
 **Tax Curve Constants Explanation**:
@@ -482,10 +482,10 @@ net = calc_netto(50000, deductibles=2000, verbose=True, config=config)
 | 2023 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
 | 2024 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
 | 2025 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
-| 2026 | ❌ Not started | ❌ Not started | ❌ Not started | ❌ Planned |
+| 2026 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
 | 2027 | ❌ Not started | ❌ Not started | ❌ Not started | ❌ Planned |
 
 ---
 
-**Last Updated**: 2025-11-15 (for release 0.2.0a3)
-**Document Version**: 1.1
+**Last Updated**: 2025-12-26 (for release 0.2.0)
+**Document Version**: 1.2
