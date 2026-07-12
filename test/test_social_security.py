@@ -162,6 +162,39 @@ def test_get_rate_nursing_with_children(salary, expected):
     assert result == expected
 
 
+@pytest.mark.parametrize(
+    "year,average_zusatzbeitrag",
+    [
+        (2018, 0.010),
+        (2022, 0.013),
+        (2024, 0.017),
+        (2025, 0.025),
+        (2026, 0.029),
+        (2032, 0.035),  # forecast
+    ],
+)
+def test_get_rate_health_uses_year_average(year, average_zusatzbeitrag):
+    """With extra_health_insurance=None, the official year-specific average
+    Zusatzbeitrag from the data files applies (employee pays half)"""
+    config = TaxConfig(year=year)
+    result = social_security.get_rate_health(10000, config)
+    assert result == pytest.approx(0.073 + average_zusatzbeitrag / 2)
+
+
+def test_get_rate_health_config_overrides_year_average():
+    """An explicit extra_health_insurance overrides the year average"""
+    config = TaxConfig(year=2026, extra_health_insurance=0.019)
+    result = social_security.get_rate_health(10000, config)
+    assert result == pytest.approx(0.073 + 0.019 / 2)
+
+
+def test_get_rate_health_zero_override_is_honored():
+    """extra_health_insurance=0.0 means no Zusatzbeitrag, not 'use average'"""
+    config = TaxConfig(year=2026, extra_health_insurance=0.0)
+    result = social_security.get_rate_health(10000, config)
+    assert result == pytest.approx(0.073)
+
+
 def test_get_rate_pension_with_default_none_config():
     """Test that get_rate_pension works when config=None"""
     result = social_security.get_rate_pension(50000)

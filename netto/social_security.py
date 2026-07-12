@@ -10,6 +10,14 @@ def get_rate_pension(salary: float, config: TaxConfig | None = None) -> float:
     return __get_rate(salary, "pension", config=config)
 
 
+def __get_extra_health_insurance(config: TaxConfig) -> float:
+    """Total Zusatzbeitrag: explicit config value, or the official
+    year-specific average from the data files if the config leaves it None."""
+    if config.extra_health_insurance is not None:
+        return config.extra_health_insurance
+    return social_security_curve[config.year]["health"]["extra"]
+
+
 def __get_rate(
     salary: float, type: str, extra: float = 0, config: TaxConfig | None = None
 ) -> float:
@@ -29,7 +37,7 @@ def get_rate_unemployment(salary: float, config: TaxConfig | None = None) -> flo
 def get_rate_health(salary: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
-    extra = config.extra_health_insurance / 2
+    extra = __get_extra_health_insurance(config) / 2
     return __get_rate(salary, "health", extra, config=config)
 
 
@@ -69,7 +77,7 @@ def calc_insurance_unemployment(
 def calc_insurance_health(salary: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
-    extra = config.extra_health_insurance / 2
+    extra = __get_extra_health_insurance(config) / 2
     return __get_value(salary, "health", extra, config=config)
 
 
@@ -78,7 +86,7 @@ def calc_insurance_health_deductable(
 ) -> float:
     if config is None:
         config = TaxConfig()
-    extra = config.extra_health_insurance / 2
+    extra = __get_extra_health_insurance(config) / 2
     return __get_value(salary, "health", extra - 0.003, config=config)
 
 

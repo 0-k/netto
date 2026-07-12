@@ -96,7 +96,8 @@ Each file contains social security contribution limits and rates:
   },
   "health": {
     "limit": 58050,
-    "rate": 0.073
+    "rate": 0.073,
+    "extra": 0.013
   },
   "nursing": {
     "limit": 58050,
@@ -111,7 +112,11 @@ Each file contains social security contribution limits and rates:
 - `pension/unemployment/health/nursing`: Contribution type
   - `limit`: Annual income limit in EUR (Beitragsbemessungsgrenze)
   - `rate`: Employee contribution rate (employer pays the same)
-  - `extra`: Extra rate for childless individuals (nursing only)
+  - `extra` (health): Official average Zusatzbeitrag for the year (total;
+    the employee pays half). Used when `TaxConfig.extra_health_insurance`
+    is `None`; an explicit config value overrides it.
+  - `extra` (nursing): Extra rate for childless individuals
+    (Kinderlosenzuschlag)
 
 ### Solidarity Tax (`soli/YEAR.json`)
 
@@ -243,9 +248,9 @@ by `scripts/generate_forecast.py` from the enacted 2026 values. Assumptions:
   (stable 18.6% until 2027, rising to ~20% by the early 2030s).
 - **Nursing rate**: moderate increases reflecting projected financing gaps
   (3.6% → 4.0% total by 2030).
-- **Health (14.6%) and unemployment (2.6%) rates, Pauschbeträge**: flat.
-  Note that the average health Zusatzbeitrag (a `TaxConfig` parameter, not
-  part of this data) reached 2.9% in 2026.
+- **Average health Zusatzbeitrag**: keeps rising by 0.1 percentage points per
+  year (2.9% in 2026 → 3.5% by 2032), continuing the recent trend.
+- **Health base (14.6%) and unemployment (2.6%) rates, Pauschbeträge**: flat.
 
 To change assumptions, edit the constants at the top of
 `scripts/generate_forecast.py` and re-run it. Replace forecast files with

@@ -52,7 +52,7 @@ netto/
   - `year`: Tax year (2018-2032; 2027+ are forecasts)
   - `has_children`: Affects nursing insurance extra rate
   - `is_married`: Joint assessment (Ehegattensplitting): splitting tariff and doubled soli exemption threshold
-  - `extra_health_insurance`: Additional health insurance rate (default: 0.014)
+  - `extra_health_insurance`: Total health Zusatzbeitrag; `None` (default) uses the year's official average from `data/social_security/`
   - `church_tax`: Church tax rate (default: 0.09, set to 0.0 for none)
 - Includes validation in `__post_init__`
 

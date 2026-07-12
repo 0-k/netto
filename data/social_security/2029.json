@@ -10,7 +10,8 @@
   },
   "health": {
     "limit": 76200,
-    "rate": 0.073
+    "rate": 0.073,
+    "extra": 0.032
   },
   "nursing": {
     "limit": 76200,

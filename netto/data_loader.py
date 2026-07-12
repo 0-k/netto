@@ -52,7 +52,11 @@ class SocialSecurityEntry(BaseModel):
     limit: float = Field(gt=0, description="Income limit for this contribution")
     rate: float = Field(ge=0, le=1, description="Contribution rate")
     extra: float | None = Field(
-        default=None, ge=0, le=1, description="Extra rate (nursing only)"
+        default=None,
+        ge=0,
+        le=1,
+        description="Extra rate (average Zusatzbeitrag for health, "
+        "childless surcharge for nursing)",
     )
 
 

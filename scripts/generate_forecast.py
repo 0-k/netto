@@ -27,9 +27,10 @@ Social security
       the early 2030s (employee half in PENSION_RATE_PATH).
     - Nursing rate rises moderately (PFLEGE_RATE_PATH), reflecting projected
       financing gaps; childless surcharge unchanged.
-    - Health (7.3%) and unemployment (1.3%) employee rates stay flat. Note:
-      the average health Zusatzbeitrag (a TaxConfig parameter, not data)
-      already reached 2.9% in 2026.
+    - The average health Zusatzbeitrag (health "extra") keeps rising by
+      0.1 percentage points per year (HEALTH_EXTRA_PATH), continuing the
+      trend that reached 2.9% in 2026.
+    - Health base (7.3%) and unemployment (1.3%) employee rates stay flat.
 
 Lump-sum deductions and pension deduction factor
     - Werbungskosten-Pauschbetrag (1,230) and Sonderausgaben-Pauschbetrag
@@ -67,6 +68,15 @@ PFLEGE_RATE_PATH = {
     2030: 0.020,
     2031: 0.020,
     2032: 0.020,
+}
+# Total average Zusatzbeitrag (not halved); 2026 official average was 2.9%
+HEALTH_EXTRA_PATH = {
+    2027: 0.030,
+    2028: 0.031,
+    2029: 0.032,
+    2030: 0.033,
+    2031: 0.034,
+    2032: 0.035,
 }
 
 
@@ -149,7 +159,11 @@ def main() -> None:
                 "year": year,
                 "pension": {"limit": bbg_pension, "rate": PENSION_RATE_PATH[year]},
                 "unemployment": {"limit": bbg_pension, "rate": 0.013},
-                "health": {"limit": bbg_health, "rate": 0.073},
+                "health": {
+                    "limit": bbg_health,
+                    "rate": 0.073,
+                    "extra": HEALTH_EXTRA_PATH[year],
+                },
                 "nursing": {
                     "limit": bbg_health,
                     "rate": PFLEGE_RATE_PATH[year],

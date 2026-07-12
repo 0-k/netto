@@ -42,7 +42,7 @@ from netto import calc_netto
 # Calculate net income from 50,000€ gross salary (uses defaults)
 net_income = calc_netto(50000)
 print(f"Net income: {net_income}€")
-# Output: Net income: 30679.18€
+# Output: Net income: 31674.4€
 ```
 
 ### Custom Configuration
@@ -56,7 +56,8 @@ config = TaxConfig(
     is_married=True,
     has_children=True,
     church_tax=0.0,  # Set to 0.09 for 9% church tax
-    extra_health_insurance=0.014  # Additional health insurance rate
+    extra_health_insurance=0.017,  # Your Krankenkasse's Zusatzbeitrag
+    # (omit to use the official year average)
 )
 
 # Calculate net income
@@ -138,7 +139,7 @@ The `TaxConfig` dataclass provides type-safe configuration:
 | `is_married` | bool | False | Married status (Ehegattensplitting) |
 | `has_children` | bool | False | Has children (affects nursing insurance) |
 | `church_tax` | float | 0.09 | Church tax rate (0.0-0.09, set to 0.0 for none) |
-| `extra_health_insurance` | float | 0.025 | Additional health insurance rate |
+| `extra_health_insurance` | float \| None | None | Total health insurance Zusatzbeitrag. `None` uses the official year-specific average (e.g. 2.9% in 2026); set explicitly to match your Krankenkasse |
 
 ## Supported Tax Years
 
