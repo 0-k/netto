@@ -6,7 +6,7 @@
 
 **Current Version**: 0.2.0
 
-**Supported Tax Years**: 2018-2026 (with plans to extend to 2027)
+**Supported Tax Years**: 2018-2026 (enacted law; 2026 preliminary), 2027-2032 (forecast data, regenerable via `scripts/generate_forecast.py`)
 
 **Key Features**:
 - Calculate net income from gross salary (`calc_netto`)
@@ -38,6 +38,7 @@ netto/
 │   ├── pension_factors/ # Pension correction factors
 │   ├── deductions/     # Lump-sum deductions (Pauschbeträge) by year
 │   └── README.md       # Data structure documentation
+├── scripts/            # Maintenance scripts (forecast data generator)
 ├── test/               # Test suite (pytest)
 ├── docs/               # Sphinx documentation
 ├── examples/           # Usage examples
@@ -48,7 +49,7 @@ netto/
 
 #### 1. Configuration (`config.py`)
 - **TaxConfig dataclass**: Central configuration for all calculations
-  - `year`: Tax year (2018-2026)
+  - `year`: Tax year (2018-2032; 2027+ are forecasts)
   - `has_children`: Affects nursing insurance extra rate
   - `is_married`: Joint assessment (Ehegattensplitting): splitting tariff and doubled soli exemption threshold
   - `extra_health_insurance`: Additional health insurance rate (default: 0.014)
@@ -148,12 +149,12 @@ Contains data loader with Pydantic validation for:
 
 ### Remaining Tasks
 
-#### 1. Add/Check Tax Codes for 2027 (Medium Priority)
-**Status**: ⚠️ Awaiting Official Data
+#### 1. Replace Forecast Data with Enacted Law (Ongoing)
+**Status**: 🔮 2027-2032 use forecast data
 
 **Current State**:
-- ✅ 2018-2026: Complete with all constants
-- ❌ 2027: Not yet available from official sources
+- ✅ 2018-2026: Complete with all constants (2026 preliminary)
+- 🔮 2027-2032: Forecast data from `scripts/generate_forecast.py`
 
 **Required Data Sources**:
 - [BMF Tarifhistorie](https://www.bmf-steuerrechner.de/Tarifhistorie_Steuerrechner.pdf)
@@ -161,11 +162,10 @@ Contains data loader with Pydantic validation for:
 - [Social Security Rates](https://www.lohn-info.de/sozialversicherungsbeitraege2024.html)
 
 **Tasks**:
-1. Monitor official sources for 2027 tax data release
-2. Create JSON files in `data/` directory for 2027
-3. Update `config.py` validation to support year 2027
-4. Add tests for new year
-5. Verify calculations against official BMF calculators
+1. Monitor official sources for newly enacted tax data (yearly)
+2. Overwrite the forecast JSON files in `data/` with official values as they are enacted
+3. Verify calculations against official BMF calculators
+4. Re-run `scripts/generate_forecast.py` if forecast assumptions change (it regenerates 2027-2032)
 
 **Tax Curve Constants Explanation**:
 The `const` values are polynomial coefficients used in German tax calculation:
@@ -496,8 +496,8 @@ net = calc_netto(50000, deductibles=2000, verbose=True, config=config)
 | 2023 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
 | 2024 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
 | 2025 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
-| 2026 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Fully supported |
-| 2027 | ❌ Not started | ❌ Not started | ❌ Not started | ❌ Planned |
+| 2026 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Preliminary official data |
+| 2027-2032 | 🔮 Forecast | 🔮 Forecast | 🔮 Forecast | 🔮 Estimates (`scripts/generate_forecast.py`) |
 
 ---
 

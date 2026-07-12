@@ -87,6 +87,21 @@ def test_calc_income_tax_married_equals_splitting(taxable_income, default_config
     assert result == pytest.approx(expected)
 
 
+@pytest.mark.parametrize("year", list(range(2018, 2033)))
+def test_income_tax_methods_agree_all_years(year):
+    """The exact formula and the integration method must agree for every
+    supported year - this cross-checks the polynomial coefficients against
+    the bracket boundaries in the data files"""
+    config = TaxConfig(year=year, church_tax=0.0)
+    for taxable_income in [15000, 40000, 80000, 300000]:
+        direct = taxes_income.calc_income_tax(taxable_income, config)
+        integrated = taxes_income.calc_income_tax_by_integration(taxable_income, config)
+        assert abs(direct - integrated) < 2, (
+            f"year {year}, taxable income {taxable_income}: "
+            f"formula {direct} vs integration {integrated}"
+        )
+
+
 @pytest.mark.parametrize("taxable_income", [0, 20000, 50000, 100000, 300000])
 def test_sameness_of_calc_income_tax_methods_married(taxable_income):
     """Both income tax calculation methods must agree for married couples"""

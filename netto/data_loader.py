@@ -37,7 +37,7 @@ class TaxBracket(BaseModel):
 
 
 class TaxCurve(BaseModel):
-    year: int = Field(ge=2018, le=2030, description="Tax year")
+    year: int = Field(ge=2018, le=2035, description="Tax year")
     brackets: dict[str, TaxBracket] = Field(description="Tax brackets (0-3)")
 
     @field_validator("brackets")
@@ -57,7 +57,7 @@ class SocialSecurityEntry(BaseModel):
 
 
 class SocialSecurity(BaseModel):
-    year: int = Field(ge=2018, le=2030, description="Tax year")
+    year: int = Field(ge=2018, le=2035, description="Tax year")
     pension: SocialSecurityEntry
     unemployment: SocialSecurityEntry
     health: SocialSecurityEntry
@@ -65,7 +65,7 @@ class SocialSecurity(BaseModel):
 
 
 class SoliCurve(BaseModel):
-    year: int = Field(ge=2018, le=2030, description="Tax year")
+    year: int = Field(ge=2018, le=2035, description="Tax year")
     start_taxable_income: float = Field(
         gt=0, description="Income threshold where soli starts"
     )
@@ -76,12 +76,12 @@ class SoliCurve(BaseModel):
 
 
 class PensionFactor(BaseModel):
-    year: int = Field(ge=2018, le=2030, description="Tax year")
+    year: int = Field(ge=2018, le=2035, description="Tax year")
     factor: float = Field(ge=0, le=1, description="Pension deduction factor")
 
 
 class Deductions(BaseModel):
-    year: int = Field(ge=2018, le=2030, description="Tax year")
+    year: int = Field(ge=2018, le=2035, description="Tax year")
     werbungskosten_pauschbetrag: float = Field(
         ge=0, description="Employee lump-sum deduction (Arbeitnehmer-Pauschbetrag)"
     )
@@ -147,7 +147,7 @@ def load_social_security(year: int) -> dict:
     file_path = DATA_DIR / "social_security" / f"{year}.json"
 
     if not file_path.exists():
-        if year >= 2026:
+        if year >= 2033:
             raise NotImplementedError(
                 f"Social security data not yet available for {year}"
             )
@@ -270,7 +270,7 @@ def load_all_tax_curves() -> dict[int, dict[int, dict]]:
         Tax curves for all years
     """
     tax_curves = {}
-    for year in range(2018, 2027):  # 2018-2026
+    for year in range(2018, 2033):  # 2018-2032
         try:
             tax_curves[year] = load_tax_curve(year)
         except FileNotFoundError:
@@ -288,14 +288,11 @@ def load_all_social_security() -> dict[int, dict]:
         Social security data for all years
     """
     social_security = {}
-    for year in range(2018, 2027):  # 2018-2026
+    for year in range(2018, 2033):  # 2018-2032
         try:
             social_security[year] = load_social_security(year)
         except (FileNotFoundError, NotImplementedError):
             pass
-
-    # Add NotImplementedError for 2027+ to maintain backward compatibility
-    social_security[2027] = NotImplementedError
 
     return social_security
 
@@ -310,7 +307,7 @@ def load_all_soli() -> dict[int, dict]:
         Soli data for all years
     """
     soli_data = {}
-    for year in range(2018, 2027):  # 2018-2026
+    for year in range(2018, 2033):  # 2018-2032
         try:
             soli_data[year] = load_soli(year)
         except FileNotFoundError:
@@ -328,7 +325,7 @@ def load_all_pension_factors() -> dict[int, float]:
         Pension correction factors for all years
     """
     pension_factors = {}
-    for year in range(2018, 2027):  # 2018-2026
+    for year in range(2018, 2033):  # 2018-2032
         try:
             pension_factors[year] = load_pension_factor(year)
         except FileNotFoundError:
@@ -346,7 +343,7 @@ def load_all_deductions() -> dict[int, dict]:
         Deductions data for all years
     """
     deductions_data = {}
-    for year in range(2018, 2027):  # 2018-2026
+    for year in range(2018, 2033):  # 2018-2032
         try:
             deductions_data[year] = load_deductions(year)
         except FileNotFoundError:

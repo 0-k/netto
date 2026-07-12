@@ -153,6 +153,15 @@ def test_calc_inverse_netto_partner_already_covers_desired(married_config):
         main.calc_inverse_netto(20000, config=married_config, partner_salary=100000)
 
 
+@pytest.mark.parametrize("year", list(range(2018, 2033)))
+def test_calc_netto_all_years_smoke(year):
+    """calc_netto must produce a plausible result for every supported year,
+    including the 2027-2032 forecast years"""
+    config = TaxConfig(year=year, church_tax=0.0)
+    netto = main.calc_netto(60000, config=config)
+    assert 30000 < netto < 60000
+
+
 @patch("sys.stdout", new_callable=StringIO)
 def test_verbose_print(mock_stdout, default_config):
     """Test that verbose mode prints expected output"""

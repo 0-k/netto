@@ -144,8 +144,9 @@ The `TaxConfig` dataclass provides type-safe configuration:
 
 | Year      | Status | Notes |
 |-----------|--------|-------|
-| 2018-2026 | Fully supported | Complete tax data (2026 uses 2025 estimates) |
-| 2027+     | Planned | To be added |
+| 2018-2025 | Fully supported | Enacted tax law |
+| 2026      | Fully supported | Preliminary official data |
+| 2027-2032 | Forecast | Estimates for planning; see `data/README.md` for assumptions |
 
 ## Documentation
 

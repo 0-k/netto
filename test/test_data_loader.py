@@ -197,7 +197,7 @@ def test_deductions_invalid_values():
 # Tests for individual load functions
 
 
-@pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026])
+@pytest.mark.parametrize("year", list(range(2018, 2033)))
 def test_load_tax_curve(year):
     """Test loading tax curve for available years"""
     curve = load_tax_curve(year)
@@ -210,10 +210,10 @@ def test_load_tax_curve(year):
 def test_load_tax_curve_missing_year():
     """Test that loading tax curve for missing year raises FileNotFoundError"""
     with pytest.raises(FileNotFoundError):
-        load_tax_curve(2030)
+        load_tax_curve(2035)
 
 
-@pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026])
+@pytest.mark.parametrize("year", list(range(2018, 2033)))
 def test_load_social_security(year):
     """Test loading social security for available years"""
     social_sec = load_social_security(year)
@@ -225,9 +225,9 @@ def test_load_social_security(year):
 
 
 def test_load_social_security_not_implemented():
-    """Test that loading social security for 2027+ raises NotImplementedError"""
+    """Test that loading social security for 2033+ raises NotImplementedError"""
     with pytest.raises(NotImplementedError):
-        load_social_security(2027)
+        load_social_security(2033)
 
 
 def test_load_social_security_missing_year():
@@ -236,7 +236,7 @@ def test_load_social_security_missing_year():
         load_social_security(2015)
 
 
-@pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026])
+@pytest.mark.parametrize("year", list(range(2018, 2033)))
 def test_load_soli(year):
     """Test loading solidarity tax data for available years"""
     soli = load_soli(year)
@@ -249,10 +249,10 @@ def test_load_soli(year):
 def test_load_soli_missing_year():
     """Test that loading soli for missing year raises FileNotFoundError"""
     with pytest.raises(FileNotFoundError):
-        load_soli(2030)
+        load_soli(2035)
 
 
-@pytest.mark.parametrize("year", [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026])
+@pytest.mark.parametrize("year", list(range(2018, 2033)))
 def test_load_pension_factor(year):
     """Test loading pension factor for available years"""
     factor = load_pension_factor(year)
@@ -263,7 +263,7 @@ def test_load_pension_factor(year):
 def test_load_pension_factor_missing_year():
     """Test that loading pension factor for missing year raises FileNotFoundError"""
     with pytest.raises(FileNotFoundError):
-        load_pension_factor(2030)
+        load_pension_factor(2035)
 
 
 @pytest.mark.parametrize(
@@ -290,7 +290,7 @@ def test_load_deductions(year, expected_werbungskosten):
 def test_load_deductions_missing_year():
     """Test that loading deductions for missing year raises FileNotFoundError"""
     with pytest.raises(FileNotFoundError):
-        load_deductions(2030)
+        load_deductions(2035)
 
 
 # Tests for bulk load functions
@@ -311,10 +311,7 @@ def test_load_all_social_security():
     """Test loading all social security data"""
     social_security_data = load_all_social_security()
     assert isinstance(social_security_data, dict)
-    assert len(social_security_data) >= 9  # At least 2018-2026
-    # Check for 2027 NotImplementedError marker
-    assert 2027 in social_security_data
-    assert social_security_data[2027] is NotImplementedError
+    assert len(social_security_data) >= 15  # At least 2018-2032
 
 
 def test_load_all_soli():
@@ -377,7 +374,7 @@ def test_load_all_deductions():
     """Test loading all deductions data"""
     deductions_data = load_all_deductions()
     assert isinstance(deductions_data, dict)
-    assert len(deductions_data) >= 9  # At least 2018-2026
+    assert len(deductions_data) >= 15  # At least 2018-2032
     for year, entry in deductions_data.items():
         assert isinstance(year, int)
         assert "werbungskosten_pauschbetrag" in entry

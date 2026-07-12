@@ -149,7 +149,9 @@ Each file contains pension deduction factor for West Germany for a specific year
 - `year`: Tax year
 - `factor`: Pension deduction factor (0.0 to 1.0)
 
-**Note:** These factors gradually increase each year, reaching 100% deductibility (1.0) in 2025.
+**Note:** These factors increased by 4 percentage points per year until the
+Jahressteuergesetz 2022 brought full deductibility (1.0) forward to 2023
+(originally scheduled for 2025).
 
 ### Lump-Sum Deductions (`deductions/YEAR.json`)
 
@@ -226,10 +228,33 @@ To add tax data for a new year:
 - Use conventional commit format: `data: update 2024 social security rates`
 - Verify calculations against official calculators before committing
 
+## Forecast Years (2027-2032)
+
+The data files for 2027-2032 are **estimates for planning purposes**, generated
+by `scripts/generate_forecast.py` from the enacted 2026 values. Assumptions:
+
+- **Tax brackets and soli threshold**: indexed by 2% per year (matching recent
+  inflation-adjustment laws); the top bracket boundary stays frozen at
+  277,826 € as it has been since 2022. Polynomial coefficients are derived
+  exactly from the bracket boundaries.
+- **Contribution ceilings** (Beitragsbemessungsgrenzen): +3% per year
+  (long-run wage growth), rounded to the official grid.
+- **Pension rate**: follows the official Rentenversicherungsbericht projection
+  (stable 18.6% until 2027, rising to ~20% by the early 2030s).
+- **Nursing rate**: moderate increases reflecting projected financing gaps
+  (3.6% → 4.0% total by 2030).
+- **Health (14.6%) and unemployment (2.6%) rates, Pauschbeträge**: flat.
+  Note that the average health Zusatzbeitrag (a `TaxConfig` parameter, not
+  part of this data) reached 2.9% in 2026.
+
+To change assumptions, edit the constants at the top of
+`scripts/generate_forecast.py` and re-run it. Replace forecast files with
+official values as they are enacted.
+
 ## Current Status
 
 | Year | Tax Curve | Social Security | Soli | Pension Factor | Deductions | Status |
 |------|-----------|-----------------|------|----------------|------------|--------|
 | 2018-2025 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | Fully supported |
-| 2026 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | Preliminary data |
-| 2027 | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Missing | Not yet available |
+| 2026 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | Preliminary official data |
+| 2027-2032 | 🔮 Forecast | 🔮 Forecast | 🔮 Forecast | 🔮 Forecast | 🔮 Forecast | Estimates (see above) |
