@@ -2,6 +2,7 @@ import pytest
 from pydantic import ValidationError
 
 from netto.data_loader import (
+    Deductions,
     PensionFactor,
     SocialSecurity,
     SocialSecurityEntry,
@@ -9,10 +10,13 @@ from netto.data_loader import (
     TaxBracket,
     TaxCurve,
     correction_factor_pensions,
+    deductions,
+    load_all_deductions,
     load_all_pension_factors,
     load_all_social_security,
     load_all_soli,
     load_all_tax_curves,
+    load_deductions,
     load_pension_factor,
     load_social_security,
     load_soli,
@@ -168,6 +172,28 @@ def test_pension_factor_invalid_factor():
         PensionFactor(year=2022, factor=1.5)  # > 1 not allowed
 
 
+def test_deductions_valid():
+    """Test creating a valid Deductions model"""
+    deductions_model = Deductions(
+        year=2022, werbungskosten_pauschbetrag=1200, sonderausgaben_pauschbetrag=36
+    )
+    assert deductions_model.year == 2022
+    assert deductions_model.werbungskosten_pauschbetrag == 1200
+    assert deductions_model.sonderausgaben_pauschbetrag == 36
+
+
+def test_deductions_invalid_values():
+    """Test that Deductions rejects negative values"""
+    with pytest.raises(ValidationError):
+        Deductions(
+            year=2022, werbungskosten_pauschbetrag=-1, sonderausgaben_pauschbetrag=36
+        )
+    with pytest.raises(ValidationError):
+        Deductions(
+            year=2022, werbungskosten_pauschbetrag=1200, sonderausgaben_pauschbetrag=-1
+        )
+
+
 # Tests for individual load functions
 
 
@@ -238,6 +264,33 @@ def test_load_pension_factor_missing_year():
     """Test that loading pension factor for missing year raises FileNotFoundError"""
     with pytest.raises(FileNotFoundError):
         load_pension_factor(2030)
+
+
+@pytest.mark.parametrize(
+    "year,expected_werbungskosten",
+    [
+        (2018, 1000),
+        (2019, 1000),
+        (2020, 1000),
+        (2021, 1000),
+        (2022, 1200),
+        (2023, 1230),
+        (2024, 1230),
+        (2025, 1230),
+        (2026, 1230),
+    ],
+)
+def test_load_deductions(year, expected_werbungskosten):
+    """Test loading deductions with year-specific Werbungskosten-Pauschbetrag"""
+    deductions_data = load_deductions(year)
+    assert deductions_data["werbungskosten_pauschbetrag"] == expected_werbungskosten
+    assert deductions_data["sonderausgaben_pauschbetrag"] == 36
+
+
+def test_load_deductions_missing_year():
+    """Test that loading deductions for missing year raises FileNotFoundError"""
+    with pytest.raises(FileNotFoundError):
+        load_deductions(2030)
 
 
 # Tests for bulk load functions
@@ -318,6 +371,24 @@ def test_module_correction_factor_pensions():
     assert len(correction_factor_pensions) >= 8
     assert 2022 in correction_factor_pensions
     assert isinstance(correction_factor_pensions[2022], float)
+
+
+def test_load_all_deductions():
+    """Test loading all deductions data"""
+    deductions_data = load_all_deductions()
+    assert isinstance(deductions_data, dict)
+    assert len(deductions_data) >= 9  # At least 2018-2026
+    for year, entry in deductions_data.items():
+        assert isinstance(year, int)
+        assert "werbungskosten_pauschbetrag" in entry
+        assert "sonderausgaben_pauschbetrag" in entry
+
+
+def test_module_deductions():
+    """Test that deductions is loaded at module level"""
+    assert isinstance(deductions, dict)
+    assert 2022 in deductions
+    assert deductions[2022]["werbungskosten_pauschbetrag"] == 1200
 
 
 # Integration tests

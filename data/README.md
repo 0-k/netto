@@ -25,7 +25,12 @@ data/
 │   ├── 2018.json
 │   ├── 2019.json
 │   ├── ...
-│   └── 2025.json
+│   └── 2026.json
+├── deductions/          # Lump-sum deductions (Pauschbeträge) by year
+│   ├── 2018.json
+│   ├── 2019.json
+│   ├── ...
+│   └── 2026.json
 └── README.md           # This file
 ```
 
@@ -73,8 +78,6 @@ Each file contains the progressive income tax brackets for a specific year:
     - Bracket 1: `[a, b]` - 2 coefficients
     - Bracket 2: `[a, b, c]` - 3 coefficients
     - Bracket 3: `[a, b]` - 2 coefficients
-
-**Note:** For years 2023-2025, `const` values are currently `null` and need to be filled in from official BMF sources.
 
 ### Social Security (`social_security/YEAR.json`)
 
@@ -148,6 +151,28 @@ Each file contains pension deduction factor for West Germany for a specific year
 
 **Note:** These factors gradually increase each year, reaching 100% deductibility (1.0) in 2025.
 
+### Lump-Sum Deductions (`deductions/YEAR.json`)
+
+Each file contains the lump-sum deductions (Pauschbeträge) for a specific year:
+
+```json
+{
+  "year": 2022,
+  "werbungskosten_pauschbetrag": 1200,
+  "sonderausgaben_pauschbetrag": 36
+}
+```
+
+**Fields:**
+- `year`: Tax year
+- `werbungskosten_pauschbetrag`: Employee lump-sum deduction
+  (Arbeitnehmer-Pauschbetrag) in EUR, granted per earner
+  - 2018-2021: 1,000 €
+  - 2022: 1,200 € (Steuerentlastungsgesetz 2022)
+  - 2023 onwards: 1,230 €
+- `sonderausgaben_pauschbetrag`: Special expenses lump sum in EUR per person
+  (36 €, doubled to 72 € for jointly assessed couples)
+
 ## Data Sources
 
 All data should be sourced from official German government sources:
@@ -184,10 +209,13 @@ To add tax data for a new year:
 4. **Create pension factor file:** `pension_factors/YEAR.json`
    - Add year entry with factor (continues at 1.0 after 2025)
 
-5. **Update validation in** `netto/config.py`:
+5. **Create deductions file:** `deductions/YEAR.json`
+   - Add year entry with the current Pauschbeträge
+
+6. **Update validation in** `netto/config.py`:
    - Update year range validation
 
-6. **Run tests:**
+7. **Run tests:**
    - Verify calculations against official BMF calculator
    - Add test cases for new year
 
@@ -200,17 +228,8 @@ To add tax data for a new year:
 
 ## Current Status
 
-| Year | Tax Curve | Social Security | Soli | Pension Factor | Status |
-|------|-----------|-----------------|------|----------------|--------|
-| 2018 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | Fully supported |
-| 2019 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | Fully supported |
-| 2020 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | Fully supported |
-| 2021 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | Fully supported |
-| 2022 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | Fully supported |
-| 2023 | ⚠️ Partial | ✅ Complete | ✅ Complete | ✅ Complete | Missing `const` coefficients |
-| 2024 | ⚠️ Partial | ✅ Complete | ✅ Complete | ✅ Complete | Missing `const` coefficients |
-| 2025 | ⚠️ Partial | ✅ Complete | ✅ Complete | ✅ Complete | Missing `const` coefficients |
-| 2026 | ❌ Missing | ❌ Missing | ❌ Missing | To be decided | Not yet available |
-| 2027 | ❌ Missing | ❌ Missing | ❌ Missing | To be decided | Not yet available |
-
-**Priority:** Complete `const` coefficients for 2023-2025 tax curves for release 0.2.0.
+| Year | Tax Curve | Social Security | Soli | Pension Factor | Deductions | Status |
+|------|-----------|-----------------|------|----------------|------------|--------|
+| 2018-2025 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | Fully supported |
+| 2026 | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | ✅ Complete | Preliminary data |
+| 2027 | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Missing | Not yet available |

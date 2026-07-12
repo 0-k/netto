@@ -11,9 +11,16 @@ def calc_netto(
     deductibles: float = 0,
     verbose: bool = False,
     config: TaxConfig | None = None,
+    partner_salary: float = 0,
 ) -> float:
     """
     Calculate net income from gross salary.
+
+    For dual-income married couples, pass the spouse's salary as
+    ``partner_salary``. Income tax is then assessed jointly
+    (Ehegattensplitting) while social security contributions are calculated
+    per person against the individual contribution ceilings. The returned
+    value is the combined household net income.
 
     Parameters
     ----------
@@ -25,11 +32,14 @@ def calc_netto(
         Print detailed calculation breakdown
     config : TaxConfig, optional
         Tax configuration (uses defaults if not provided)
+    partner_salary: float, optional
+        Yearly gross salary of the spouse (requires is_married=True).
+        Default is 0 (single-earner household).
 
     Returns
     -------
     float
-        Net income
+        Net income (household net income if partner_salary is given)
 
     Examples
     --------
@@ -38,43 +48,61 @@ def calc_netto(
     >>> calc_netto(50000, verbose=True)
     >>> config = TaxConfig(year=2025, is_married=True)
     >>> calc_netto(50000, config=config)
+    >>> calc_netto(50000, config=config, partner_salary=40000)
     """
     if config is None:
         config = TaxConfig()
+    if partner_salary < 0:
+        raise ValueError(f"partner_salary must be non-negative, got {partner_salary}")
+    if partner_salary > 0 and not config.is_married:
+        raise ValueError(
+            "partner_salary requires is_married=True, as only jointly "
+            "assessed couples are taxed on their combined income"
+        )
 
     deductible_social_security = calc_deductible_social_security(salary, config)
+    social_security = calc_social_security(salary, config)
+    if partner_salary > 0:
+        deductible_social_security += calc_deductible_social_security(
+            partner_salary, config
+        )
+        social_security += calc_social_security(partner_salary, config)
     taxable_income = calc_taxable_income(
         salary=salary,
         deductible_social_security=deductible_social_security,
         deductibles_other=deductibles,
+        config=config,
+        partner_salary=partner_salary,
     )
     income_tax = calc_income_tax_by_integration(taxable_income, config)
+    soli = calc_soli(income_tax, config)
+    church_tax = calc_church_tax(income_tax, config)
     if verbose:
         repr = (
             "Yearly Evaluation:\n"
             + f"Income Tax:      {round(income_tax, 2):>12}\n"
-            + f"Soli:            {round(calc_soli(income_tax, config), 2):>12}\n"
-            + f"Church Tax:      {round(calc_church_tax(income_tax, config), 2):>12}\n"
-            + f"Social Security: {round(calc_social_security(salary, config), 2):>12}"
+            + f"Soli:            {round(soli, 2):>12}\n"
+            + f"Church Tax:      {round(church_tax, 2):>12}\n"
+            + f"Social Security: {round(social_security, 2):>12}"
         )
         print(repr)
     return round(
-        (
-            salary
-            - income_tax
-            - calc_soli(income_tax, config)
-            - calc_church_tax(income_tax, config)
-            - calc_social_security(salary, config)
-        ),
+        salary + partner_salary - income_tax - soli - church_tax - social_security,
         2,
     )
 
 
 def calc_inverse_netto(
-    desired_netto: float, deductibles: float = 0, config: TaxConfig | None = None
+    desired_netto: float,
+    deductibles: float = 0,
+    config: TaxConfig | None = None,
+    partner_salary: float = 0,
 ) -> float:
     """
     Calculate required gross salary to reach desired net income.
+
+    If ``partner_salary`` is given, it is kept fixed and the primary salary
+    required to reach the desired household net income is calculated.
 
     Parameters
     ----------
@@ -84,6 +112,8 @@ def calc_inverse_netto(
         Additional deductibles that reduce taxable income
     config : TaxConfig, optional
         Tax configuration (uses defaults if not provided)
+    partner_salary: float, optional
+        Fixed yearly gross salary of the spouse (requires is_married=True)
 
     Returns
     -------
@@ -96,13 +126,31 @@ def calc_inverse_netto(
     >>> calc_inverse_netto(50000, deductibles=5000)
     >>> config = TaxConfig(year=2025, is_married=True)
     >>> calc_inverse_netto(50000, config=config)
+    >>> calc_inverse_netto(70000, config=config, partner_salary=40000)
     """
     if config is None:
         config = TaxConfig()
 
+    if partner_salary > 0:
+        netto_without_primary = calc_netto(
+            0, deductibles=deductibles, config=config, partner_salary=partner_salary
+        )
+        if desired_netto <= netto_without_primary:
+            raise ValueError(
+                f"desired_netto {desired_netto} is already reached by the "
+                f"partner salary alone (household netto without primary "
+                f"salary: {netto_without_primary})"
+            )
+
     def f(salary):
         return (
-            calc_netto(salary, deductibles=deductibles, config=config) - desired_netto
+            calc_netto(
+                salary,
+                deductibles=deductibles,
+                config=config,
+                partner_salary=partner_salary,
+            )
+            - desired_netto
         )
 
-    return round(newton(f, x0=desired_netto), 0)
+    return round(newton(f, x0=max(desired_netto - partner_salary, 1)), 0)

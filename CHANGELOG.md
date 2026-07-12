@@ -7,9 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.0] - 2025-12-26
+## [0.2.0] - 2026-07-12
 
 ### Added
+- **Dual-income households**: New `partner_salary` parameter on `calc_netto` and
+  `calc_inverse_netto` for jointly assessed couples where both partners work
+  - Income tax is assessed jointly (Ehegattensplitting) on the combined income
+  - Social security contributions are calculated per person against the
+    individual contribution ceilings (Beitragsbemessungsgrenzen)
+  - Each earner receives their own Werbungskosten-Pauschbetrag
+  - `calc_inverse_netto` solves for the primary salary with the partner salary fixed
+- **Lump-sum deductions data**: New `data/deductions/{year}.json` files with
+  year-specific Werbungskosten-Pauschbetrag (1,000 € until 2021, 1,200 € in 2022,
+  1,230 € since 2023) and Sonderausgaben-Pauschbetrag, validated via the new
+  `Deductions` Pydantic model
 - **Tax year 2026 support**: Added preliminary tax data for 2026
   - Income tax brackets with estimated values
   - Social security rates and contribution limits
@@ -97,6 +108,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **TODO list**: Removed from README.md (moved to CLAUDE.md for internal tracking)
 
 ### Fixed
+- **Solidarity tax for married couples**: The soli exemption threshold (Freigrenze)
+  is now doubled for jointly assessed couples. Previously, married couples were
+  charged up to ~2,200 €/year too much soli in the mid-to-high income range
+- **Year-specific lump-sum deductions**: `calc_taxable_income` no longer hardcodes
+  the 2022 Werbungskosten-Pauschbetrag (1,200 €) for all years, and the
+  Sonderausgaben-Pauschbetrag is doubled for married couples (72 € instead of 36 €)
+- **Married income tax via exact formula**: `calc_income_tax` now applies the
+  splitting tariff (2 × tax(income/2)) for married couples, consistent with
+  `calc_income_tax_by_integration`
 - **Test rounding tolerance**: Adjusted test assertions to use appropriate rounding tolerance for floating-point comparisons
 - **Tax curve polynomial coefficients**: Added missing coefficients and corrected bracket boundaries for 2021-2025
 - **ReadTheDocs build**: Fixed setuptools package discovery error

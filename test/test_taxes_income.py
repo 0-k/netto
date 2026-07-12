@@ -76,6 +76,70 @@ def test_sameness_of_calc_income_tax_methods(taxable_income, default_config):
     assert abs(result_direct - result_integration) < 0.1
 
 
+@pytest.mark.parametrize(
+    "taxable_income", [10000, 30000, 60000, 100000, 200000, 600000]
+)
+def test_calc_income_tax_married_equals_splitting(taxable_income, default_config):
+    """Married income tax must equal the official splitting tariff: 2 * T(zvE/2)"""
+    married_config = TaxConfig(year=2022, is_married=True)
+    result = taxes_income.calc_income_tax(taxable_income, married_config)
+    expected = 2 * taxes_income.calc_income_tax(taxable_income / 2, default_config)
+    assert result == pytest.approx(expected)
+
+
+@pytest.mark.parametrize("taxable_income", [0, 20000, 50000, 100000, 300000])
+def test_sameness_of_calc_income_tax_methods_married(taxable_income):
+    """Both income tax calculation methods must agree for married couples"""
+    married_config = TaxConfig(year=2022, is_married=True)
+    result_direct = taxes_income.calc_income_tax(taxable_income, married_config)
+    result_integration = taxes_income.calc_income_tax_by_integration(
+        taxable_income, married_config
+    )
+    assert abs(result_direct - result_integration) < 0.5
+
+
+@pytest.mark.parametrize(
+    "year,expected",
+    [
+        (2018, 48964),  # 50000 - 1000 (Werbungskosten) - 36 (Sonderausgaben)
+        (2021, 48964),
+        (2022, 48764),  # Werbungskosten-Pauschbetrag raised to 1200
+        (2023, 48734),  # Werbungskosten-Pauschbetrag raised to 1230
+        (2025, 48734),
+    ],
+)
+def test_calc_taxable_income_year_aware_lump_sums(year, expected):
+    """Test that lump-sum deductions match the year-specific Pauschbeträge"""
+    config = TaxConfig(year=year)
+    result = taxes_income.calc_taxable_income(50000, 0, config=config)
+    assert result == expected
+
+
+def test_calc_taxable_income_married_doubles_sonderausgaben():
+    """Married couples get the doubled Sonderausgaben-Pauschbetrag (72 instead of 36)"""
+    config = TaxConfig(year=2025, is_married=True)
+    result = taxes_income.calc_taxable_income(50000, 0, config=config)
+    assert result == 48698  # 50000 - 1230 - 72
+
+
+def test_calc_taxable_income_dual_earner():
+    """Each earner gets their own Werbungskosten-Pauschbetrag"""
+    config = TaxConfig(year=2025, is_married=True)
+    result = taxes_income.calc_taxable_income(
+        50000, 0, config=config, partner_salary=40000
+    )
+    assert result == 87468  # (50000 - 1230) + (40000 - 1230) - 72
+
+
+def test_calc_taxable_income_partner_below_pauschbetrag():
+    """The partner's Werbungskosten deduction cannot exceed their income"""
+    config = TaxConfig(year=2025, is_married=True)
+    result = taxes_income.calc_taxable_income(
+        50000, 0, config=config, partner_salary=500
+    )
+    assert result == 48698  # partner income fully offset by the lump sum
+
+
 def test_get_marginal_tax_rate_with_default_none_config():
     """Test that get_marginal_tax_rate works when config=None"""
     result = taxes_income.get_marginal_tax_rate(50000)

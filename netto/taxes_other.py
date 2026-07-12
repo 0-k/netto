@@ -21,13 +21,14 @@ def calc_soli(tax_assessment: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
 
+    # The exemption threshold (Freigrenze) doubles for jointly assessed couples
+    exemption_threshold = soli_curve[config.year]["start_taxable_income"] * (
+        2 if config.is_married else 1
+    )
     return round(
         max(
             min(
-                max(
-                    0,
-                    tax_assessment - soli_curve[config.year]["start_taxable_income"],
-                )
+                max(0, tax_assessment - exemption_threshold)
                 * soli_curve[config.year]["start_fraction"],
                 tax_assessment * soli_curve[config.year]["end_rate"],
             ),

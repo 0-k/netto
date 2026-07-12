@@ -77,6 +77,82 @@ def test_calc_inverse_netto_roundtrip(alternate_config):
     assert gross == salary
 
 
+@pytest.fixture
+def married_config():
+    """Fixture providing a married config for tests"""
+    return TaxConfig(year=2025, is_married=True, church_tax=0.0)
+
+
+@pytest.mark.parametrize(
+    "salary,expected",
+    [
+        (50000, 36263.40),
+        (100000, 67016.96),
+        (150000, 98603.98),  # income tax 33940 is below married soli threshold 39900
+        (250000, 152445.93),
+    ],
+)
+def test_calc_netto_married(salary, expected, married_config):
+    """Test married netto (splitting tariff, doubled soli threshold)"""
+    result = main.calc_netto(salary, config=married_config)
+    assert abs(result - expected) < 1
+
+
+def test_calc_netto_married_higher_than_single(married_config):
+    """Splitting must never yield less netto than the single tariff"""
+    single_config = TaxConfig(year=2025, church_tax=0.0)
+    for salary in [30000, 60000, 100000, 150000, 250000]:
+        assert main.calc_netto(salary, config=married_config) >= main.calc_netto(
+            salary, config=single_config
+        )
+
+
+def test_calc_netto_dual_income(married_config):
+    """Test household netto for a dual-income married couple"""
+    result = main.calc_netto(80000, config=married_config, partner_salary=80000)
+    assert abs(result - 96345.38) < 1
+
+
+def test_calc_netto_dual_income_pays_more_social_security(married_config):
+    """Same household income, but two earners below the contribution ceilings
+    pay more social security than a single earner above them"""
+    single_earner = main.calc_netto(160000, config=married_config)
+    dual_earner = main.calc_netto(80000, config=married_config, partner_salary=80000)
+    assert dual_earner < single_earner
+
+
+def test_calc_netto_partner_salary_zero_equals_single_earner(married_config):
+    """partner_salary=0 must behave exactly like the single-earner call"""
+    assert main.calc_netto(
+        100000, config=married_config, partner_salary=0
+    ) == main.calc_netto(100000, config=married_config)
+
+
+def test_calc_netto_partner_salary_requires_married(default_config):
+    """partner_salary without is_married must raise"""
+    with pytest.raises(ValueError, match="is_married"):
+        main.calc_netto(50000, config=default_config, partner_salary=10000)
+
+
+def test_calc_netto_negative_partner_salary(married_config):
+    """Negative partner_salary must raise"""
+    with pytest.raises(ValueError, match="non-negative"):
+        main.calc_netto(50000, config=married_config, partner_salary=-1)
+
+
+def test_calc_inverse_netto_dual_income_roundtrip(married_config):
+    """Inverse calculation with a fixed partner salary recovers the gross salary"""
+    netto = main.calc_netto(80000, config=married_config, partner_salary=50000)
+    gross = main.calc_inverse_netto(netto, config=married_config, partner_salary=50000)
+    assert abs(gross - 80000) <= 1
+
+
+def test_calc_inverse_netto_partner_already_covers_desired(married_config):
+    """A desired netto already reached by the partner salary alone must raise"""
+    with pytest.raises(ValueError, match="partner salary alone"):
+        main.calc_inverse_netto(20000, config=married_config, partner_salary=100000)
+
+
 @patch("sys.stdout", new_callable=StringIO)
 def test_verbose_print(mock_stdout, default_config):
     """Test that verbose mode prints expected output"""

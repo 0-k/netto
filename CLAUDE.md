@@ -11,7 +11,7 @@
 **Key Features**:
 - Calculate net income from gross salary (`calc_netto`)
 - Calculate required gross salary for desired net income (`calc_inverse_netto`)
-- Support for married couples (doubles tax brackets)
+- Support for married couples (Ehegattensplitting), including dual-income households via `partner_salary`
 - Support for children (affects nursing insurance)
 - Optional church tax
 - Public health and pension insurance
@@ -36,6 +36,7 @@ netto/
 │   ├── social_security/ # Social security rates by year
 │   ├── soli/           # Solidarity tax parameters
 │   ├── pension_factors/ # Pension correction factors
+│   ├── deductions/     # Lump-sum deductions (Pauschbeträge) by year
 │   └── README.md       # Data structure documentation
 ├── test/               # Test suite (pytest)
 ├── docs/               # Sphinx documentation
@@ -49,7 +50,7 @@ netto/
 - **TaxConfig dataclass**: Central configuration for all calculations
   - `year`: Tax year (2018-2026)
   - `has_children`: Affects nursing insurance extra rate
-  - `is_married`: Doubles tax brackets (Ehegattensplitting)
+  - `is_married`: Joint assessment (Ehegattensplitting): splitting tariff and doubled soli exemption threshold
   - `extra_health_insurance`: Additional health insurance rate (default: 0.014)
   - `church_tax`: Church tax rate (default: 0.09, set to 0.0 for none)
 - Includes validation in `__post_init__`
@@ -62,6 +63,7 @@ Contains data loader with Pydantic validation for:
 - `social_security_curve`: Social security limits and rates
 - `soli_curve`: Solidarity tax parameters
 - `pension_factors`: Pension deduction factors
+- `deductions`: Lump-sum deductions (Werbungskosten- and Sonderausgaben-Pauschbetrag) by year
 
 **Benefits of Current Structure**:
 - JSON files in `data/` directory for easy editing
@@ -72,18 +74,21 @@ Contains data loader with Pydantic validation for:
 
 #### 3. Main API (`main.py`)
 
-**calc_netto(salary, deductibles=0, verbose=False, config=None)**
+**calc_netto(salary, deductibles=0, verbose=False, config=None, partner_salary=0)**
 - Calculates net income from gross salary
+- `partner_salary`: spouse's gross salary for dual-income couples (requires `is_married=True`);
+  social security is calculated per person, income tax jointly; returns household net income
 - Returns rounded float (2 decimal places)
 - Workflow:
-  1. Calculate deductible social security (`calc_deductible_social_security`)
+  1. Calculate deductible social security (`calc_deductible_social_security`, per earner)
   2. Calculate taxable income (`calc_taxable_income`)
   3. Calculate income tax via integration (`calc_income_tax_by_integration`)
-  4. Calculate soli, church tax, social security
-  5. Return: salary - all taxes and contributions
+  4. Calculate soli, church tax, social security (per earner)
+  5. Return: salary (+ partner_salary) - all taxes and contributions
 
-**calc_inverse_netto(desired_netto, deductibles=0, config=None)**
+**calc_inverse_netto(desired_netto, deductibles=0, config=None, partner_salary=0)**
 - Calculates required gross salary for desired net income
+- With `partner_salary`, solves for the primary salary while keeping the partner salary fixed
 - Uses Newton's method for optimization (scipy.optimize.newton)
 - Returns rounded integer
 
@@ -93,11 +98,16 @@ Contains data loader with Pydantic validation for:
 - Progressive tax curve with 4 brackets (0-3)
 - German tax formula implementation
 - Integration-based calculation for accuracy
+- Married couples: splitting tariff (2 × tax(income/2)), implemented by stretching
+  the marginal rate curve in the integration method and by halving/doubling in the exact formula
+- Year-aware lump-sum deductions (Werbungskosten- and Sonderausgaben-Pauschbetrag)
+  from `data/deductions/`, applied per earner / doubled for joint assessment
 
 **Other Taxes** (`taxes_other.py`):
 - **Solidarity Tax (Soli)**: Reduced significantly in 2021
   - Pre-2021: 5.5% on income tax above threshold
   - 2021+: Phased reduction, only affects high earners
+  - Exemption threshold (Freigrenze) doubles for jointly assessed couples
 - **Church Tax**: Optional, typically 8-9% of income tax
 
 **Social Security** (`social_security.py`):
@@ -325,11 +335,12 @@ python examples/examples.py
 2. Create new JSON file in `data/social_security/YEAR.json`
 3. Create new JSON file in `data/soli/YEAR.json`
 4. Create new JSON file in `data/pension_factors/YEAR.json`
-5. Find relevant data from official sources (BMF, lohn-info.de)
-6. Update JSON files with new year data
-7. Update validation in `config.py` to support the new year
-8. Add tests for new year
-9. Verify calculations against official BMF calculators
+5. Create new JSON file in `data/deductions/YEAR.json`
+6. Find relevant data from official sources (BMF, lohn-info.de)
+7. Update JSON files with new year data
+8. Update validation in `config.py` to support the new year
+9. Add tests for new year
+10. Verify calculations against official BMF calculators
 
 **Data Validation**:
 - All data is validated using Pydantic models in `data_loader.py`
@@ -457,11 +468,14 @@ from netto import calc_netto, calc_inverse_netto
 from netto.config import TaxConfig
 
 # Basic usage
-net = calc_netto(50000)  # Uses defaults (2022, single, no church tax)
+net = calc_netto(50000)  # Uses defaults (2025, single, with church tax)
 
 # Custom configuration
 config = TaxConfig(year=2024, is_married=True, has_children=True, church_tax=0.0)
 net = calc_netto(50000, config=config)
+
+# Dual-income married couple (household net income)
+net = calc_netto(80000, config=config, partner_salary=50000)
 
 # Inverse calculation
 gross = calc_inverse_netto(35000, config=config)
@@ -487,5 +501,5 @@ net = calc_netto(50000, deductibles=2000, verbose=True, config=config)
 
 ---
 
-**Last Updated**: 2025-12-26 (for release 0.2.0)
-**Document Version**: 1.2
+**Last Updated**: 2026-07-12 (for release 0.2.0)
+**Document Version**: 1.3

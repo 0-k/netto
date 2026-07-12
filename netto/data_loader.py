@@ -10,6 +10,7 @@ The loaded data is exposed as module-level variables for easy import:
 - social_security_curve: Social security rates by year
 - soli_curve: Solidarity tax parameters by year
 - correction_factor_pensions: Pension deduction factors by year
+- deductions: Lump-sum deductions (Pauschbeträge) by year
 """
 
 import json
@@ -77,6 +78,16 @@ class SoliCurve(BaseModel):
 class PensionFactor(BaseModel):
     year: int = Field(ge=2018, le=2030, description="Tax year")
     factor: float = Field(ge=0, le=1, description="Pension deduction factor")
+
+
+class Deductions(BaseModel):
+    year: int = Field(ge=2018, le=2030, description="Tax year")
+    werbungskosten_pauschbetrag: float = Field(
+        ge=0, description="Employee lump-sum deduction (Arbeitnehmer-Pauschbetrag)"
+    )
+    sonderausgaben_pauschbetrag: float = Field(
+        ge=0, description="Special expenses lump sum per person"
+    )
 
 
 def load_tax_curve(year: int) -> dict[int, dict]:
@@ -216,6 +227,39 @@ def load_pension_factor(year: int) -> float:
     return pension_factor.factor
 
 
+def load_deductions(year: int) -> dict:
+    """
+    Load lump-sum deductions (Pauschbeträge) for a specific year.
+
+    Parameters
+    ----------
+    year : int
+        Tax year to load
+
+    Returns
+    -------
+    dict
+        Deductions data
+
+    Examples
+    --------
+    >>> deductions = load_deductions(2022)
+    >>> deductions['werbungskosten_pauschbetrag']
+    1200.0
+    """
+    file_path = DATA_DIR / "deductions" / f"{year}.json"
+
+    if not file_path.exists():
+        raise FileNotFoundError(f"Deductions data not found for year {year}")
+
+    with open(file_path) as f:
+        data = json.load(f)
+
+    deductions_data = Deductions(**data)
+
+    return deductions_data.model_dump(exclude={"year"})
+
+
 def load_all_tax_curves() -> dict[int, dict[int, dict]]:
     """
     Load tax curves for all available years.
@@ -292,8 +336,27 @@ def load_all_pension_factors() -> dict[int, float]:
     return pension_factors
 
 
+def load_all_deductions() -> dict[int, dict]:
+    """
+    Load lump-sum deductions for all available years.
+
+    Returns
+    -------
+    dict
+        Deductions data for all years
+    """
+    deductions_data = {}
+    for year in range(2018, 2027):  # 2018-2026
+        try:
+            deductions_data[year] = load_deductions(year)
+        except FileNotFoundError:
+            pass
+    return deductions_data
+
+
 # Load all data at module import time and expose as module-level variables
 tax_curve = load_all_tax_curves()
 social_security_curve = load_all_social_security()
 soli_curve = load_all_soli()
 correction_factor_pensions = load_all_pension_factors()
+deductions = load_all_deductions()

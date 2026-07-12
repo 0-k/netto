@@ -13,8 +13,8 @@
 
 - **Calculate net income** from gross salary with `calc_netto()`
 - **Calculate required gross salary** for desired net income with `calc_inverse_netto()`
-- **Support for tax years 2018-2025**
-- **Married couples support** (Ehegattensplitting - doubles tax brackets)
+- **Support for tax years 2018-2026**
+- **Married couples support** (Ehegattensplitting, including dual-income households)
 - **Children support** (affects nursing care insurance extra rate)
 - **Optional church tax** (8-9%, configurable)
 - **Public health and pension insurance** calculations
@@ -65,6 +65,27 @@ print(f"Net income: {net}€")
 
 # Calculate required gross salary for desired net income
 gross = calc_inverse_netto(35000, config=config)
+print(f"Required gross: {gross}€")
+```
+
+### Dual-Income Married Couples
+
+For jointly assessed couples where both partners work, pass the spouse's
+salary as `partner_salary`. Income tax is assessed jointly (Ehegattensplitting)
+while social security contributions are calculated per person:
+
+```python
+from netto import calc_netto, calc_inverse_netto, TaxConfig
+
+config = TaxConfig(year=2025, is_married=True, church_tax=0.0)
+
+# Combined household net income for 80,000€ + 50,000€ gross salaries
+household_net = calc_netto(80000, config=config, partner_salary=50000)
+print(f"Household net income: {household_net}€")
+
+# Required primary salary for a desired household net income,
+# with the partner salary fixed
+gross = calc_inverse_netto(90000, config=config, partner_salary=50000)
 print(f"Required gross: {gross}€")
 ```
 
