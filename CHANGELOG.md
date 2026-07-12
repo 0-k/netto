@@ -10,6 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2026-07-12
 
 ### Added
+- **Kindergeld and Kinderfreibetrag with Günstigerprüfung**: New
+  `num_children` field on `TaxConfig`. When set, `calc_netto` includes the
+  yearly Kindergeld in the result and applies the per-child
+  Günstigerprüfung (§ 31 EStG): if the Kinderfreibetrag (incl. BEA) yields
+  more tax relief than the Kindergeld, the allowance is deducted and the
+  Kindergeld added back to the tax. Solidarity surcharge and church tax are
+  always computed on the fictitious income tax with all child allowances
+  deducted (§ 3 SolzG, § 51a EStG). Official amounts 2018-2026 in
+  `data/children/{year}.json` (2027-2032 forecast); new public helpers
+  `calc_kindergeld`, `calc_child_allowance_per_child`,
+  `apply_guenstigerpruefung`. Simplifications: first/second-child Kindergeld
+  rate for all children, no Corona-Kinderboni, single parents get half the
+  allowance without Übertragung
 - **Year-aware health Zusatzbeitrag**: The official average Zusatzbeitrag now
   lives in the social security data files (1.0% in 2018 up to 2.9% in 2026,
   forecast to 3.5% by 2032). `TaxConfig.extra_health_insurance` defaults to

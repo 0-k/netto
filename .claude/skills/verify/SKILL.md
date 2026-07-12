@@ -24,6 +24,9 @@ netto is a pure-Python library; its surface is the public package boundary
 - Married invariants: netto(married) >= netto(single);
   household netto symmetric under swapping salary/partner_salary;
   soli 0 below the doubled Freigrenze.
+- Children (num_children > 0): benefit vs has_children-only config is exactly
+  Kindergeld at low income and strictly more at high income (Freibetrag wins
+  the Guenstigerpruefung); netto(0 gross, kids) == Kindergeld.
 - Error paths: negative salary/partner_salary, partner_salary without
   is_married, desired netto already covered by partner salary alone.
 

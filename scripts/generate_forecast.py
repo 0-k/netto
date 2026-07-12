@@ -38,6 +38,11 @@ Lump-sum deductions and pension deduction factor
     - Pension contributions remain 100% deductible (factor 1.0, law since
       2023).
 
+Child benefits
+    - Kindergeld and Kinderfreibetrag (incl. BEA) are indexed by
+      TARIFF_INDEXATION per year, rounded to multiples of 12 EUR/year so
+      monthly amounts stay whole euros.
+
 Run from the repository root:  python scripts/generate_forecast.py
 """
 
@@ -131,6 +136,10 @@ def main() -> None:
     bbg_pension = base_social["pension"]["limit"]
     bbg_health = base_social["health"]["limit"]
 
+    base_children = json.load(open(DATA_DIR / "children" / "2026.json"))
+    kindergeld = base_children["kindergeld_per_child"]
+    kinderfreibetrag = base_children["kinderfreibetrag_per_child"]
+
     for year in FORECAST_YEARS:
         e0 = round(e0 * (1 + TARIFF_INDEXATION))
         e1 = round(e1 * (1 + TARIFF_INDEXATION))
@@ -183,6 +192,17 @@ def main() -> None:
                 "year": year,
                 "werbungskosten_pauschbetrag": 1230,
                 "sonderausgaben_pauschbetrag": 36,
+            },
+        )
+
+        kindergeld = round_to(kindergeld * (1 + TARIFF_INDEXATION), 12)
+        kinderfreibetrag = round_to(kinderfreibetrag * (1 + TARIFF_INDEXATION), 12)
+        write_json(
+            DATA_DIR / "children" / f"{year}.json",
+            {
+                "year": year,
+                "kindergeld_per_child": kindergeld,
+                "kinderfreibetrag_per_child": kinderfreibetrag,
             },
         )
 

@@ -11,6 +11,7 @@ The loaded data is exposed as module-level variables for easy import:
 - soli_curve: Solidarity tax parameters by year
 - correction_factor_pensions: Pension deduction factors by year
 - deductions: Lump-sum deductions (Pauschbeträge) by year
+- child_benefits: Kindergeld and Kinderfreibetrag by year
 """
 
 import json
@@ -91,6 +92,17 @@ class Deductions(BaseModel):
     )
     sonderausgaben_pauschbetrag: float = Field(
         ge=0, description="Special expenses lump sum per person"
+    )
+
+
+class ChildBenefits(BaseModel):
+    year: int = Field(ge=2018, le=2035, description="Tax year")
+    kindergeld_per_child: float = Field(
+        ge=0, description="Yearly Kindergeld per child (first/second child rate)"
+    )
+    kinderfreibetrag_per_child: float = Field(
+        ge=0,
+        description="Yearly child allowance per child incl. BEA, both parents",
     )
 
 
@@ -264,6 +276,39 @@ def load_deductions(year: int) -> dict:
     return deductions_data.model_dump(exclude={"year"})
 
 
+def load_child_benefits(year: int) -> dict:
+    """
+    Load child benefits data (Kindergeld, Kinderfreibetrag) for a specific year.
+
+    Parameters
+    ----------
+    year : int
+        Tax year to load
+
+    Returns
+    -------
+    dict
+        Child benefits data
+
+    Examples
+    --------
+    >>> benefits = load_child_benefits(2026)
+    >>> benefits['kindergeld_per_child']
+    3108.0
+    """
+    file_path = DATA_DIR / "children" / f"{year}.json"
+
+    if not file_path.exists():
+        raise FileNotFoundError(f"Child benefits data not found for year {year}")
+
+    with open(file_path) as f:
+        data = json.load(f)
+
+    child_benefits_data = ChildBenefits(**data)
+
+    return child_benefits_data.model_dump(exclude={"year"})
+
+
 def load_all_tax_curves() -> dict[int, dict[int, dict]]:
     """
     Load tax curves for all available years.
@@ -355,9 +400,28 @@ def load_all_deductions() -> dict[int, dict]:
     return deductions_data
 
 
+def load_all_child_benefits() -> dict[int, dict]:
+    """
+    Load child benefits data for all available years.
+
+    Returns
+    -------
+    dict
+        Child benefits data for all years
+    """
+    child_benefits_data = {}
+    for year in range(2018, 2033):  # 2018-2032
+        try:
+            child_benefits_data[year] = load_child_benefits(year)
+        except FileNotFoundError:
+            pass
+    return child_benefits_data
+
+
 # Load all data at module import time and expose as module-level variables
 tax_curve = load_all_tax_curves()
 social_security_curve = load_all_social_security()
 soli_curve = load_all_soli()
 correction_factor_pensions = load_all_pension_factors()
 deductions = load_all_deductions()
+child_benefits = load_all_child_benefits()

@@ -30,7 +30,12 @@ data/
 │   ├── 2018.json
 │   ├── 2019.json
 │   ├── ...
-│   └── 2026.json
+│   └── 2032.json
+├── children/            # Kindergeld and Kinderfreibetrag by year
+│   ├── 2018.json
+│   ├── 2019.json
+│   ├── ...
+│   └── 2032.json
 └── README.md           # This file
 ```
 
@@ -180,6 +185,30 @@ Each file contains the lump-sum deductions (Pauschbeträge) for a specific year:
 - `sonderausgaben_pauschbetrag`: Special expenses lump sum in EUR per person
   (36 €, doubled to 72 € for jointly assessed couples)
 
+### Child Benefits (`children/YEAR.json`)
+
+Each file contains the yearly child benefit amounts for a specific year:
+
+```json
+{
+  "year": 2026,
+  "kindergeld_per_child": 3108,
+  "kinderfreibetrag_per_child": 9756
+}
+```
+
+**Fields:**
+- `year`: Tax year
+- `kindergeld_per_child`: Yearly Kindergeld in EUR at the first/second-child
+  rate (mid-year changes are averaged in, e.g. 2019). Simplifications:
+  before 2023 the third and further children received slightly more; one-off
+  Corona-Kinderboni (2020-2022) are not included.
+- `kinderfreibetrag_per_child`: Yearly child allowance in EUR for **both
+  parents combined**, including the BEA allowance (Betreuungs-, Erziehungs-
+  und Ausbildungsbedarf: 2,640 € until 2020, 2,928 € since 2021). Single
+  parents receive half. The 2022 and 2024 values include the retroactive
+  raises.
+
 ## Data Sources
 
 All data should be sourced from official German government sources:
@@ -219,10 +248,13 @@ To add tax data for a new year:
 5. **Create deductions file:** `deductions/YEAR.json`
    - Add year entry with the current Pauschbeträge
 
-6. **Update validation in** `netto/config.py`:
+6. **Create child benefits file:** `children/YEAR.json`
+   - Add year entry with Kindergeld and Kinderfreibetrag (incl. BEA)
+
+7. **Update validation in** `netto/config.py`:
    - Update year range validation
 
-7. **Run tests:**
+8. **Run tests:**
    - Verify calculations against official BMF calculator
    - Add test cases for new year
 
@@ -251,6 +283,8 @@ by `scripts/generate_forecast.py` from the enacted 2026 values. Assumptions:
 - **Average health Zusatzbeitrag**: keeps rising by 0.1 percentage points per
   year (2.9% in 2026 → 3.5% by 2032), continuing the recent trend.
 - **Health base (14.6%) and unemployment (2.6%) rates, Pauschbeträge**: flat.
+- **Kindergeld and Kinderfreibetrag**: indexed by 2% per year, rounded so
+  monthly amounts stay whole euros.
 
 To change assumptions, edit the constants at the top of
 `scripts/generate_forecast.py` and re-run it. Replace forecast files with

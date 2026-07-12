@@ -15,7 +15,8 @@
 - **Calculate required gross salary** for desired net income with `calc_inverse_netto()`
 - **Support for tax years 2018-2026**
 - **Married couples support** (Ehegattensplitting, including dual-income households)
-- **Children support** (affects nursing care insurance extra rate)
+- **Children support**: Kindergeld and Kinderfreibetrag with automatic
+  Günstigerprüfung, plus the nursing care insurance effect
 - **Optional church tax** (8-9%, configurable)
 - **Public health and pension insurance** calculations
 - **West-German pension deduction** (East German support planned)
@@ -50,11 +51,11 @@ print(f"Net income: {net_income}€")
 ```python
 from netto import calc_netto, calc_inverse_netto, TaxConfig
 
-# Configure for 2024, married couple, with children, no church tax
+# Configure for 2026, married couple, two children, no church tax
 config = TaxConfig(
-    year=2024,
+    year=2026,
     is_married=True,
-    has_children=True,
+    num_children=2,  # includes Kindergeld and the Günstigerprüfung
     church_tax=0.0,  # Set to 0.09 for 9% church tax
     extra_health_insurance=0.017,  # Your Krankenkasse's Zusatzbeitrag
     # (omit to use the official year average)
@@ -137,7 +138,8 @@ The `TaxConfig` dataclass provides type-safe configuration:
 |-----------|------|---------|-------------|
 | `year` | int | 2025 | Tax year (2018-2026 supported) |
 | `is_married` | bool | False | Married status (Ehegattensplitting) |
-| `has_children` | bool | False | Has children (affects nursing insurance) |
+| `has_children` | bool | False | Has (or ever had) children — removes the nursing insurance childless surcharge. Implied by `num_children > 0` |
+| `num_children` | int | 0 | Children entitled to Kindergeld. When set, `calc_netto` includes Kindergeld and applies the Günstigerprüfung (Kindergeld vs. Kinderfreibetrag) |
 | `church_tax` | float | 0.09 | Church tax rate (0.0-0.09, set to 0.0 for none) |
 | `extra_health_insurance` | float \| None | None | Total health insurance Zusatzbeitrag. `None` uses the official year-specific average (e.g. 2.9% in 2026); set explicitly to match your Krankenkasse |
 

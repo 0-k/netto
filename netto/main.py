@@ -2,6 +2,7 @@ from scipy.optimize import newton
 
 from netto.config import TaxConfig
 from netto.social_security import calc_deductible_social_security, calc_social_security
+from netto.taxes_children import apply_guenstigerpruefung, calc_kindergeld
 from netto.taxes_income import calc_income_tax_by_integration, calc_taxable_income
 from netto.taxes_other import calc_church_tax, calc_soli
 
@@ -22,6 +23,13 @@ def calc_netto(
     per person against the individual contribution ceilings. The returned
     value is the combined household net income.
 
+    With ``num_children`` set in the config, the result includes the yearly
+    Kindergeld and applies the Günstigerprüfung: if the Kinderfreibetrag
+    yields more tax relief than the Kindergeld, the allowance is deducted
+    and the Kindergeld added back to the tax (§ 31 EStG). Solidarity
+    surcharge and church tax are always based on the income tax with child
+    allowances deducted.
+
     Parameters
     ----------
     salary: float
@@ -39,7 +47,8 @@ def calc_netto(
     Returns
     -------
     float
-        Net income (household net income if partner_salary is given)
+        Net income (household net income if partner_salary is given;
+        includes Kindergeld if num_children is set)
 
     Examples
     --------
@@ -75,8 +84,12 @@ def calc_netto(
         partner_salary=partner_salary,
     )
     income_tax = calc_income_tax_by_integration(taxable_income, config)
-    soli = calc_soli(income_tax, config)
-    church_tax = calc_church_tax(income_tax, config)
+    kindergeld = calc_kindergeld(config)
+    income_tax, fictitious_tax = apply_guenstigerpruefung(
+        taxable_income, income_tax, config
+    )
+    soli = calc_soli(fictitious_tax, config)
+    church_tax = calc_church_tax(fictitious_tax, config)
     if verbose:
         repr = (
             "Yearly Evaluation:\n"
@@ -85,9 +98,17 @@ def calc_netto(
             + f"Church Tax:      {round(church_tax, 2):>12}\n"
             + f"Social Security: {round(social_security, 2):>12}"
         )
+        if config.num_children > 0:
+            repr += f"\nKindergeld:      {round(kindergeld, 2):>12}"
         print(repr)
     return round(
-        salary + partner_salary - income_tax - soli - church_tax - social_security,
+        salary
+        + partner_salary
+        + kindergeld
+        - income_tax
+        - soli
+        - church_tax
+        - social_security,
         2,
     )
 

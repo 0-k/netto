@@ -13,6 +13,11 @@ from netto.social_security import (
     get_rate_pension,
     get_rate_unemployment,
 )
+from netto.taxes_children import (
+    apply_guenstigerpruefung,
+    calc_child_allowance_per_child,
+    calc_kindergeld,
+)
 from netto.taxes_income import (
     calc_income_tax,
     calc_income_tax_by_integration,
@@ -47,4 +52,8 @@ __all__ = [
     # Other Taxes
     "calc_soli",
     "calc_church_tax",
+    # Child Benefits
+    "calc_kindergeld",
+    "calc_child_allowance_per_child",
+    "apply_guenstigerpruefung",
 ]

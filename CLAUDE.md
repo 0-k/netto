@@ -30,6 +30,7 @@ netto/
 │   ├── data_loader.py  # Data loader with Pydantic validation
 │   ├── taxes_income.py # Income tax calculations
 │   ├── taxes_other.py  # Solidarity and church tax
+│   ├── taxes_children.py # Kindergeld and Günstigerprüfung
 │   └── social_security.py  # Social security calculations
 ├── data/               # Tax data (JSON files with validation)
 │   ├── tax_curves/     # Income tax brackets by year
@@ -37,6 +38,7 @@ netto/
 │   ├── soli/           # Solidarity tax parameters
 │   ├── pension_factors/ # Pension correction factors
 │   ├── deductions/     # Lump-sum deductions (Pauschbeträge) by year
+│   ├── children/       # Kindergeld and Kinderfreibetrag by year
 │   └── README.md       # Data structure documentation
 ├── scripts/            # Maintenance scripts (forecast data generator)
 ├── test/               # Test suite (pytest)
@@ -65,6 +67,7 @@ Contains data loader with Pydantic validation for:
 - `soli_curve`: Solidarity tax parameters
 - `pension_factors`: Pension deduction factors
 - `deductions`: Lump-sum deductions (Werbungskosten- and Sonderausgaben-Pauschbetrag) by year
+- `child_benefits`: Kindergeld and Kinderfreibetrag by year
 
 **Benefits of Current Structure**:
 - JSON files in `data/` directory for easy editing
@@ -257,7 +260,8 @@ The following tasks have been completed in v0.2.0:
   - Apply to: `get_marginal_tax_rate()`, `calc_taxable_income()`, and similar functions
 
 **Other enhancements:**
-- [ ] Calculate support for children (Kindergeld/Kinderfreibetrag)
+- [x] Calculate support for children (Kindergeld/Kinderfreibetrag with Günstigerprüfung) — done in 0.2.0
+- [ ] Kinderfreibetrag-Übertragung for single parents; higher pre-2023 Kindergeld for 3rd+ children
 - [ ] Implement correct pension deductible for East Germany
 - [ ] Add support for self-employed individuals
 - [ ] Add support for capital gains tax (Kapitalertragsteuer)
