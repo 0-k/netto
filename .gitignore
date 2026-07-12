@@ -130,3 +130,5 @@ dmypy.json
 
 *.idea
 *.DS_Store
+# Personal scenario scripts (contain private salary data)
+family_scenario.py
