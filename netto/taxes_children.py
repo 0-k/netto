@@ -99,7 +99,11 @@ def apply_guenstigerpruefung(
         return income_tax, income_tax
 
     allowance = calc_child_allowance_per_child(config)
-    kindergeld_per_child = CHILD_BENEFITS_DATA[config.year]["kindergeld_per_child"]
+    # A single parent claims half the allowance, so only half the
+    # Kindergeld is counted against it (§ 31 S. 4 EStG).
+    kindergeld_per_child = CHILD_BENEFITS_DATA[config.year]["kindergeld_per_child"] * (
+        1 if config.is_married else 0.5
+    )
 
     assessed_tax = income_tax
     remaining_income = taxable_income
