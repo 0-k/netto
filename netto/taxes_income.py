@@ -189,6 +189,48 @@ def calc_income_tax(taxable_income: float, config: TaxConfig | None = None) -> f
         )
 
 
+def calc_income_tax_with_progression(
+    taxable_income: float,
+    progression_income: float = 0,
+    config: TaxConfig | None = None,
+) -> float:
+    """
+    Income tax under the Progressionsvorbehalt (§ 32b EStG).
+
+    Tax-free replacement benefits such as Elterngeld, Krankengeld or
+    Arbeitslosengeld I are not taxed themselves, but they raise the tax
+    RATE on the taxable income: the average rate of the tariff at
+    ``taxable_income + progression_income`` is applied to
+    ``taxable_income``. With ``progression_income`` 0 this is the plain
+    tariff (``calc_income_tax_by_integration``).
+
+    Parameters
+    ----------
+    taxable_income: float
+        Taxable income (zvE)
+    progression_income: float, optional
+        Yearly tax-free benefits subject to the Progressionsvorbehalt
+    config : TaxConfig, optional
+        Tax configuration (uses defaults if not provided)
+
+    Returns
+    -------
+    float
+        Income tax amount
+
+    Examples
+    --------
+    >>> calc_income_tax_with_progression(60000, progression_income=15000)
+    """
+    if progression_income <= 0:
+        return calc_income_tax_by_integration(taxable_income, config)
+    if taxable_income <= 0:
+        return 0.0
+    extended = taxable_income + progression_income
+    special_rate = calc_income_tax_by_integration(extended, config) / extended
+    return taxable_income * special_rate
+
+
 def calc_income_tax_by_integration(
     taxable_income: float, config: TaxConfig | None = None
 ) -> float:

@@ -5,6 +5,27 @@ from scipy.integrate import quad
 from netto.config import TaxConfig
 from netto.data_loader import correction_factor_pensions, social_security_curve
 
+# Pflegeversicherung child discount (§ 55 Abs. 3 SGB XI, PUEG, from
+# 2023-07-01): members with at least two children under 25 pay 0.25 pp
+# less (employee share) for the 2nd to 5th child.
+NURSING_CHILD_DISCOUNT = 0.0025
+NURSING_CHILD_DISCOUNT_MAX_CHILDREN = 4
+
+
+def _nursing_child_discount(config: TaxConfig) -> float:
+    """Employee-share reduction of the nursing rate for 2+ children.
+
+    Uses ``num_children`` (Kindergeld-eligible children, i.e. usually under
+    25). 2023 gets half the yearly effect (in force from July).
+    """
+    if config.year < 2023:
+        return 0.0
+    extra_children = min(
+        max(config.num_children - 1, 0), NURSING_CHILD_DISCOUNT_MAX_CHILDREN
+    )
+    discount = extra_children * NURSING_CHILD_DISCOUNT
+    return discount / 2 if config.year == 2023 else discount
+
 
 def get_rate_pension(salary: float, config: TaxConfig | None = None) -> float:
     return __get_rate(salary, "pension", config=config)
@@ -45,7 +66,7 @@ def get_rate_nursing(salary: float, config: TaxConfig | None = None) -> float:
     if config is None:
         config = TaxConfig()
     extra = (
-        0
+        -_nursing_child_discount(config)
         if config.has_children
         else social_security_curve[config.year]["nursing"]["extra"]
     )
@@ -94,7 +115,7 @@ def calc_insurance_nursing(salary: float, config: TaxConfig | None = None) -> fl
     if config is None:
         config = TaxConfig()
     extra = (
-        0
+        -_nursing_child_discount(config)
         if config.has_children
         else social_security_curve[config.year]["nursing"]["extra"]
     )

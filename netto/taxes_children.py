@@ -1,6 +1,6 @@
 from netto.config import TaxConfig
 from netto.data_loader import child_benefits as CHILD_BENEFITS_DATA
-from netto.taxes_income import calc_income_tax_by_integration
+from netto.taxes_income import calc_income_tax_with_progression
 
 
 def calc_kindergeld(config: TaxConfig | None = None) -> float:
@@ -60,7 +60,10 @@ def calc_child_allowance_per_child(config: TaxConfig | None = None) -> float:
 
 
 def apply_guenstigerpruefung(
-    taxable_income: float, income_tax: float, config: TaxConfig | None = None
+    taxable_income: float,
+    income_tax: float,
+    config: TaxConfig | None = None,
+    progression_income: float = 0,
 ) -> tuple[float, float]:
     """
     Apply the per-child Günstigerprüfung (Kindergeld vs. Kinderfreibetrag).
@@ -84,6 +87,9 @@ def apply_guenstigerpruefung(
         Income tax on taxable_income (before child allowances)
     config : TaxConfig, optional
         Tax configuration (uses default if not provided)
+    progression_income : float, optional
+        Tax-free benefits under the Progressionsvorbehalt (§ 32b EStG); the
+        tax with child allowances is computed with the same special rate
 
     Returns
     -------
@@ -110,7 +116,9 @@ def apply_guenstigerpruefung(
     tax_before_child = income_tax
     for _ in range(config.num_children):
         remaining_income = max(0, remaining_income - allowance)
-        tax_after_child = calc_income_tax_by_integration(remaining_income, config)
+        tax_after_child = calc_income_tax_with_progression(
+            remaining_income, progression_income, config
+        )
         relief = tax_before_child - tax_after_child
         if relief > kindergeld_per_child:
             assessed_tax += kindergeld_per_child - relief

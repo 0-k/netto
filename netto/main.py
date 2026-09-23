@@ -3,7 +3,7 @@ from scipy.optimize import newton
 from netto.config import TaxConfig
 from netto.social_security import calc_deductible_social_security, calc_social_security
 from netto.taxes_children import apply_guenstigerpruefung, calc_kindergeld
-from netto.taxes_income import calc_income_tax_by_integration, calc_taxable_income
+from netto.taxes_income import calc_income_tax_with_progression, calc_taxable_income
 from netto.taxes_other import calc_church_tax, calc_soli
 
 
@@ -13,6 +13,7 @@ def calc_netto(
     verbose: bool = False,
     config: TaxConfig | None = None,
     partner_salary: float = 0,
+    progression_income: float = 0,
 ) -> float:
     """
     Calculate net income from gross salary.
@@ -43,6 +44,10 @@ def calc_netto(
     partner_salary: float, optional
         Yearly gross salary of the spouse (requires is_married=True).
         Default is 0 (single-earner household).
+    progression_income: float, optional
+        Yearly tax-free replacement benefits under the Progressionsvorbehalt
+        (§ 32b EStG), e.g. Elterngeld. They are NOT added to the result
+        (add them yourself); they raise the tax rate on the taxable income.
 
     Returns
     -------
@@ -63,6 +68,10 @@ def calc_netto(
         config = TaxConfig()
     if partner_salary < 0:
         raise ValueError(f"partner_salary must be non-negative, got {partner_salary}")
+    if progression_income < 0:
+        raise ValueError(
+            f"progression_income must be non-negative, got {progression_income}"
+        )
     if partner_salary > 0 and not config.is_married:
         raise ValueError(
             "partner_salary requires is_married=True, as only jointly "
@@ -83,10 +92,12 @@ def calc_netto(
         config=config,
         partner_salary=partner_salary,
     )
-    income_tax = calc_income_tax_by_integration(taxable_income, config)
+    income_tax = calc_income_tax_with_progression(
+        taxable_income, progression_income, config
+    )
     kindergeld = calc_kindergeld(config)
     income_tax, fictitious_tax = apply_guenstigerpruefung(
-        taxable_income, income_tax, config
+        taxable_income, income_tax, config, progression_income
     )
     soli = calc_soli(fictitious_tax, config)
     church_tax = calc_church_tax(fictitious_tax, config)

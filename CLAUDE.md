@@ -78,7 +78,10 @@ Contains data loader with Pydantic validation for:
 
 #### 3. Main API (`main.py`)
 
-**calc_netto(salary, deductibles=0, verbose=False, config=None, partner_salary=0)**
+**calc_netto(salary, deductibles=0, verbose=False, config=None, partner_salary=0, progression_income=0)**
+- `progression_income`: tax-free benefits under the Progressionsvorbehalt
+  (§ 32b EStG, e.g. Elterngeld) — raise the rate on the taxable income, not
+  added to the result
 - Calculates net income from gross salary
 - `partner_salary`: spouse's gross salary for dual-income couples (requires `is_married=True`);
   social security is calculated per person, income tax jointly; returns household net income
@@ -120,6 +123,8 @@ Contains data loader with Pydantic validation for:
 - Health insurance (Krankenversicherung)
 - Nursing care insurance (Pflegeversicherung)
   - Extra rate for childless individuals (Kinderlosenzuschlag)
+  - Child discount 0.25 pp per child from the 2nd to the 5th (from 2023-07,
+    `num_children`)
 
 ## Development Guidelines
 

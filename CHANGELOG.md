@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Progressionsvorbehalt (§ 32b EStG)**: new `progression_income`
+  argument to `calc_netto` for tax-free replacement benefits (Elterngeld,
+  Krankengeld, ALG I). They are not added to the result but raise the tax
+  rate on the taxable income (average rate at zvE + benefits, applied to
+  zvE), including inside the Günstigerprüfung. New helper
+  `calc_income_tax_with_progression`. Without it, net income in a year
+  with Elterngeld was overstated.
+
+### Fixed
+- **Pflegeversicherung child discount** (§ 55 Abs. 3 SGB XI, from
+  2023-07): members with two or more children under 25 pay 0.25 pp less per
+  child from the 2nd to the 5th (half the effect in 2023). Uses
+  `num_children`; previously ignored, understating net pay for families.
+
 ## [0.2.0] - 2026-07-12
 
 ### Added

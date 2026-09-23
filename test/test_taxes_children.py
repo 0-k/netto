@@ -62,7 +62,10 @@ def test_guenstigerpruefung_kindergeld_wins_at_low_income(
     netto_kids = main.calc_netto(30000, config=married_two_kids)
     netto_ref = main.calc_netto(30000, config=married_childless_reference)
     kindergeld = taxes_children.calc_kindergeld(married_two_kids)
-    assert netto_kids - netto_ref == pytest.approx(kindergeld, abs=0.02)
+    # the only other difference: the 2nd child's Pflegeversicherung
+    # discount (0.25 pp, § 55 Abs. 3 SGB XI)
+    pv_discount = 30000 * social_security.NURSING_CHILD_DISCOUNT
+    assert netto_kids - netto_ref == pytest.approx(kindergeld + pv_discount, abs=0.02)
 
 
 def test_guenstigerpruefung_freibetrag_wins_at_high_income(
@@ -116,7 +119,7 @@ def test_apply_guenstigerpruefung_no_children_passthrough():
 
 def test_num_children_implies_has_children():
     """num_children > 0 removes the nursing childless surcharge"""
-    config = TaxConfig(year=2026, num_children=2)
+    config = TaxConfig(year=2026, num_children=1)
     assert config.has_children is True
     reference = TaxConfig(year=2026, has_children=True)
     assert social_security.calc_social_security(
@@ -145,3 +148,51 @@ def test_forecast_years_have_child_data():
     for year in range(2018, 2033):
         config = TaxConfig(year=year, num_children=1)
         assert taxes_children.calc_kindergeld(config) > 0
+
+
+@pytest.mark.parametrize(
+    "children, discount",
+    [(1, 0.0), (2, 0.0025), (3, 0.005), (5, 0.01), (7, 0.01)],
+)
+def test_nursing_child_discount(children, discount):
+    """0.25 pp less Pflegeversicherung per child from the 2nd to the 5th"""
+    with_kids = TaxConfig(year=2026, num_children=children)
+    reference = TaxConfig(year=2026, has_children=True)
+    diff = social_security.calc_insurance_nursing(
+        50000, reference
+    ) - social_security.calc_insurance_nursing(50000, with_kids)
+    assert diff == pytest.approx(50000 * discount)
+
+
+def test_nursing_child_discount_not_before_2023():
+    assert social_security.calc_insurance_nursing(
+        50000, TaxConfig(year=2022, num_children=3)
+    ) == social_security.calc_insurance_nursing(
+        50000, TaxConfig(year=2022, has_children=True)
+    )
+
+
+def test_progressionsvorbehalt_raises_tax_not_income():
+    """Elterngeld is tax-free but raises the rate on the other income"""
+    config = TaxConfig(year=2026, is_married=True, church_tax=0.0)
+    plain = main.calc_netto(80000, config=config)
+    with_elterngeld = main.calc_netto(80000, config=config, progression_income=21600)
+    assert with_elterngeld < plain
+    # the special rate is the average rate at zvE + benefit
+    zve = 50000
+    t = taxes_income.calc_income_tax_with_progression(zve, 20000, config)
+    t_ext = taxes_income.calc_income_tax_by_integration(zve + 20000, config)
+    assert t == pytest.approx(zve * t_ext / (zve + 20000))
+
+
+def test_progressionsvorbehalt_can_tax_income_below_basic_allowance():
+    config = TaxConfig(year=2026)
+    assert taxes_income.calc_income_tax_by_integration(10000, config) == 0
+    assert taxes_income.calc_income_tax_with_progression(10000, 20000, config) > 0
+
+
+def test_progression_income_zero_is_identity():
+    config = TaxConfig(year=2026, is_married=True, num_children=2)
+    assert main.calc_netto(
+        90000, config=config, progression_income=0
+    ) == main.calc_netto(90000, config=config)
