@@ -21,6 +21,7 @@ from netto.taxes_children import (
 from netto.taxes_income import (
     calc_income_tax,
     calc_income_tax_by_integration,
+    calc_income_tax_with_progression,
     calc_taxable_income,
     get_marginal_tax_rate,
 )
@@ -47,6 +48,7 @@ __all__ = [
     # Income Tax
     "calc_income_tax",
     "calc_income_tax_by_integration",
+    "calc_income_tax_with_progression",
     "calc_taxable_income",
     "get_marginal_tax_rate",
     # Other Taxes

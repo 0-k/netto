@@ -1,8 +1,6 @@
 import math
 from dataclasses import replace
 
-from scipy.integrate import quad
-
 from netto.config import TaxConfig
 from netto.data_loader import deductions as DEDUCTIONS_DATA
 from netto.data_loader import tax_curve as TAX_CURVE_DATA
@@ -235,7 +233,7 @@ def calc_income_tax_by_integration(
     taxable_income: float, config: TaxConfig | None = None
 ) -> float:
     """
-    Calculate income tax by numerical integration of marginal tax rates.
+    Calculate income tax by exact integration of the marginal tax rate curve.
 
     Parameters
     ----------
@@ -256,7 +254,30 @@ def calc_income_tax_by_integration(
     if config is None:
         config = TaxConfig()
 
-    income_tax, _ = quad(
-        lambda ti: get_marginal_tax_rate(ti, config), 0, taxable_income
-    )
+    # The marginal rate is piecewise linear, so its integral is evaluated
+    # exactly zone by zone (trapezoids) instead of by numerical quadrature,
+    # which misses the jumps at the Grundfreibetrag and the top-rate step.
+    splitting_factor = 2 if config.is_married else 1
+    curve = TAX_CURVE_DATA[config.year]
+    steps = [curve[i]["step"] * splitting_factor for i in range(4)]
+    rates = [curve[i]["rate"] for i in range(4)]
+
+    income_tax = 0.0
+    # Progression zones: rate rises linearly between the bracket boundaries
+    for lower, upper, rate_lower, rate_upper in (
+        (steps[0], steps[1], rates[0], rates[1]),
+        (steps[1], steps[2], rates[1], rates[2]),
+    ):
+        if taxable_income <= lower:
+            return income_tax
+        end = min(taxable_income, upper)
+        rate_end = rate_lower + (rate_upper - rate_lower) * (end - lower) / (
+            upper - lower
+        )
+        income_tax += (end - lower) * (rate_lower + rate_end) / 2
+    # Proportional zones: 42% up to the top-rate step, 45% above
+    if taxable_income > steps[2]:
+        income_tax += (min(taxable_income, steps[3]) - steps[2]) * rates[2]
+    if taxable_income > steps[3]:
+        income_tax += (taxable_income - steps[3]) * rates[3]
     return income_tax

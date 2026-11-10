@@ -164,9 +164,7 @@ def test_get_marginal_tax_rate_with_default_none_config():
 
 def test_calc_income_tax_with_default_none_config():
     """Test that calc_income_tax works when config=None"""
-    # Use explicit year=2022 since calc_income_tax requires const values
-    # which are not available for 2023-2025
-    result = taxes_income.calc_income_tax(50000, config=TaxConfig(year=2022))
+    result = taxes_income.calc_income_tax(50000)
     assert isinstance(result, float)
     assert result >= 0
 
@@ -176,3 +174,38 @@ def test_calc_income_tax_by_integration_with_default_none_config():
     result = taxes_income.calc_income_tax_by_integration(50000)
     assert isinstance(result, float)
     assert result >= 0
+
+
+@pytest.mark.parametrize("year", list(range(2018, 2033)))
+@pytest.mark.parametrize("is_married", [False, True])
+def test_integration_matches_formula_at_bracket_boundaries(year, is_married):
+    """Around the Grundfreibetrag and the top-rate step the marginal rate
+    jumps; the integration must still agree with the official formula"""
+    config = TaxConfig(year=year, is_married=is_married)
+    factor = 2 if is_married else 1
+    curve = taxes_income.TAX_CURVE_DATA[year]
+    for bracket in range(4):
+        boundary = curve[bracket]["step"] * factor
+        for taxable_income in (boundary - 50, boundary, boundary + 50, boundary * 2):
+            direct = taxes_income.calc_income_tax(taxable_income, config)
+            integrated = taxes_income.calc_income_tax_by_integration(
+                taxable_income, config
+            )
+            assert abs(direct - integrated) < 1
+
+
+def test_integration_exact_for_very_high_income():
+    config = TaxConfig(year=2025)
+    at_step = taxes_income.calc_income_tax_by_integration(277826, config)
+    result = taxes_income.calc_income_tax_by_integration(200_000_000, config)
+    assert result == pytest.approx(at_step + 0.45 * (200_000_000 - 277826))
+
+
+def test_calc_income_tax_with_progression_is_exported():
+    import netto
+
+    assert (
+        netto.calc_income_tax_with_progression
+        is taxes_income.calc_income_tax_with_progression
+    )
+    assert "calc_income_tax_with_progression" in netto.__all__

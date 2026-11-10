@@ -96,7 +96,8 @@ Contains data loader with Pydantic validation for:
 **calc_inverse_netto(desired_netto, deductibles=0, config=None, partner_salary=0)**
 - Calculates required gross salary for desired net income
 - With `partner_salary`, solves for the primary salary while keeping the partner salary fixed
-- Uses Newton's method for optimization (scipy.optimize.newton)
+- Uses a bracketing root finder (scipy.optimize.brentq); net income is a step
+  function of gross, so the roundtrip is exact to within 1 EUR
 - Returns rounded integer
 
 #### 4. Tax Calculations
@@ -173,7 +174,9 @@ Contains data loader with Pydantic validation for:
 1. Monitor official sources for newly enacted tax data (yearly)
 2. Overwrite the forecast JSON files in `data/` with official values as they are enacted
 3. Verify calculations against official BMF calculators
-4. Re-run `scripts/generate_forecast.py` if forecast assumptions change (it regenerates 2027-2032)
+4. Re-run `scripts/generate_forecast.py` if forecast assumptions change; it only
+   writes years after its `BASE_YEAR`, so raise `BASE_YEAR` once a forecast year
+   has been replaced with enacted law
 
 **Tax Curve Constants Explanation**:
 The `const` values are polynomial coefficients used in German tax calculation:
@@ -197,18 +200,25 @@ The `const` values are polynomial coefficients used in German tax calculation:
 # In netto/exceptions.py
 class NettoError(Exception):
     """Base exception for netto library"""
+
     pass
+
 
 class UnsupportedTaxYear(NettoError):
     """Tax year not supported"""
+
     pass
+
 
 class InvalidSalary(NettoError):
     """Invalid salary value"""
+
     pass
+
 
 class InvalidConfiguration(NettoError):
     """Invalid configuration"""
+
     pass
 ```
 
@@ -253,7 +263,7 @@ The following tasks have been completed in v0.2.0:
     def get_marginal_tax_rate(
         salary: float | None = None,
         taxable_income: float | None = None,
-        config: TaxConfig | None = None
+        config: TaxConfig | None = None,
     ) -> float:
         if salary is not None:
             # Auto-calculate taxable_income from salary
@@ -347,7 +357,8 @@ python examples/examples.py
 5. Create new JSON file in `data/deductions/YEAR.json`
 6. Find relevant data from official sources (BMF, lohn-info.de)
 7. Update JSON files with new year data
-8. Update validation in `config.py` to support the new year
+8. Supported years are discovered from the data files (`data_loader.SUPPORTED_YEARS`);
+   every data directory needs a file for the new year, otherwise import fails
 9. Add tests for new year
 10. Verify calculations against official BMF calculators
 

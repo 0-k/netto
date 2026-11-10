@@ -1,4 +1,4 @@
-from scipy.optimize import newton
+from scipy.optimize import brentq
 
 from netto.config import TaxConfig
 from netto.social_security import calc_deductible_social_security, calc_social_security
@@ -66,6 +66,10 @@ def calc_netto(
     """
     if config is None:
         config = TaxConfig()
+    if salary < 0:
+        raise ValueError(f"salary must be non-negative, got {salary}")
+    if deductibles < 0:
+        raise ValueError(f"deductibles must be non-negative, got {deductibles}")
     if partner_salary < 0:
         raise ValueError(f"partner_salary must be non-negative, got {partner_salary}")
     if progression_income < 0:
@@ -124,17 +128,28 @@ def calc_netto(
     )
 
 
+# Upper end of the search bracket for calc_inverse_netto is doubled until it
+# nets more than the target; this caps the number of doublings.
+_MAX_BRACKET_DOUBLINGS = 60
+
+
 def calc_inverse_netto(
     desired_netto: float,
     deductibles: float = 0,
     config: TaxConfig | None = None,
     partner_salary: float = 0,
+    progression_income: float = 0,
 ) -> float:
     """
     Calculate required gross salary to reach desired net income.
 
     If ``partner_salary`` is given, it is kept fixed and the primary salary
     required to reach the desired household net income is calculated.
+
+    The net income is a step function of the gross salary (cent rounding,
+    taxable income floored to full euros), so the salary is found with a
+    bracketing root finder and rounded to full euros; ``calc_netto`` of the
+    result is within a few euros of ``desired_netto``.
 
     Parameters
     ----------
@@ -146,11 +161,20 @@ def calc_inverse_netto(
         Tax configuration (uses defaults if not provided)
     partner_salary: float, optional
         Fixed yearly gross salary of the spouse (requires is_married=True)
+    progression_income: float, optional
+        Yearly tax-free benefits under the Progressionsvorbehalt
+        (§ 32b EStG), passed through to ``calc_netto``
 
     Returns
     -------
     float
-        Required gross salary
+        Required gross salary, rounded to full euros
+
+    Raises
+    ------
+    ValueError
+        If ``desired_netto`` is below the net income at zero salary, i.e.
+        already reached by the partner salary alone and/or the Kindergeld
 
     Examples
     --------
@@ -163,17 +187,6 @@ def calc_inverse_netto(
     if config is None:
         config = TaxConfig()
 
-    if partner_salary > 0:
-        netto_without_primary = calc_netto(
-            0, deductibles=deductibles, config=config, partner_salary=partner_salary
-        )
-        if desired_netto <= netto_without_primary:
-            raise ValueError(
-                f"desired_netto {desired_netto} is already reached by the "
-                f"partner salary alone (household netto without primary "
-                f"salary: {netto_without_primary})"
-            )
-
     def f(salary):
         return (
             calc_netto(
@@ -181,8 +194,27 @@ def calc_inverse_netto(
                 deductibles=deductibles,
                 config=config,
                 partner_salary=partner_salary,
+                progression_income=progression_income,
             )
             - desired_netto
         )
 
-    return round(newton(f, x0=max(desired_netto - partner_salary, 1)), 0)
+    netto_without_primary = f(0) + desired_netto
+    if desired_netto < netto_without_primary:
+        raise ValueError(
+            f"desired_netto {desired_netto} is already reached by the "
+            f"partner salary alone and/or the Kindergeld (household netto "
+            f"without primary salary: {netto_without_primary})"
+        )
+    if desired_netto == netto_without_primary:
+        return 0.0
+
+    upper = max(desired_netto - netto_without_primary, 1.0)
+    for _ in range(_MAX_BRACKET_DOUBLINGS):
+        upper *= 2
+        if f(upper) >= 0:
+            break
+    else:
+        raise ValueError(f"desired_netto {desired_netto} cannot be reached")
+    # xtol well below one euro: the result is rounded to full euros anyway
+    return float(round(brentq(f, 0, upper, xtol=1e-3), 0))

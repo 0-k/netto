@@ -196,3 +196,9 @@ def test_progression_income_zero_is_identity():
     assert main.calc_netto(
         90000, config=config, progression_income=0
     ) == main.calc_netto(90000, config=config)
+
+
+def test_kinderfreibetrag_2024_includes_retroactive_raise():
+    """6,612 EUR Kinderfreibetrag (raised retroactively) + 2,928 EUR BEA"""
+    config = TaxConfig(year=2024, is_married=True, num_children=1)
+    assert taxes_children.calc_child_allowance_per_child(config) == 6612 + 2928

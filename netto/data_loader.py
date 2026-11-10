@@ -12,6 +12,7 @@ The loaded data is exposed as module-level variables for easy import:
 - correction_factor_pensions: Pension deduction factors by year
 - deductions: Lump-sum deductions (Pauschbeträge) by year
 - child_benefits: Kindergeld and Kinderfreibetrag by year
+- SUPPORTED_YEARS: Years for which all of the above are available
 """
 
 import json
@@ -20,6 +21,15 @@ from pathlib import Path
 from pydantic import BaseModel, Field, field_validator
 
 DATA_DIR = Path(__file__).parent.parent / "data"
+
+
+def _available_years(subdirectory: str) -> list[int]:
+    """Years for which ``data/<subdirectory>/<year>.json`` exists."""
+    return sorted(
+        int(path.stem)
+        for path in (DATA_DIR / subdirectory).glob("*.json")
+        if path.stem.isdigit()
+    )
 
 
 class TaxBracket(BaseModel):
@@ -318,13 +328,7 @@ def load_all_tax_curves() -> dict[int, dict[int, dict]]:
     dict
         Tax curves for all years
     """
-    tax_curves = {}
-    for year in range(2018, 2033):  # 2018-2032
-        try:
-            tax_curves[year] = load_tax_curve(year)
-        except FileNotFoundError:
-            pass
-    return tax_curves
+    return {year: load_tax_curve(year) for year in _available_years("tax_curves")}
 
 
 def load_all_social_security() -> dict[int, dict]:
@@ -336,14 +340,9 @@ def load_all_social_security() -> dict[int, dict]:
     dict
         Social security data for all years
     """
-    social_security = {}
-    for year in range(2018, 2033):  # 2018-2032
-        try:
-            social_security[year] = load_social_security(year)
-        except (FileNotFoundError, NotImplementedError):
-            pass
-
-    return social_security
+    return {
+        year: load_social_security(year) for year in _available_years("social_security")
+    }
 
 
 def load_all_soli() -> dict[int, dict]:
@@ -355,13 +354,7 @@ def load_all_soli() -> dict[int, dict]:
     dict
         Soli data for all years
     """
-    soli_data = {}
-    for year in range(2018, 2033):  # 2018-2032
-        try:
-            soli_data[year] = load_soli(year)
-        except FileNotFoundError:
-            pass
-    return soli_data
+    return {year: load_soli(year) for year in _available_years("soli")}
 
 
 def load_all_pension_factors() -> dict[int, float]:
@@ -373,13 +366,9 @@ def load_all_pension_factors() -> dict[int, float]:
     dict
         Pension correction factors for all years
     """
-    pension_factors = {}
-    for year in range(2018, 2033):  # 2018-2032
-        try:
-            pension_factors[year] = load_pension_factor(year)
-        except FileNotFoundError:
-            pass
-    return pension_factors
+    return {
+        year: load_pension_factor(year) for year in _available_years("pension_factors")
+    }
 
 
 def load_all_deductions() -> dict[int, dict]:
@@ -391,13 +380,7 @@ def load_all_deductions() -> dict[int, dict]:
     dict
         Deductions data for all years
     """
-    deductions_data = {}
-    for year in range(2018, 2033):  # 2018-2032
-        try:
-            deductions_data[year] = load_deductions(year)
-        except FileNotFoundError:
-            pass
-    return deductions_data
+    return {year: load_deductions(year) for year in _available_years("deductions")}
 
 
 def load_all_child_benefits() -> dict[int, dict]:
@@ -409,13 +392,7 @@ def load_all_child_benefits() -> dict[int, dict]:
     dict
         Child benefits data for all years
     """
-    child_benefits_data = {}
-    for year in range(2018, 2033):  # 2018-2032
-        try:
-            child_benefits_data[year] = load_child_benefits(year)
-        except FileNotFoundError:
-            pass
-    return child_benefits_data
+    return {year: load_child_benefits(year) for year in _available_years("children")}
 
 
 # Load all data at module import time and expose as module-level variables
@@ -425,3 +402,30 @@ soli_curve = load_all_soli()
 correction_factor_pensions = load_all_pension_factors()
 deductions = load_all_deductions()
 child_benefits = load_all_child_benefits()
+
+
+def _get_supported_years() -> tuple[int, ...]:
+    """Years covered by every dataset; fail loudly if the datasets differ."""
+    datasets = {
+        "tax_curves": tax_curve,
+        "social_security": social_security_curve,
+        "soli": soli_curve,
+        "pension_factors": correction_factor_pensions,
+        "deductions": deductions,
+        "children": child_benefits,
+    }
+    all_years = set().union(*datasets.values())
+    incomplete = {
+        name: sorted(all_years - set(data))
+        for name, data in datasets.items()
+        if all_years - set(data)
+    }
+    if incomplete:
+        raise FileNotFoundError(
+            "Tax data is incomplete, every year needs a file in each data "
+            f"directory. Missing years by directory: {incomplete}"
+        )
+    return tuple(sorted(all_years))
+
+
+SUPPORTED_YEARS = _get_supported_years()
