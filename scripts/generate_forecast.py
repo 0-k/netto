@@ -3,7 +3,7 @@ Generate forecast tax data for the years after BASE_YEAR (2027-2032).
 
 All generated values are ESTIMATES for planning purposes, extrapolated from
 the enacted law of BASE_YEAR (currently 2026), which is read from the
-``data/*/<BASE_YEAR>.json`` files. Only years after BASE_YEAR are written:
+``netto/data/*/<BASE_YEAR>.json`` files. Only years after BASE_YEAR are written:
 once a forecast year has been replaced with enacted law, raise BASE_YEAR to
 that year (and drop it from the *_PATH tables) so re-running the script
 extrapolates from it instead of overwriting it.
@@ -56,7 +56,7 @@ Run from the repository root:  python scripts/generate_forecast.py
 import json
 from pathlib import Path
 
-DATA_DIR = Path(__file__).parent.parent / "data"
+DATA_DIR = Path(__file__).parent.parent / "netto" / "data"
 
 BASE_YEAR = 2026  # latest year with enacted (or preliminary official) data
 LAST_FORECAST_YEAR = 2032

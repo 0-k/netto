@@ -101,7 +101,7 @@ pip install dist/netto-X.Y.Z-py3-none-any.whl
 ```bash
 git add pyproject.toml CHANGELOG.md
 git commit -m "chore: bump version to X.Y.Z"
-git push origin main
+git push origin master
 ```
 
 ### Step 5: Test on TestPyPI (Recommended)

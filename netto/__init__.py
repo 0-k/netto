@@ -1,3 +1,5 @@
+from importlib.metadata import PackageNotFoundError, version
+
 from netto.config import TaxConfig
 from netto.main import calc_inverse_netto, calc_netto
 from netto.social_security import (
@@ -27,7 +29,13 @@ from netto.taxes_income import (
 )
 from netto.taxes_other import calc_church_tax, calc_soli
 
+try:
+    __version__ = version("netto")
+except PackageNotFoundError:  # running from a source tree without installation
+    __version__ = "unknown"
+
 __all__ = [
+    "__version__",
     # Main API
     "calc_netto",
     "calc_inverse_netto",

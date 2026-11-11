@@ -1,3 +1,1 @@
-include data/**/*.json
-include data/**/*.md
-include data/README.md
+recursive-include netto/data *.json *.md
