@@ -34,8 +34,9 @@ netto is a pure-Python library; its surface is the public package boundary
 
 - `ruff format .` from the repo root also formats files in the cwd — run the
   consumer script from the scratchpad, not the repo.
-- scipy emits an IntegrationWarning for very high incomes (>= ~300k); it is
-  pre-existing and harmless.
+- The calculation must not emit warnings (run with `python -W error`); the
+  net income is a step function of the gross (cent rounding, floored zvE),
+  so `calc_inverse_netto` roundtrips are only exact to within 1 EUR.
 - Cross-check income tax against the official formula: for married,
   `calc_income_tax(zvE, married)` must equal `2 * calc_income_tax(zvE/2, single)`
   (`calc_income_tax` implements the exact BMF polynomial).

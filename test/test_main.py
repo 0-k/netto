@@ -86,7 +86,7 @@ def married_config():
 @pytest.mark.parametrize(
     "salary,expected",
     [
-        (50000, 36263.40),
+        (50000, 36262.01),
         (100000, 67016.96),
         (150000, 98603.98),  # income tax 33940 is below married soli threshold 39900
         (250000, 152445.93),
@@ -187,11 +187,82 @@ def test_calc_netto_with_default_none_config():
 
 def test_calc_inverse_netto_with_default_none_config():
     """Test that calc_inverse_netto works when config=None (uses default TaxConfig)"""
-    # Use a value that we know works well with Newton's method
-    # Use explicit year=2022 for stable test behavior
-    result = main.calc_inverse_netto(30000, config=TaxConfig(year=2022))
-    # Should use default TaxConfig
-    assert isinstance(result, int | float)
-    assert result > 0
-    # Verify the result makes sense (gross should be higher than net)
-    assert result > 30000
+    result = main.calc_inverse_netto(30000)
+    assert isinstance(result, float)
+    assert abs(main.calc_netto(result) - 30000) < 1
+
+
+@pytest.mark.parametrize(
+    "config",
+    [
+        TaxConfig(),
+        TaxConfig(year=2022),
+        TaxConfig(year=2025, is_married=True, church_tax=0.0),
+        TaxConfig(year=2026, is_married=True, num_children=3),
+        TaxConfig(year=2030, num_children=1),
+    ],
+)
+def test_calc_inverse_netto_converges_for_all_targets(config):
+    """The solver must find a gross salary for every reachable target; the
+    net income is a step function, so a secant method does not converge"""
+    start = int(main.calc_netto(0, config=config)) + 1
+    for desired_netto in range(start, 300000, 1499):
+        gross = main.calc_inverse_netto(desired_netto, config=config)
+        assert abs(main.calc_netto(gross, config=config) - desired_netto) < 1
+
+
+def test_calc_inverse_netto_dual_income_low_primary_salary(married_config):
+    """Targets just above the partner's net income need a small primary salary"""
+    partner_only = main.calc_netto(0, config=married_config, partner_salary=50000)
+    for desired_netto in (partner_only + 50, 40000, 45000, 50001):
+        gross = main.calc_inverse_netto(
+            desired_netto, config=married_config, partner_salary=50000
+        )
+        netto = main.calc_netto(gross, config=married_config, partner_salary=50000)
+        assert 0 <= gross < desired_netto
+        assert abs(netto - desired_netto) < 1
+
+
+def test_calc_inverse_netto_zero_target():
+    assert main.calc_inverse_netto(0) == 0
+    assert main.calc_inverse_netto(1) == 1
+
+
+def test_calc_inverse_netto_kindergeld_already_covers_desired():
+    """A target below the Kindergeld must raise instead of returning a
+    negative gross salary"""
+    config = TaxConfig(year=2026, is_married=True, num_children=2)
+    with pytest.raises(ValueError, match="Kindergeld"):
+        main.calc_inverse_netto(1000, config=config)
+    with pytest.raises(ValueError):
+        main.calc_inverse_netto(-1)
+
+
+def test_calc_inverse_netto_with_progression_income():
+    gross = main.calc_inverse_netto(40000, progression_income=15000)
+    assert gross > main.calc_inverse_netto(40000)
+    assert abs(main.calc_netto(gross, progression_income=15000) - 40000) < 1
+
+
+def test_calc_netto_rejects_negative_inputs():
+    with pytest.raises(ValueError, match="salary"):
+        main.calc_netto(-1000)
+    with pytest.raises(ValueError, match="deductibles"):
+        main.calc_netto(50000, deductibles=-10000)
+
+
+@pytest.mark.parametrize(
+    "config",
+    [TaxConfig(year=2025), TaxConfig(year=2025, is_married=True, church_tax=0.0)],
+)
+def test_calc_netto_never_drops_with_a_raise(config):
+    """A 1 EUR raise must not lower the net income (regression: numerical
+    quadrature skipped slivers next to the bracket boundaries)"""
+    previous = main.calc_netto(0, config=config)
+    for salary in range(250, 650000, 250):
+        current = main.calc_netto(salary, config=config)
+        assert current >= previous
+        previous = current
+    assert main.calc_netto(89544, config=config) >= main.calc_netto(
+        89543, config=config
+    )

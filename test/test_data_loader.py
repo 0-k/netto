@@ -445,3 +445,32 @@ def test_pension_factor_value_2022():
     factor_2022 = load_pension_factor(2022)
 
     assert factor_2022 == 0.88
+
+
+def test_supported_years_cover_all_datasets():
+    from netto import data_loader
+
+    assert data_loader.SUPPORTED_YEARS == tuple(range(2018, 2033))
+    for dataset in (
+        data_loader.tax_curve,
+        data_loader.social_security_curve,
+        data_loader.soli_curve,
+        data_loader.correction_factor_pensions,
+        data_loader.deductions,
+        data_loader.child_benefits,
+    ):
+        assert tuple(sorted(dataset)) == data_loader.SUPPORTED_YEARS
+
+
+def test_missing_year_file_fails_loudly(monkeypatch):
+    """A year missing from one data directory must not pass silently"""
+    from netto import data_loader
+
+    incomplete = {
+        year: value
+        for year, value in data_loader.child_benefits.items()
+        if year != 2030
+    }
+    monkeypatch.setattr(data_loader, "child_benefits", incomplete)
+    with pytest.raises(FileNotFoundError, match="children.*2030"):
+        data_loader._get_supported_years()

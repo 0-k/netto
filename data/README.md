@@ -118,10 +118,13 @@ Each file contains social security contribution limits and rates:
   - `limit`: Annual income limit in EUR (Beitragsbemessungsgrenze)
   - `rate`: Employee contribution rate (employer pays the same)
   - `extra` (health): Official average Zusatzbeitrag for the year (total;
-    the employee pays half). Used when `TaxConfig.extra_health_insurance`
+    the employee pays half, in 2018 all of it - parity financing returned
+    on 2019-01-01). Used when `TaxConfig.extra_health_insurance`
     is `None`; an explicit config value overrides it.
   - `extra` (nursing): Extra rate for childless individuals
     (Kinderlosenzuschlag)
+  - Mid-year changes are entered as the yearly average: 2023 nursing is
+    the mean of 1.525 % / 0.35 % (January-June) and 1.7 % / 0.6 % (from July)
 
 ### Solidarity Tax (`soli/YEAR.json`)
 

@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from netto.data_loader import SUPPORTED_YEARS
+
 
 @dataclass(slots=True)
 class TaxConfig:
@@ -23,7 +25,7 @@ class TaxConfig:
         Married status (doubles tax brackets)
     extra_health_insurance : float or None
         Total health insurance Zusatzbeitrag (e.g. 0.029 for 2.9%; the
-        employee pays half). Defaults to None, which uses the official
+        employee pays half, in 2018 all of it). Defaults to None, which uses the official
         year-specific average rate from the data files. Set explicitly to
         match your Krankenkasse.
     church_tax : float
@@ -49,8 +51,11 @@ class TaxConfig:
         """Validate configuration values."""
         if not isinstance(self.year, int):
             raise TypeError(f"year must be int, got {type(self.year)}")
-        if self.year < 2018 or self.year > 2032:
-            raise ValueError(f"year must be between 2018 and 2032, got {self.year}")
+        if self.year not in SUPPORTED_YEARS:
+            raise ValueError(
+                f"year must be between {SUPPORTED_YEARS[0]} and "
+                f"{SUPPORTED_YEARS[-1]}, got {self.year}"
+            )
         if not isinstance(self.has_children, bool):
             raise TypeError(f"has_children must be bool, got {type(self.has_children)}")
         if not isinstance(self.num_children, int) or isinstance(

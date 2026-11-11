@@ -102,8 +102,8 @@ config = TaxConfig(year=2024)
 net = calc_netto(
     salary=60000,
     deductibles=2000,  # e.g., professional expenses
-    verbose=True,      # Print detailed breakdown
-    config=config
+    verbose=True,  # Print detailed breakdown
+    config=config,
 )
 ```
 
@@ -112,7 +112,11 @@ net = calc_netto(
 For more granular control, you can use the intermediate calculation functions:
 
 ```python
-from netto import calc_taxable_income, calc_deductible_social_security, get_marginal_tax_rate
+from netto import (
+    calc_taxable_income,
+    calc_deductible_social_security,
+    get_marginal_tax_rate,
+)
 
 salary = 50000
 
@@ -121,8 +125,7 @@ deductible_social_security = calc_deductible_social_security(salary)
 
 # Calculate taxable income
 taxable_income = calc_taxable_income(
-    salary=salary,
-    deductible_social_security=deductible_social_security
+    salary=salary, deductible_social_security=deductible_social_security
 )
 
 # Get marginal tax rate for this income level

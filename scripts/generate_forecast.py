@@ -1,21 +1,28 @@
 """
-Generate forecast tax data for future years (2027-2032).
+Generate forecast tax data for the years after BASE_YEAR (2027-2032).
 
 All generated values are ESTIMATES for planning purposes, extrapolated from
-enacted 2026 law. Assumptions (edit below and re-run to regenerate):
+the enacted law of BASE_YEAR (currently 2026), which is read from the
+``data/*/<BASE_YEAR>.json`` files. Only years after BASE_YEAR are written:
+once a forecast year has been replaced with enacted law, raise BASE_YEAR to
+that year (and drop it from the *_PATH tables) so re-running the script
+extrapolates from it instead of overwriting it.
+
+Assumptions (edit below and re-run to regenerate):
 
 Income tax curve
     - Bracket boundaries E0 (Grundfreibetrag), E1, E2 are indexed by
       TARIFF_INDEXATION per year, following the pattern of recent
       inflation-adjustment laws (2025->2026 was ~+2.1%).
-    - The top bracket boundary E3 (277,826) stays frozen, as it has been
-      since 2022 (deliberate policy).
+    - The top bracket boundary E3 (277,826) stays frozen at its BASE_YEAR
+      value, as it has been since 2022 (deliberate policy).
     - Polynomial coefficients are derived exactly from the boundaries using
       the structure of § 32a EStG (marginal rate rises linearly from 14% to
       23.97% in zone 1 and from 23.97% to 42% in zone 2).
 
 Solidarity tax
-    - Exemption threshold indexed by TARIFF_INDEXATION per year.
+    - Exemption threshold indexed by TARIFF_INDEXATION per year; phase-in
+      fraction and rate as in BASE_YEAR.
 
 Social security
     - Contribution ceilings (Beitragsbemessungsgrenzen) grow by BBG_GROWTH
@@ -26,17 +33,17 @@ Social security
       projection: stable at 18.6% until 2027, then rising towards ~20% by
       the early 2030s (employee half in PENSION_RATE_PATH).
     - Nursing rate rises moderately (PFLEGE_RATE_PATH), reflecting projected
-      financing gaps; childless surcharge unchanged.
+      financing gaps; childless surcharge as in BASE_YEAR.
     - The average health Zusatzbeitrag (health "extra") keeps rising by
       0.1 percentage points per year (HEALTH_EXTRA_PATH), continuing the
       trend that reached 2.9% in 2026.
-    - Health base (7.3%) and unemployment (1.3%) employee rates stay flat.
+    - Health base (7.3%) and unemployment (1.3%) employee rates stay flat
+      at their BASE_YEAR values.
 
 Lump-sum deductions and pension deduction factor
-    - Werbungskosten-Pauschbetrag (1,230) and Sonderausgaben-Pauschbetrag
-      (36) stay flat (no enacted changes).
-    - Pension contributions remain 100% deductible (factor 1.0, law since
-      2023).
+    - Werbungskosten-Pauschbetrag (1,230), Sonderausgaben-Pauschbetrag
+      (36) and the pension deduction factor (1.0, law since 2023) stay at
+      their BASE_YEAR values (no enacted changes).
 
 Child benefits
     - Kindergeld and Kinderfreibetrag (incl. BEA) are indexed by
@@ -51,11 +58,12 @@ from pathlib import Path
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
-FORECAST_YEARS = range(2027, 2033)
+BASE_YEAR = 2026  # latest year with enacted (or preliminary official) data
+LAST_FORECAST_YEAR = 2032
+FORECAST_YEARS = range(BASE_YEAR + 1, LAST_FORECAST_YEAR + 1)
 
 TARIFF_INDEXATION = 0.02  # yearly growth of tax bracket boundaries and soli threshold
 BBG_GROWTH = 0.03  # yearly growth of social security contribution ceilings
-E3_FROZEN = 277826  # top bracket boundary, frozen since 2022
 
 # Employee shares; pension per Rentenversicherungsbericht projection path
 PENSION_RATE_PATH = {
@@ -123,22 +131,31 @@ def write_json(path: Path, data: dict) -> None:
     print(f"wrote {path}")
 
 
+def read_base(subdirectory: str) -> dict:
+    with open(DATA_DIR / subdirectory / f"{BASE_YEAR}.json") as f:
+        return json.load(f)
+
+
 def main() -> None:
-    base_tax = json.load(open(DATA_DIR / "tax_curves" / "2026.json"))["brackets"]
+    base_tax = read_base("tax_curves")["brackets"]
     e0 = base_tax["0"]["step"]
     e1 = base_tax["1"]["step"]
     e2 = base_tax["2"]["step"]
+    e3 = base_tax["3"]["step"]  # top bracket boundary stays frozen
 
-    base_soli = json.load(open(DATA_DIR / "soli" / "2026.json"))
+    base_soli = read_base("soli")
     soli_threshold = base_soli["start_taxable_income"]
 
-    base_social = json.load(open(DATA_DIR / "social_security" / "2026.json"))
+    base_social = read_base("social_security")
     bbg_pension = base_social["pension"]["limit"]
     bbg_health = base_social["health"]["limit"]
 
-    base_children = json.load(open(DATA_DIR / "children" / "2026.json"))
+    base_children = read_base("children")
     kindergeld = base_children["kindergeld_per_child"]
     kinderfreibetrag = base_children["kinderfreibetrag_per_child"]
+
+    base_deductions = read_base("deductions")
+    base_pension_factor = read_base("pension_factors")["factor"]
 
     for year in FORECAST_YEARS:
         e0 = round(e0 * (1 + TARIFF_INDEXATION))
@@ -146,18 +163,13 @@ def main() -> None:
         e2 = round(e2 * (1 + TARIFF_INDEXATION))
         write_json(
             DATA_DIR / "tax_curves" / f"{year}.json",
-            {"year": year, "brackets": derive_tax_constants(e0, e1, e2, E3_FROZEN)},
+            {"year": year, "brackets": derive_tax_constants(e0, e1, e2, e3)},
         )
 
         soli_threshold = round(soli_threshold * (1 + TARIFF_INDEXATION))
         write_json(
             DATA_DIR / "soli" / f"{year}.json",
-            {
-                "year": year,
-                "start_taxable_income": soli_threshold,
-                "start_fraction": 0.119,
-                "end_rate": 0.055,
-            },
+            {**base_soli, "year": year, "start_taxable_income": soli_threshold},
         )
 
         bbg_pension = round_to(bbg_pension * (1 + BBG_GROWTH), 600)
@@ -167,32 +179,31 @@ def main() -> None:
             {
                 "year": year,
                 "pension": {"limit": bbg_pension, "rate": PENSION_RATE_PATH[year]},
-                "unemployment": {"limit": bbg_pension, "rate": 0.013},
+                "unemployment": {
+                    "limit": bbg_pension,
+                    "rate": base_social["unemployment"]["rate"],
+                },
                 "health": {
                     "limit": bbg_health,
-                    "rate": 0.073,
+                    "rate": base_social["health"]["rate"],
                     "extra": HEALTH_EXTRA_PATH[year],
                 },
                 "nursing": {
                     "limit": bbg_health,
                     "rate": PFLEGE_RATE_PATH[year],
-                    "extra": 0.006,
+                    "extra": base_social["nursing"]["extra"],
                 },
             },
         )
 
         write_json(
             DATA_DIR / "pension_factors" / f"{year}.json",
-            {"year": year, "factor": 1.0},
+            {"year": year, "factor": base_pension_factor},
         )
 
         write_json(
             DATA_DIR / "deductions" / f"{year}.json",
-            {
-                "year": year,
-                "werbungskosten_pauschbetrag": 1230,
-                "sonderausgaben_pauschbetrag": 36,
-            },
+            {**base_deductions, "year": year},
         )
 
         kindergeld = round_to(kindergeld * (1 + TARIFF_INDEXATION), 12)

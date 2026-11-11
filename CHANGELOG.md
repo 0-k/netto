@@ -16,7 +16,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `calc_income_tax_with_progression`. Without it, net income in a year
   with Elterngeld was overstated.
 
+### Changed
+- `calc_netto` raises `ValueError` for a negative `salary` or negative
+  `deductibles` instead of returning a meaningless result.
+- `calc_inverse_netto` raises `ValueError` whenever the target is below the
+  net income at zero salary (partner salary and/or Kindergeld), not only
+  with a `partner_salary`; previously it could return a negative gross.
+  It gained a `progression_income` argument and returns `0.0` for a target
+  equal to the net income at zero salary.
+- `calc_income_tax_with_progression` is exported from the package root.
+- Supported years are discovered from the files in `data/`
+  (`data_loader.SUPPORTED_YEARS`); a year missing from one data directory
+  now fails at import with a message naming it instead of a `KeyError`
+  during calculation.
+- `scripts/generate_forecast.py` extrapolates from a configurable
+  `BASE_YEAR`, reads all base values from that year's files and only writes
+  later years, so enacted data is no longer overwritten on a re-run.
+
 ### Fixed
+- **`calc_inverse_netto` convergence**: replaced the secant method, which
+  failed with `RuntimeError` for ordinary targets (e.g. 30,000 with the
+  default config) because net income is a step function, with a bracketing
+  root finder. The dual-income starting guess is gone with it.
+- **Income tax near bracket boundaries**: `calc_income_tax_by_integration`
+  integrates the piecewise linear marginal rate exactly instead of by
+  numerical quadrature, which skipped slivers next to the Grundfreibetrag
+  and the top-rate step (a 1 EUR raise could lower net income by several
+  euros; errors up to ~20 EUR at high incomes). No more
+  `IntegrationWarning`, and `calc_netto` is much faster.
+- **`calc_social_security_by_integration`** was wrong above the
+  contribution ceilings; each rate is now integrated up to its ceiling.
+- **2024 Kinderfreibetrag**: 9,540 EUR (6,612 + 2,928 BEA) including the
+  retroactive raise, was 9,312.
+- **2023 Pflegeversicherung**: rate and childless surcharge are the yearly
+  average of the January-June (1.525 % / 0.35 %) and July-December
+  (1.7 % / 0.6 %) values instead of the first-half values.
+- **2018 health Zusatzbeitrag**: paid by the employee alone (parity
+  financing only returned in 2019), was halved.
 - **Pflegeversicherung child discount** (§ 55 Abs. 3 SGB XI, from
   2023-07): members with two or more children under 25 pay 0.25 pp less per
   child from the 2nd to the 5th (half the effect in 2023). Uses
@@ -185,9 +221,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ```python
 # OLD (0.1.x) - Environment variables
 import os
-os.environ['NETTO_YEAR'] = '2024'
-os.environ['NETTO_MARRIED'] = '1'
+
+os.environ["NETTO_YEAR"] = "2024"
+os.environ["NETTO_MARRIED"] = "1"
 from netto import calc_netto
+
 calc_netto(50000)  # Used env vars
 
 # NEW (0.2.0) - Explicit TaxConfig

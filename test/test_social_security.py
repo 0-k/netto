@@ -175,10 +175,12 @@ def test_get_rate_nursing_with_children(salary, expected):
 )
 def test_get_rate_health_uses_year_average(year, average_zusatzbeitrag):
     """With extra_health_insurance=None, the official year-specific average
-    Zusatzbeitrag from the data files applies (employee pays half)"""
+    Zusatzbeitrag from the data files applies (employee pays half, in 2018
+    all of it)"""
     config = TaxConfig(year=year)
     result = social_security.get_rate_health(10000, config)
-    assert result == pytest.approx(0.073 + average_zusatzbeitrag / 2)
+    employee_share = 1 if year == 2018 else 0.5
+    assert result == pytest.approx(0.073 + average_zusatzbeitrag * employee_share)
 
 
 def test_get_rate_health_config_overrides_year_average():
@@ -249,3 +251,40 @@ def test_calc_deductible_social_security_with_default_none_config():
     result = social_security.calc_deductible_social_security(50000)
     assert isinstance(result, int | float)
     assert result >= 0
+
+
+def test_health_zusatzbeitrag_paid_by_employee_alone_in_2018():
+    """Parity financing of the Zusatzbeitrag only returned on 2019-01-01"""
+    assert social_security.calc_insurance_health(
+        50000, TaxConfig(year=2018)
+    ) == pytest.approx(50000 * 0.083)
+    assert social_security.calc_insurance_health(
+        50000, TaxConfig(year=2019, extra_health_insurance=0.01)
+    ) == pytest.approx(50000 * 0.078)
+
+
+def test_nursing_2023_uses_year_average_rate():
+    """1.525% / 0.35% until June, 1.7% / 0.6% from July 2023"""
+    childless = social_security.calc_insurance_nursing(50000, TaxConfig(year=2023))
+    with_child = social_security.calc_insurance_nursing(
+        50000, TaxConfig(year=2023, has_children=True)
+    )
+    assert with_child == pytest.approx(50000 * (0.01525 + 0.017) / 2)
+    assert childless - with_child == pytest.approx(50000 * (0.0035 + 0.006) / 2)
+
+
+@pytest.mark.parametrize("year", [2018, 2022, 2025, 2032])
+def test_social_security_by_integration_around_ceilings(year):
+    """Salaries just around and far above the contribution ceilings"""
+    config = TaxConfig(year=year)
+    limits = social_security.social_security_curve[year]
+    salaries = [199900, 50_000_000]
+    for type in ("pension", "health"):
+        limit = limits[type]["limit"]
+        salaries += [limit - 1, limit, limit + 1, limit + 3333]
+    for salary in salaries:
+        assert social_security.calc_social_security_by_integration(
+            salary, config
+        ) == pytest.approx(
+            social_security.calc_social_security(salary, config), abs=0.01
+        )
