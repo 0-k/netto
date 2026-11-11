@@ -13,7 +13,7 @@ class TaxConfig:
     year : int
         Tax year (2018-2032, default: 2025). Years 2018-2025 use enacted
         law, 2026 uses preliminary official data, 2027-2032 are forecasts
-        (see data/README.md for assumptions).
+        (see netto/data/README.md for assumptions).
     has_children : bool
         Has (or ever had) children - removes the childless surcharge on
         nursing insurance. Automatically set to True if num_children > 0.

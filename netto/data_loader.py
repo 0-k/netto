@@ -20,11 +20,11 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, field_validator
 
-DATA_DIR = Path(__file__).parent.parent / "data"
+DATA_DIR = Path(__file__).parent / "data"
 
 
 def _available_years(subdirectory: str) -> list[int]:
-    """Years for which ``data/<subdirectory>/<year>.json`` exists."""
+    """Years for which ``netto/data/<subdirectory>/<year>.json`` exists."""
     return sorted(
         int(path.stem)
         for path in (DATA_DIR / subdirectory).glob("*.json")

@@ -13,7 +13,7 @@
 
 - **Calculate net income** from gross salary with `calc_netto()`
 - **Calculate required gross salary** for desired net income with `calc_inverse_netto()`
-- **Support for tax years 2018-2026**
+- **Support for tax years 2018-2026**, plus forecast data for 2027-2032
 - **Married couples support** (Ehegattensplitting, including dual-income households)
 - **Children support**: Kindergeld and Kinderfreibetrag with automatic
   Günstigerprüfung, plus the nursing care insurance effect
@@ -152,7 +152,7 @@ The `TaxConfig` dataclass provides type-safe configuration:
 |-----------|--------|-------|
 | 2018-2025 | Fully supported | Enacted tax law |
 | 2026      | Fully supported | Preliminary official data |
-| 2027-2032 | Forecast | Estimates for planning; see `data/README.md` for assumptions |
+| 2027-2032 | Forecast | Estimates for planning; see `netto/data/README.md` for assumptions |
 
 ## Documentation
 
@@ -242,4 +242,4 @@ Created and maintained by Martin Klein (hi@martinklein.co).
 
 ---
 
-© 2025 Martin Klein
+© 2023-2026 Martin Klein

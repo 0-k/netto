@@ -5,7 +5,7 @@ This directory contains all tax and social security data used by the netto calcu
 ## Directory Structure
 
 ```
-data/
+netto/data/
 ├── tax_curves/          # Income tax curves by year
 │   ├── 2018.json
 │   ├── 2019.json

@@ -1,4 +1,5 @@
 from io import StringIO
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -266,3 +267,13 @@ def test_calc_netto_never_drops_with_a_raise(config):
     assert main.calc_netto(89544, config=config) >= main.calc_netto(
         89543, config=config
     )
+
+
+def test_package_exposes_version_and_bundled_data():
+    import netto
+    from netto import data_loader
+
+    assert netto.__version__
+    assert "__version__" in netto.__all__
+    # data must live inside the package so that it ships in the wheel
+    assert data_loader.DATA_DIR.parent == Path(netto.__file__).parent

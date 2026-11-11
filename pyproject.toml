@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -10,14 +10,24 @@ authors = [
 ]
 description = "German income tax (Einkommensteuer) and social security (Sozialabgaben) calculator"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
 dependencies = [
     "scipy",
     "pydantic>=2.0",
 ]
 classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Office/Business :: Financial",
     "Operating System :: OS Independent",
 ]
 
@@ -25,12 +35,13 @@ classifiers = [
 "Homepage" = "https://github.com/0-k/netto"
 "Documentation" = "https://netto.readthedocs.io/en/latest/"
 "Bug Tracker" = "https://github.com/0-k/netto/issues"
+"Changelog" = "https://github.com/0-k/netto/blob/master/CHANGELOG.md"
 
-[tool.setuptools]
-packages = ["netto"]
+[tool.setuptools.packages.find]
+include = ["netto*"]
 
 [tool.setuptools.package-data]
-netto = ["../data/**/*.json", "../data/**/*.md"]
+netto = ["data/**/*.json", "data/*.md"]
 
 [tool.ruff]
 line-length = 88  # Black-compatible default, widely adopted standard

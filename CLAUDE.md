@@ -31,15 +31,15 @@ netto/
 │   ├── taxes_income.py # Income tax calculations
 │   ├── taxes_other.py  # Solidarity and church tax
 │   ├── taxes_children.py # Kindergeld and Günstigerprüfung
-│   └── social_security.py  # Social security calculations
-├── data/               # Tax data (JSON files with validation)
-│   ├── tax_curves/     # Income tax brackets by year
-│   ├── social_security/ # Social security rates by year
-│   ├── soli/           # Solidarity tax parameters
-│   ├── pension_factors/ # Pension correction factors
-│   ├── deductions/     # Lump-sum deductions (Pauschbeträge) by year
-│   ├── children/       # Kindergeld and Kinderfreibetrag by year
-│   └── README.md       # Data structure documentation
+│   ├── social_security.py  # Social security calculations
+│   └── data/           # Tax data (JSON files with validation, shipped in the wheel)
+│       ├── tax_curves/     # Income tax brackets by year
+│       ├── social_security/ # Social security rates by year
+│       ├── soli/           # Solidarity tax parameters
+│       ├── pension_factors/ # Pension correction factors
+│       ├── deductions/     # Lump-sum deductions (Pauschbeträge) by year
+│       ├── children/       # Kindergeld and Kinderfreibetrag by year
+│       └── README.md       # Data structure documentation
 ├── scripts/            # Maintenance scripts (forecast data generator)
 ├── test/               # Test suite (pytest)
 ├── docs/               # Sphinx documentation
@@ -54,7 +54,7 @@ netto/
   - `year`: Tax year (2018-2032; 2027+ are forecasts)
   - `has_children`: Affects nursing insurance extra rate
   - `is_married`: Joint assessment (Ehegattensplitting): splitting tariff and doubled soli exemption threshold
-  - `extra_health_insurance`: Total health Zusatzbeitrag; `None` (default) uses the year's official average from `data/social_security/`
+  - `extra_health_insurance`: Total health Zusatzbeitrag; `None` (default) uses the year's official average from `netto/data/social_security/`
   - `church_tax`: Church tax rate (default: 0.09, set to 0.0 for none)
 - Includes validation in `__post_init__`
 
@@ -70,7 +70,7 @@ Contains data loader with Pydantic validation for:
 - `child_benefits`: Kindergeld and Kinderfreibetrag by year
 
 **Benefits of Current Structure**:
-- JSON files in `data/` directory for easy editing
+- JSON files in `netto/data/` directory for easy editing
 - Pydantic schema validation ensures data integrity
 - Easy to audit changes via git diffs
 - Simple to extend to new years (just add new JSON files)
@@ -109,7 +109,7 @@ Contains data loader with Pydantic validation for:
 - Married couples: splitting tariff (2 × tax(income/2)), implemented by stretching
   the marginal rate curve in the integration method and by halving/doubling in the exact formula
 - Year-aware lump-sum deductions (Werbungskosten- and Sonderausgaben-Pauschbetrag)
-  from `data/deductions/`, applied per earner / doubled for joint assessment
+  from `netto/data/deductions/`, applied per earner / doubled for joint assessment
 
 **Other Taxes** (`taxes_other.py`):
 - **Solidarity Tax (Soli)**: Reduced significantly in 2021
@@ -172,7 +172,7 @@ Contains data loader with Pydantic validation for:
 
 **Tasks**:
 1. Monitor official sources for newly enacted tax data (yearly)
-2. Overwrite the forecast JSON files in `data/` with official values as they are enacted
+2. Overwrite the forecast JSON files in `netto/data/` with official values as they are enacted
 3. Verify calculations against official BMF calculators
 4. Re-run `scripts/generate_forecast.py` if forecast assumptions change; it only
    writes years after its `BASE_YEAR`, so raise `BASE_YEAR` once a forecast year
@@ -350,11 +350,11 @@ python examples/examples.py
 ### Updating Tax Data
 
 **Current Process**:
-1. Create new JSON file in `data/tax_curves/YEAR.json` (copy and modify from previous year)
-2. Create new JSON file in `data/social_security/YEAR.json`
-3. Create new JSON file in `data/soli/YEAR.json`
-4. Create new JSON file in `data/pension_factors/YEAR.json`
-5. Create new JSON file in `data/deductions/YEAR.json`
+1. Create new JSON file in `netto/data/tax_curves/YEAR.json` (copy and modify from previous year)
+2. Create new JSON file in `netto/data/social_security/YEAR.json`
+3. Create new JSON file in `netto/data/soli/YEAR.json`
+4. Create new JSON file in `netto/data/pension_factors/YEAR.json`
+5. Create new JSON file in `netto/data/deductions/YEAR.json`
 6. Find relevant data from official sources (BMF, lohn-info.de)
 7. Update JSON files with new year data
 8. Supported years are discovered from the data files (`data_loader.SUPPORTED_YEARS`);
@@ -365,7 +365,7 @@ python examples/examples.py
 **Data Validation**:
 - All data is validated using Pydantic models in `data_loader.py`
 - Invalid data will raise validation errors on import
-- See `data/README.md` for detailed data structure documentation
+- See `netto/data/README.md` for detailed data structure documentation
 
 ### Release Process
 
